@@ -13,8 +13,8 @@ endif ()
 
 file(GLOB_RECURSE CORE_SOURCES CONFIGURE_DEPENDS "src/*.cc")
 
-add_executable(MeuhleBridge ${CORE_SOURCES})
+add_executable(MuehleBridge ${CORE_SOURCES})
 
-target_include_directories(MeuhleBridge PRIVATE
+target_include_directories(MuehleBridge PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
