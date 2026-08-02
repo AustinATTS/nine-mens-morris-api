@@ -11,10 +11,21 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif ()
 
+find_package(ZLIB REQUIRED)
+
 file(GLOB_RECURSE CORE_SOURCES CONFIGURE_DEPENDS "src/*.cc")
 
 add_executable(MuehleBridge ${CORE_SOURCES})
 
 target_include_directories(MuehleBridge PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_compile_definitions(MuehleBridge PRIVATE
+    UNICODE
+    _UNICODE
+)
+
+target_link_libraries(MuehleBridge PRIVATE
+    ZLIB::ZLIB
 )
