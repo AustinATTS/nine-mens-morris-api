@@ -54,7 +54,7 @@ class FieldStructTypes {
     PlayerStruct::Core opp_player; /* Pointers to the opponent player */
 
     Core();
-    Core(const FieldStructVarialbes& vars);
+    Core(const FieldStructVariables& vars);
 
     const PlayerStruct::Core& GetCurPlayer() const;
     const PlayerStruct::Core& GetOppPlayer() const;
