@@ -8,6 +8,9 @@
 
 namespace muehle {
 
+/* Forward declarations */
+class FieldStructVariables;
+
 /*
  * Class containing the types and constants
  */

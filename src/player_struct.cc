@@ -12,4 +12,18 @@ bool PlayerStruct::operator==(const PlayerStruct& other) const {
          warning == other.warning && num_stones_set == other.num_stones_set;
 }
 
+/*
+ * Constructor
+ */
+PlayerStruct::Core::Core() {}
+
+/*
+ * Constructor
+ */
+PlayerStruct::Core::Core(const PlayerStruct& player) {
+  id = player.id;
+  num_stones_missing = player.num_stones_missing;
+  num_stones = player.num_stones;
+}
+
 }  // namespace muehle
