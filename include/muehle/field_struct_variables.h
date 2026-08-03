@@ -4,9 +4,7 @@
 
 namespace muehle {
 
-/*
- * Additional variables describing the game state
- */
+/* Additional variables describing the game state */
 class FieldStructVariables : public FieldStructTypes {
   friend class FieldStruct;
 

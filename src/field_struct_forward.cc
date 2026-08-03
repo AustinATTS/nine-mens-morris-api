@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+#include "muehle/field_struct.h"
+
 namespace muehle {
 using namespace std;
 
@@ -117,7 +119,7 @@ void FieldStructForward::GetPossNormalMove(
     /* No possible moves */
   }
 
-  assert(possibility_ids.size() < FieldStruct::max_number_pos_moves);
+  assert(possibility_ids.size() < FieldStruct::max_num_pos_moves);
 }
 
 /* Helper function to get the possible moves to remove a stone */
@@ -415,12 +417,11 @@ bool FieldStructForward::RemoveStone(const MoveInfo& move,
   opp_player.num_stones--;
   opp_player.num_stones_missing++;
 
-      /* Update possible moves */
-      if (setting_phase) {
+  /* Update possible moves */
+  if (setting_phase) {
     cur_player.num_possible_moves++;
     opp_player.num_possible_moves++;
-  }
-  else {
+  } else {
     UpdatePossibleMoves(move.remove_stone, opp_player, true, size);
   }
 
@@ -434,7 +435,7 @@ bool FieldStructForward::RemoveStone(const MoveInfo& move,
   if ((!opp_player.num_possible_moves) && (!setting_phase) &&
       (opp_player.num_stones > 3)) {
     game_has_finished =
-        true;  // Opponent has no possible moves and more than 3 stones
+        true; /* Opponent has no possible moves and more than 3 stones */
   }
 
   /* Everything is ok */

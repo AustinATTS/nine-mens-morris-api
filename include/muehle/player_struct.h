@@ -3,9 +3,7 @@
 
 namespace muehle {
 
-/*
- * Enums
- */
+/* Enums */
 enum class PlayerId : unsigned int {
   square_is_free = 0,
   player_one = 1,
@@ -24,9 +22,7 @@ enum class WarningId : unsigned int {
   invalid = 1000
 };
 
-/*
- * Class representing a player
- */
+/* Class representing a player */
 class PlayerStruct {
  public:
   PlayerId id;       /* Constant over lifetime */
@@ -47,8 +43,7 @@ class PlayerStruct {
 
   bool operator==(const PlayerStruct& other) const;
 
-  /*
-   * Class containing a reduced set of variables to skip unneeded computations
+  /* Class containing a reduced set of variables to skip unneeded computations
    */
   class Core {
    public:

@@ -11,9 +11,7 @@ namespace muehle {
 /* Forward declarations */
 class FieldStructVariables;
 
-/*
- * Class containing the types and constants
- */
+/* Class containing the types and constants */
 class FieldStructTypes {
  public:
   /* Constants */
@@ -44,8 +42,7 @@ class FieldStructTypes {
                            ints, indicating the number of mills, of which this
                            stone is part of */
 
-  /*
-   * Class containing a reduced set of variables to skip unneeded computations
+  /* Class containing a reduced set of variables to skip unneeded computations
    */
   class Core {
    public:

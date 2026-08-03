@@ -2,9 +2,7 @@
 
 namespace muehle {
 
-/*
- * Compares two Player
- */
+/* Compares two Player */
 bool PlayerStruct::operator==(const PlayerStruct& other) const {
   return id == other.id && num_stones == other.num_stones_missing &&
          num_stones_missing == other.num_stones_missing &&
@@ -12,14 +10,10 @@ bool PlayerStruct::operator==(const PlayerStruct& other) const {
          warning == other.warning && num_stones_set == other.num_stones_set;
 }
 
-/*
- * Constructor
- */
+/* Constructor */
 PlayerStruct::Core::Core() {}
 
-/*
- * Constructor
- */
+/* Constructor */
 PlayerStruct::Core::Core(const PlayerStruct& player) {
   id = player.id;
   num_stones_missing = player.num_stones_missing;

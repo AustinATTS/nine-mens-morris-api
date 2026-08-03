@@ -2,14 +2,10 @@
 
 namespace muehle {
 
-/*
- * Constructor
- */
+/* Constructor */
 FieldStruct::FieldStruct() { Reset(); }
 
-/*
- * Copy Constructor
- */
+/* Copy Constructor */
 FieldStruct::FieldStruct(const FieldStruct& other)
     : FieldStructForward(other), FieldStructReverse(other) {
   /* Copy the core variables from the other FieldStruct */
@@ -21,14 +17,10 @@ FieldStruct::FieldStruct(const FieldStruct& other)
   this->game_has_finished = other.game_has_finished;
 }
 
-/*
- * Destructor
- */
+/* Destructor */
 FieldStruct::~FieldStruct() {}
 
-/*
- * Compares two FieldStructs
- */
+/* Compares two FieldStructs */
 bool FieldStruct::operator==(const FieldStruct& other) const {
   return cur_player == other.cur_player && opp_player == other.opp_player &&
          setting_phase == other.setting_phase &&
@@ -36,14 +28,10 @@ bool FieldStruct::operator==(const FieldStruct& other) const {
          stone_part_of_mill == other.stone_part_of_mill;
 }
 
-/*
- * Constructor
- */
+/* Constructor */
 FieldStruct::Core::Core() {}
 
-/*
- * Constructor
- */
+/* Constructor */
 FieldStruct::Core::Core(const FieldStructVariables& vars) {
   field = vars.GetField();
   setting_phase = vars.InSettingPhase();

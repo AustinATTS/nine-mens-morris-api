@@ -3,9 +3,7 @@
 
 namespace muehle {
 
-/*
- * Class representing a move
- */
+/* Class representing a move */
 class MoveInfo {
  public:
   using PossibilityId =

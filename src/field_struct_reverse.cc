@@ -5,9 +5,7 @@
 namespace muehle {
 using namespace std;
 
-/*
- * Returns the predecessors fields of the current fie
- */
+/* Returns the predecessors fields of the current fie */
 void FieldStructReverse::GetPredecessors(
     std::vector<FieldStructTypes::Core>& pred_fields) const {
   /* The important variables which must be updated for the GetLyerAndStateNumber

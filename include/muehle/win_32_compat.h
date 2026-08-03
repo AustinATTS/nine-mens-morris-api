@@ -1,7 +1,5 @@
-/*
- * Minimal header file to act as a compatibility layer while porting over the
- * original code to compile and run on Linux systems.
- */
+/* Minimal header file to act as a compatibility layer while porting over the
+ * original code to compile and run on Linux systems. */
 
 #ifndef MUEHLE_WIN_32_COMPAT_H_
 #define MUEHLE_WIN_32_COMPAT_H_
@@ -26,9 +24,7 @@
 
 namespace muehle {
 
-/*
- * Basic Types
- */
+/* Basic Types */
 using BOOL = int;
 using DWORD = uint32_t;
 using LONG = int32_t;
@@ -51,9 +47,7 @@ using LPWSTR = wchar_t*;
 #define WINAPI
 #endif  // WINAPI
 
-/*
- * Large Integer
- */
+/* Large Integer */
 union LARGE_INTEGER {
   struct {
     uint32_t LowPart;
@@ -62,9 +56,7 @@ union LARGE_INTEGER {
   int64_t QuadPart;
 };
 
-/*
- * File Constants
- */
+/* File Constants */
 constexpr DWORD GENERIC_READ = 0x80000000;
 constexpr DWORD GENERIC_WRITE = 0x40000000;
 constexpr DWORD FILE_SHARE_READ = 0x00000001;
@@ -80,10 +72,7 @@ constexpr DWORD INVALID_SET_FILE_POINTER = 0xFFFFFFFFu;
 constexpr int THREAD_PRIORITY_BELOW_NORMAL = -1;
 constexpr DWORD CREATE_SUSPENDED = 0x00000004;
 
-/*
- * HANDLE
- * file handle, thread handle, or process pseudo-handle
- */
+/* HANDLE file handle, thread handle, or process pseudo-handle */
 namespace win_32_compat {
 struct ThreadSuspendState {
   sem_t resume_sem;
@@ -96,12 +85,10 @@ inline thread_local ThreadSuspendState* tl_my_suspend_state = nullptr;
 inline thread_local DWORD tl_thread_id = 0;
 inline std::atomic<DWORD> g_next_thread_id{1};
 
-/*
- * SIGUSR1 is used to interrupt a thread at it's current point of execution and
+/* SIGUSR1 is used to interrupt a thread at it's current point of execution and
  * have it block until resumed. This mirrors Win32's
  * SuspendThread()/ResumeThread() semantics enough for this code base, which
- * pairs a Suspend with a later Resume for the same thread.
- */
+ * pairs a Suspend with a later Resume for the same thread. */
 inline void SuspendSignalHandler(int) {
   if (tl_my_suspend_state != nullptr) {
     sem_post(&tl_my_suspend_state->resume_sem);
@@ -120,10 +107,8 @@ inline void InstallSuspendHandlerOnce() {
 }
 
 inline std::string ToNativePath(const wchar_t* wpath) {
-  /*
-   * Re uses std::filesystem's wchar_t -> native string conversion, which is
-   * already used elsewhere in the code.
-   */
+  /* Re uses std::filesystem's wchar_t -> native string conversion, which is
+   * already used elsewhere in the code. */
   return std::filesystem::path(wpath).string();
 }
 }  // namespace win_32_compat
@@ -141,9 +126,7 @@ using HANDLE = HANDLE__*;
 
 #define INVALID_HANDLE_VALUE ((HANDLE)(intptr_t)-1)
 
-/*
- * File I/O
- */
+/* File I/O */
 inline HANDLE CreateFile(const wchar_t* path, DWORD access, DWORD /* share */,
                          void* /* sa */, DWORD creation, DWORD /* flags */,
                          void* /* templ */) {
@@ -277,9 +260,7 @@ inline BOOL CreateDirectory(LPCWSTR path, LPVOID /* security_attributes */) {
   return ec ? FALSE : TRUE;
 }
 
-/*
- * <SVC intrinsic to rotate an 8-bit value right by 'shift' bits
- */
+/* <SVC intrinsic to rotate an 8-bit value right by 'shift' bits */
 inline unsigned char _rotr8(unsigned char value, unsigned char shift) {
   shift &= 7;
   if (shift == 0) {
@@ -346,9 +327,7 @@ inline BOOL GlobalMemoryStatusEx(MEMORYSTATUSEX* status) {
   return TRUE;
 }
 
-/*
- * Critical sections
- */
+/* Critical sections */
 struct CRITICAL_SECTION {
   std::recursive_mutex m;
 };
@@ -357,9 +336,7 @@ inline void DeleteCriticalSection(CRITICAL_SECTION*) {}
 inline void EnterCriticalSection(CRITICAL_SECTION* cs) { cs->m.lock(); }
 inline void LeaveCriticalSection(CRITICAL_SECTION* cs) { cs->m.unlock(); }
 
-/*
- * Sleep / High resolution timers
- */
+/* Sleep / High resolution timers */
 inline void Sleep(DWORD milliseconds) {
   std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 }

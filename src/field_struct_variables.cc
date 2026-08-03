@@ -5,9 +5,7 @@
 namespace muehle {
 using namespace std;
 
-/*
- * Prints the field to the console
- */
+/* Prints the field to the console */
 void FieldStructVariables::Print() const {
   /* Locals */
   std::array<char, size> c;
@@ -61,11 +59,9 @@ void FieldStructVariables::Print() const {
   }
 }
 
-/*
- * Resets the field to the initial state, including both players' warnings and
+/* Resets the field to the initial state, including both players' warnings and
  * all relevant state. This function ensures that both players' warnings, stone
- * counts, mills and the board state are fully reset.
- */
+ * counts, mills and the board state are fully reset. */
 void FieldStructVariables::Reset(PlayerId first_player) {
   game_has_finished = false;
   cur_player.id = first_player;
@@ -96,9 +92,7 @@ void FieldStructVariables::Reset(PlayerId first_player) {
   stone_part_of_mill.fill(0);
 }
 
-/*
- * Switches the players and inverts the field
- */
+/* Switches the players and inverts the field */
 void FieldStructVariables::Invert() {
   std::swap(cur_player, opp_player);
 
@@ -120,9 +114,7 @@ void FieldStructVariables::Invert() {
   }
 }
 
-/*
- * Returns the char representation of a stone
- */
+/* Returns the char representation of a stone */
 char FieldStructVariables::GetCharFromStone(PlayerId stone) const {
   switch (stone) {
     case PlayerId::player_one:
@@ -141,9 +133,7 @@ char FieldStructVariables::GetCharFromStone(PlayerId stone) const {
   return 'f';
 }
 
-/*
- * Helper function to set 'connection_square'
- */
+/* Helper function to set 'connection_square' */
 void FieldStructVariables::SetConnection(
     Array2d<FieldPos, size, 4>& connected_square, FieldPos index,
     int first_direction, int second_direction, int third_direction,
@@ -154,9 +144,7 @@ void FieldStructVariables::SetConnection(
   connected_square[index][3] = fourth_direction;
 }
 
-/*
- * Helper function to set 'neighbour'
- */
+/* Helper function to set 'neighbour' */
 void FieldStructVariables::SetNeighbour(
     Array3d<FieldPos, size, 2, 2>& neighbour, FieldPos index,
     FieldPos first_neighbour0, FieldPos second_neigbour0,
@@ -167,10 +155,8 @@ void FieldStructVariables::SetNeighbour(
   neighbour[index][1][1] = second_neigbour1;
 }
 
-/*
- * Returns the winner of the game, and PlayerId::square_is_free if the game is
- * not finished.
- */
+/* Returns the winner of the game, and PlayerId::square_is_free if the game is
+ * not finished. */
 PlayerId FieldStructVariables::GetWinner() const {
   PlayerId winner = PlayerId::square_is_free;
 
@@ -188,62 +174,43 @@ PlayerId FieldStructVariables::GetWinner() const {
   return winner;
 }
 
-/*
- * Returns a reference to the current player
- */
+/* Returns a reference to the current player */
 const PlayerStruct& FieldStructVariables::GetCurPlayer() const {
   return cur_player;
 }
 
-/*
- * Returns a reference to the opponent player
- */
+/* Returns a reference to the opponent player */
 const PlayerStruct& FieldStructVariables::GetOppPlayer() const {
   return opp_player;
 }
 
-/*
- * Returns the player id of a stone
- */
+/* Returns the player id of a stone */
 PlayerId FieldStructVariables::GetStone(FieldPos pos) const {
   return field[pos];
 }
 
-/*
- * Returns the number of mills, of which this stone is part of
- */
+/* Returns the number of mills, of which this stone is part of */
 unsigned int FieldStructVariables::IsStonePartOfMill(FieldPos pos) const {
   return stone_part_of_mill[pos];
 }
 
-/*
- * Returns the field
- */
+/* Returns the field */
 const FieldStructVariables::FieldArray& FieldStructVariables::GetField() const {
   return field;
 }
 
-/*
- * Returns true if the game has finished
- */
+/* Returns true if the game has finished */
 bool FieldStructVariables::HasGameFinished() const { return game_has_finished; }
 
-/*
- * Returns the number of stones set in the setting phase
- */
+/* Returns the number of stones set in the setting phase */
 unsigned int FieldStructVariables::GetNumStonesSet() const {
   return cur_player.num_stones_set + opp_player.num_stones_set;
 }
 
-/*
- * Returns true if the game is in setting phase
- */
+/* Returns true if the game is in setting phase */
 bool FieldStructVariables::InSettingPhase() const { return setting_phase; }
 
-/*
- * Updates 'has_only_mills'.
- * stone_part_of_mill and field must be in sync
- */
+/* Updates 'has_only_mills'. stone_part_of_mill and field must be in sync */
 void FieldStructVariables::CalcHasOnlyMills() {
   /* Update each player */
   for (PlayerStruct* player : {&opp_player, &cur_player}) {
@@ -263,9 +230,7 @@ void FieldStructVariables::CalcHasOnlyMills() {
   }
 }
 
-/*
- * Updates the number of mills for each player
- */
+/* Updates the number of mills for each player */
 void FieldStructVariables::CalcNumberOfMills() {
   /* Count completed mills */
   cur_player.number_of_mills = 0;
@@ -281,9 +246,7 @@ void FieldStructVariables::CalcNumberOfMills() {
   opp_player.number_of_mills /= 3;
 }
 
-/*
- * Updates the number of stones for each player
- */
+/* Updates the number of stones for each player */
 void FieldStructVariables::CalcNumStones() {
   /* Count stones */
   cur_player.num_stones = 0;
@@ -300,9 +263,7 @@ void FieldStructVariables::CalcNumStones() {
   }
 }
 
-/*
- * Updates the number of stones set for each player
- */
+/* Updates the number of stones set for each player */
 void FieldStructVariables::CalcNumStonesSet(
     unsigned int total_num_stones_missing) {
   unsigned int total_num_stones_set =
@@ -312,10 +273,8 @@ void FieldStructVariables::CalcNumStonesSet(
       total_num_stones_set / 2 + total_num_stones_set % 2;
 }
 
-/*
- * Updates the number of possible moves for a player.
- * Thereby the possibilities containing a stone removal are not counted.
- */
+/* Updates the number of possible moves for a player. Thereby the possibilities
+ * containing a stone removal are not counted. */
 void FieldStructVariables::CalcNumPossibleMoves(PlayerStruct& player) const {
   /* Locals */
   FieldPos i, j, k;
@@ -366,9 +325,7 @@ void FieldStructVariables::CalcNumPossibleMoves(PlayerStruct& player) const {
   }
 }
 
-/*
- * Updates the stone_part_of_mill array for each player
- */
+/* Updates the stone_part_of_mill array for each player */
 void FieldStructVariables::CalcStonePartOfMill() {
   for (FieldPos i = 0; i < size; i++) {
     stone_part_of_mill[i] = 0;
@@ -383,9 +340,7 @@ void FieldStructVariables::CalcStonePartOfMill() {
   }
 }
 
-/*
- * Sets the stone_part_of_mill array
- */
+/* Sets the stone_part_of_mill array */
 void FieldStructVariables::SetStonePartOfMill(FieldPos stone,
                                               FieldPos first_neighbour,
                                               FieldPos second_neighbour) {
@@ -402,9 +357,7 @@ void FieldStructVariables::SetStonePartOfMill(FieldPos stone,
   }
 }
 
-/*
- * Sets the field to a specific state.
- */
+/* Sets the field to a specific state. */
 bool FieldStructVariables::SetSituation(const FieldArray& field,
                                         bool setting_phase,
                                         unsigned int total_num_stones_missing) {
@@ -500,12 +453,9 @@ bool FieldStructVariables::SetSituation(const FieldArray& field,
   return IsIntegrityOk();
 }
 
-/*
- * Checks if the field is in a valid state.
- * The following member variables are not verified:
- * .field, .stone_part_of_mill, .game_has_finished, .has_only_mills,
- * .num_possible_moves, .num_stones_missing, ...
- */
+/* Checks if the field is in a valid state. The following member variables are
+ * not verified: .field, .stone_part_of_mill, .game_has_finished,
+ * .has_only_mills, .num_possible_moves, .num_stones_missing, ... */
 bool FieldStructVariables::IsIntegrityOk() const {
   if (setting_phase) {
     /* If 18 stones have been set, then it cannot be the setting phase anymore
@@ -543,7 +493,7 @@ bool FieldStructVariables::IsIntegrityOk() const {
       return false;
     }
 
-    /* Each missing stone of a player must correspond toa  mill of the other
+    /* Each missing stone of a player must correspond to a mill of the other
      * player on the field or a former mill, which has already been destroyed.
      * Each destroyed mill of a player requires a missing stone of that player.
      */
