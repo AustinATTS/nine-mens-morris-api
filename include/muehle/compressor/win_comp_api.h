@@ -1,19 +1,19 @@
-#ifndef MUEHLE_COMPRESSOR_ZLIB_API_H_
-#define MUEHLE_COMPRESSOR_ZLIB_API_H_
+#ifndef MUEHLE_COMPRESSOR_WIN_COMP_API_H_
+#define MUEHLE_COMPRESSOR_WIN_COMP_API_H_
 
-#include <zlib.h>
+#ifdef _WIN32
+#include <compressapi.h>
 
 #include "muehle/compressor/general_lib.h"
+#include "muehle/win_32_compat.h"
 
 namespace muehle {
 namespace compressor {
 
-/* Cross-platform (Linux/macOS) replacement for win_comp_api.h, which relied on
- * the Windows Compression API. This uses zlib instead */
-class ZLibApi : public GeneralLib {
+class WinCompApi : public GeneralLib {
  public:
-  ZLibApi();
-  ~ZLibApi();
+  WinCompApi();
+  ~WinCompApi();
   bool Compress(void* compressed_data, void* source_data,
                 unsigned int n_bytes_to_compress,
                 unsigned int& n_bytes_compressed) override;
@@ -24,13 +24,17 @@ class ZLibApi : public GeneralLib {
       long long amount_uncompressed_data) override;
 
  private:
-  unsigned long compressed_buffer_size = 0;
-  unsigned long decompressed_buffer_size = 0;
+  COMPRESSOR_HANDLE compressor = NULL;
+  DECOMPRESSOR_HANDLE decompressor = NULL;
+  PBYTE compressed_buffer = NULL;
+  SIZE_T compressed_buffer_size = 0;
+  SIZE_T decompressed_buffer_size = 0;
 };
 
-using PlatformCompApi = ZLibApi;
+using PlatformCompApi = WinCompApi;
 
 }  // namespace compressor
 }  // namespace muehle
 
-#endif  // MUEHLE_COMPRESSOR_ZLIB_API_H_
+#endif  // _WIN32
+#endif  // MUEHLE_COMPRESSOR_WIN_COMP_API_H_
