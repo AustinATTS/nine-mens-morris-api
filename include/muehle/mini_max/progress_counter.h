@@ -2,7 +2,7 @@
 #define MUEHLE_MINI_MAX_PROGRESS_COUNTER_H_
 
 #include "muehle/utils/logger.h"
-#include "type_def.h"
+#include "muehle/mini_max/type_def.h"
 
 namespace muehle {
 namespace mini_max {
