@@ -23,7 +23,7 @@ class Muehle {
     LogItem() = default;
     LogItem(const MoveInfo& move, PlayerId player);
 
-    static unsigned int GetNumNormalMovesWithoutRemoveal(
+    static unsigned int GetNumNormalMovesWithoutRemoval(
         const std::vector<LogItem>& log);
     static float GetNumRepeatedMoves(const std::vector<LogItem>& log);
     bool operator==(const LogItem& other) const;
@@ -85,7 +85,7 @@ class Muehle {
   }
   unsigned int GetNumTurnsToRemis() const;
   float GetNumRepeatedMoves() const;
-  bool IsMoveAllowed(const MoveInfo& move, bool IgnoreStoneRemoval) const;
+  bool IsMoveAllowed(const MoveInfo& move, bool ignore_stone_removal) const;
 
  private:
   /* Variables */
