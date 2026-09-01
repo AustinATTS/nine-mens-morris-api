@@ -8,7 +8,7 @@
 
 namespace muehle {
 namespace mini_max {
-namespace reto_analysis {
+namespace retro_analysis {
 /* Class containing a queue with a large amount of states to process.
  * There is one queue for each ply number, managed as a cyclic array.
  * Each cyclic array is stored in a file, allowing for efficient disk-backed
@@ -51,7 +51,7 @@ class StateQueue {
   alignas(64) char dummy_cache_align; /* Align to cache line (64 bytes) */
 };
 
-}  // namespace reto_analysis
+}  // namespace retro_analysis
 }  // namespace mini_max
 }  // namespace muehle
 
