@@ -4,4 +4,6 @@ namespace muehle {
 
 // Implementation goes here.
 
+bool mini_max::ReturnValues::FalseOrStop() {
+}
 }  // namespace muehle
