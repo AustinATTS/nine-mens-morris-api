@@ -1,6 +1,7 @@
 #ifndef MUEHLE_MINI_MAX_ALPHA_BETA_SOLVER_H_
 #define MUEHLE_MINI_MAX_ALPHA_BETA_SOLVER_H_
-#include "knot_struct.h"
+
+#include "muehle/mini_max/alpha_beta/knot_struct.h"
 #include "muehle/mini_max/database/database.h"
 #include "muehle/mini_max/state_info.h"
 #include "muehle/utils/logger.h"
