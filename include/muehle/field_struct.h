@@ -1,6 +1,12 @@
 #ifndef MUEHLE_FIELD_STRUCT_H_
 #define MUEHLE_FIELD_STRUCT_H_
 
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+
 #include "muehle/field_struct_forward.h"
 #include "muehle/field_struct_reverse.h"
 

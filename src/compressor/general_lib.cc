@@ -1,5 +1,9 @@
 #include "muehle/compressor/general_lib.h"
 
+#include <cstring>
+#include <future>
+#include <thread>
+
 namespace muehle {
 
 /* GeneralLib class constructor */

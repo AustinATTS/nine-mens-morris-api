@@ -599,9 +599,7 @@ DWORD mini_max::integrity::Checker::TestSymStatesSameValueThreadProc(
   }
   return TM_RETURN_VALUE_OK;
 }
-#pragma endregion
 
-#pragma region Testing functions of the GameInterface
 bool mini_max::integrity::Checker::TestSetSituationAndGetStateNum(
     unsigned int layer_number) {
   log << "\n"

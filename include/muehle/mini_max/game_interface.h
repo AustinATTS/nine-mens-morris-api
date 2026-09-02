@@ -97,7 +97,7 @@ class GameInterface {
                     bool& player_to_move_changed, void*& p_backup) {};
   /* Undo a move based on the ids returned by GetPossibilities() */
   virtual void Undo(unsigned int thread_no, unsigned int id_possibility,
-                    bool& player_to_move_changed, void*& p_backup) {};
+                    bool& player_to_move_changed, void* p_backup) {};
 
   /* Output */
   /* For console */

@@ -1,5 +1,8 @@
 #include "muehle/api/muehle_bridge.h"
 
+#include <exception>
+#include <iostream>
+
 namespace muehle {
 
 MuehleBridge::MuehleBridge() : game(), ai() {}

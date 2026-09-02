@@ -5,11 +5,18 @@
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif // NOMINMAX
+#endif  // NOMINMAX
 #include <windows.h>
 #endif // _WIN32
+#include <algorithm>
+#include <filesystem>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <list>
 #include <map>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include "muehle/compressor/general_lib.h"

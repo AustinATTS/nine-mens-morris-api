@@ -3,7 +3,6 @@
 
 #include <array>
 
-#include "muehle/field_struct_variables.h"
 #include "muehle/player_struct.h"
 
 namespace muehle {

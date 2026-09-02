@@ -27,7 +27,7 @@ class AddNumSuccedorsVars : public ThreadManagerClass::ThreadVarsArrayItem {
   AddNumSuccedorsVars(SuccessorCountManager& scm, unsigned int layer_number,
                       int64_t& rough_total_num_states_processed);
   bool StorePredecessorState(const StateAddressStruct& pred_state);
-  void Reduce();
+  void Reduce() override;
 
  private:
   const size_t pred_states_chunk_size =

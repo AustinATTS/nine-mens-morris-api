@@ -1,9 +1,24 @@
 #ifndef MUEHLE_COMPRESSOR_GENERAL_LIB_H_
 #define MUEHLE_COMPRESSOR_GENERAL_LIB_H_
+#include <iosfwd>
+#include <string>
 
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif  // NOMINMAX
+#include <windows.h>
+#endif // _WIN32
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <list>
+#include <map>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace muehle {
 namespace compressor {

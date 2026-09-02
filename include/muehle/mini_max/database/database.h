@@ -63,9 +63,10 @@ class Database {
   StateNumberVarType GetNumInvalidStates(unsigned int layer_number);
   long long GetLayerSizeInBytes(unsigned int layer_number);
   std::wstring GetFileDirectory() {
-    if (file) return file->GetFileDirectory() {
-        return L"";
+    if (file) {
+      return file->GetFileDirectory();
       }
+    return L"";
   };
 
   /* Read and write operations */
@@ -75,9 +76,9 @@ class Database {
                                unsigned int state_number,
                                PlyInfoVarType& value);
   bool WriteKnotValueInDatabase(unsigned int layer_number,
-                                unsigned int state_number, TwoBit& knot_value);
+                                unsigned int state_number, TwoBit knot_value);
   bool WritePlyInfoInDatabase(unsigned int layer_number,
-                              unsigned int state_number, PlyInfoVarType& value);
+                              unsigned int state_number, PlyInfoVarType value);
   bool LoadLayerFromFile(unsigned int layer_number);
   bool SaveLayerToFile(unsigned int layer_number);
 

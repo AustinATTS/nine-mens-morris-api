@@ -1,10 +1,7 @@
 #include "muehle/compressor/file.h"
 
-#include <cassert>
 #include <cstring>
-#include <filesystem>
 #include <future>
-#include <iostream>
 #include <thread>
 
 namespace muehle {

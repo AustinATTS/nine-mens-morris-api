@@ -27,9 +27,11 @@ struct CheckerThreadVars : public ThreadManagerClass::ThreadVarsArrayItem {
                     unsigned int max_num_branches,
                     int64_t rough_total_num_states_processed);
 
-  void Reduce();
+  void Reduce() override;
 };
 
 }  // namespace integrity
 }  // namespace mini_max
 }  // namespace muehle
+
+#endif // MUEHLE_MINI_MAX_INTEGRITY_CHECKER_THREAD_VARS_H_

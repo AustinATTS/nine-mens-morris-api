@@ -2,10 +2,9 @@
 #define MUEHLE_COMPRESSOR_WIN_COMP_API_H_
 
 #ifdef _WIN32
-#include <compressapi.h>
 
 #include "muehle/compressor/general_lib.h"
-#include "muehle/win_32_compat.h"
+#include <compressapi.h>
 
 namespace muehle {
 namespace compressor {

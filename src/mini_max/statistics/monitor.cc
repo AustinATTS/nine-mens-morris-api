@@ -1,6 +1,11 @@
 #include "muehle/mini_max/statistics/monitor.h"
 
-#include "muehle/mini_max/database/database.h"
+#include "muehle/mini_max/mini_max.h"
+#ifdef _WIN32
+#include <windows.h>
+#else // _WIN32
+#include <muehle/win_32_compat.h>
+#endif // _WIN32
 
 namespace muehle {
 

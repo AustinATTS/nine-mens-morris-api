@@ -1,5 +1,10 @@
 #include "muehle/mini_max/alpha_beta/common_thread_vars.h"
 
+#ifdef _MSC_VER
+#define NOMINMAX /* Prevent macro conflicts with min/max in Windows header */
+#endif // _MSC_VER
+#include <algorithm> /* For std::min */
+
 namespace muehle {
 
 std::mutex mini_max::CommonThreadVars::buffer_mutex = {};
@@ -146,7 +151,7 @@ mini_max::CommonThreadVars::~CommonThreadVars() {
   }
 }
 
-bool mini_max::CommonThreadVars::ReadByte(int64_t possition_in_file,
+bool mini_max::CommonThreadVars::ReadByte(int64_t position_in_file,
                                           unsigned char& data) {
   /* Checks */
   if (!load_from_file) {
@@ -155,17 +160,17 @@ bool mini_max::CommonThreadVars::ReadByte(int64_t possition_in_file,
   if (h_file == NULL || h_file == INVALID_HANDLE_VALUE) {
     log.Log(Logger::LogLevel::error, L"File handle is null. Failed to read!");
   }
-  if (possition_in_file < 0) {
+  if (position_in_file < 0) {
     return log.Log(Logger::LogLevel::error, L"Position in file is negative!");
   }
-  if (possition_in_file >= target_file_size) {
+  if (position_in_file >= target_file_size) {
     return log.Log(Logger::LogLevel::error,
                    L"Position in file is out of range");
   }
 
   /* Reload data, if maximum buffer size reached */
   if (!buffer.size() || buffer_position >= max_buffer_size) {
-    buffer_offset = possition_in_file;
+    buffer_offset = position_in_file;
     buffer_position = 0;
     LoadDataToBuffer();
   }
@@ -173,25 +178,25 @@ bool mini_max::CommonThreadVars::ReadByte(int64_t possition_in_file,
   /* Read data from buffer */
   data = buffer[buffer_position];
   buffer_position += 1;
-  file_position = possition_in_file;
+  file_position = position_in_file;
 
   return true;
 }
 
-bool mini_max::CommonThreadVars::WriteByte(int64_t possition_in_file,
+bool mini_max::CommonThreadVars::WriteByte(int64_t position_in_file,
                                            unsigned char data) {
   /* Checks */
-  if (!load_from_file) {
+  if (load_from_file) {
     return log.Log(Logger::LogLevel::error,
                    L"File is open for reading! Writing not possible!");
   }
   if (h_file == NULL || h_file == INVALID_HANDLE_VALUE) {
     log.Log(Logger::LogLevel::error, L"File not open for writing!");
   }
-  if (possition_in_file < 0) {
+  if (position_in_file < 0) {
     return log.Log(Logger::LogLevel::error, L"Position in file is negative!");
   }
-  if (possition_in_file >= target_file_size) {
+  if (position_in_file >= target_file_size) {
     return log.Log(Logger::LogLevel::error,
                    L"Position in file is out of range");
   }
@@ -205,14 +210,14 @@ bool mini_max::CommonThreadVars::WriteByte(int64_t possition_in_file,
 
   /* When buffer is empty, then set offset to current file position */
   if (!buffer.size()) {
-    buffer_offset = possition_in_file;
+    buffer_offset = position_in_file;
     buffer_position = 0;
   }
 
   /* Assume that only one byte is written at a time */
   buffer.push_back(data);
   buffer_position += 1;
-  file_position = possition_in_file;
+  file_position = position_in_file;
 
   return true;
 }

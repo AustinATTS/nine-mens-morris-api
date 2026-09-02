@@ -4,6 +4,8 @@
 #ifndef MUEHLE_WIN_32_COMPAT_H_
 #define MUEHLE_WIN_32_COMPAT_H_
 
+#ifndef _WIN32
+
 #include <fcntl.h>
 #include <pthread.h>
 #include <semaphore.h>
@@ -447,5 +449,7 @@ inline HANDLE GetCurrentProcess() {
 }
 
 }  // namespace muehle
+
+#endif  // _WIN32
 
 #endif  // MUEHLE_WIN_32_COMPAT_H_

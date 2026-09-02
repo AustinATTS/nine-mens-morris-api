@@ -1,4 +1,5 @@
 #include "muehle/mini_max/alpha_beta/run_alpha_beta_vars.h"
+#include "muehle/mini_max/alpha_beta/solver.h"
 
 namespace muehle {
 

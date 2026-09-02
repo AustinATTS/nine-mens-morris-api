@@ -31,7 +31,7 @@ MyString::~MyString() {
 const char* MyString::CStrA() { return str_a; }
 
 /* Returns the wide char string */
-const char* MyString::CStrW() { return str_w; }
+const WCHAR* MyString::CStrW() { return str_w; }
 
 /* Set the string to a new ascii string */
 MyString& MyString::Assign(const char* c_str) {

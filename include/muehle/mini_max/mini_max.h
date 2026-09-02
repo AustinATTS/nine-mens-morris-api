@@ -1,12 +1,47 @@
 #ifndef MUEHLE_MINI_MAX_MINI_MAX_H_
 #define MUEHLE_MINI_MAX_MINI_MAX_H_
 
-#include <numeric>
+/* Win API */
+#ifdef _WIN32
+#include <Shlwapi.h>
+#include <windows.h>
+#else // _WIN32
+#include "muehle/win_32_compat.h"
+#endif // _WIN32
 
+/* Std */
+#include <cstdio>
+#include <iostream>
+#include <list>
+#include <sstream>
+#ifdef _WIN32
+#define <intrin.h>
+#endif // _WIN32
+#include <algorithm>
+#include <ctime>
+#include <filesystem>
+#include <vector>
+
+/* Utils */
+#include "muehle/utils/logger.h"
+#include "muehle/utils/thread_manager_class.h"
+#include "muehle/utils/my_string.h"
+
+/* Other mini_max headers */
 #include "muehle/mini_max/alpha_beta/solver.h"
-#include "muehle/mini_max/integrity/checker_thread_vars.h"
-#include "muehle/mini_max/state_info.h"
+#include "muehle/mini_max/database/database.h"
+#include "muehle/mini_max/integrity/checker.h"
+#include "muehle/mini_max/retro_analysis/solver.h"
 #include "muehle/mini_max/statistics/monitor.h"
+#include "muehle/mini_max/type_def.h"
+
+#ifdef _WIN32
+#pragma intrinsic(_rotl8, _rotr8) /* For shifting bits */
+#endif // _WIN32
+
+#include "game_interface.h"
+#include "muehle/mini_max/state_info.h"
+
 
 namespace muehle {
 

@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <vector>
 
 #include "muehle/field_struct.h"
 #include "muehle/muehle_ai.h"

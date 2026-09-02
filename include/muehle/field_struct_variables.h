@@ -1,5 +1,6 @@
 #ifndef MUEHLE_FIELD_STRUCT_VARIABLES_H_
 #define MUEHLE_FIELD_STRUCT_VARIABLES_H_
+
 #include "muehle/field_struct_types.h"
 
 namespace muehle {

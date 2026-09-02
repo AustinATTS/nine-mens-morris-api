@@ -1,12 +1,12 @@
 #ifndef MUEHLE_API_MUEHLE_BRIDGE_H_
 #define MUEHLE_API_MUEHLE_BRIDGE_H_
+
 #include <array>
+#include <string>
+#include <vector>
 
 #include "muehle/ai/min_max_ai.h"
-#include "muehle/field_struct.h"
-#include "muehle/mini_max/mini_max.h"
 #include "muehle/muehle.h"
-#include "muehle/player_struct.h"
 
 namespace muehle {
 

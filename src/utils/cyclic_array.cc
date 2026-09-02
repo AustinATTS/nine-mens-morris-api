@@ -363,7 +363,7 @@ bool CyclicArray::TakeBytes(unsigned int num_bytes, unsigned char* p_data) {
     p_data++;
 
     /* Load next block */
-    if (cur_reading_pos == reading_block + block_size) {
+    if (cur_reading_pointer == reading_block + block_size) {
       /* Go to next block */
       if (cur_reading_block == (cur_reading_block + 1) % num_blocks) {
         if (cur_reading_block == 0) {
@@ -377,7 +377,7 @@ bool CyclicArray::TakeBytes(unsigned int num_bytes, unsigned char* p_data) {
         }
       } else {
         /* Set pointer to beginning of the reading block */
-        cur_reading_pointer = reading_block
+        cur_reading_pointer = reading_block;
 
             /* Store block in file */
             if (!ReadDataFromFile(h_file, block_size * cur_reading_block,

@@ -1,11 +1,12 @@
 #ifndef MUEHLE_MINI_MAX_RETRO_ANALYSIS_SUCCESSOR_COUNT_MANAGER_H_
 #define MUEHLE_MINI_MAX_RETRO_ANALYSIS_SUCCESSOR_COUNT_MANAGER_H_
 
+#include "muehle/mini_max/retro_analysis/successor_count_array.h"
 #include "muehle/mini_max/database/database.h"
 #include "muehle/utils/logger.h"
 #include "muehle/utils/thread_manager_class.h"
+#include "muehle/mini_max/type_def.h"
 #include "muehle/mini_max/retro_analysis/state_queue.h"
-#include "muehle/mini_max/retro_analysis/successor_count_array.h"
 
 namespace muehle {
 namespace mini_max {

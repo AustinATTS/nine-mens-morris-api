@@ -59,9 +59,9 @@ class CommonThreadVars : public ThreadManagerClass::ThreadVarsArrayItem {
                    int64_t& total_num_states_processed, Logger& log);
   ~CommonThreadVars();
 
-  bool ReadByte(int64_t possition_in_file, unsigned char& data);
-  bool WriteByte(int64_t possition_in_file, unsigned char data);
-  void Reduce();
+  bool ReadByte(int64_t position_in_file, unsigned char& data);
+  bool WriteByte(int64_t position_in_file, unsigned char data);
+  void Reduce() override;
 };
 
 }  // namespace mini_max

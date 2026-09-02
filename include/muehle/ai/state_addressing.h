@@ -1,7 +1,12 @@
 #ifndef MUEHLE_AI_STATE_ADDRESSING_H_
 #define MUEHLE_AI_STATE_ADDRESSING_H_
 
+#include<filesystem>
 #include <fstream>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <string>
 
 #include "muehle/field_struct.h"
 

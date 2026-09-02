@@ -1,5 +1,7 @@
 #include "muehle/mini_max/mini_max.h"
 
+#include <numeric>
+
 #include "muehle/mini_max/retro_analysis/solver.h"
 
 namespace muehle {

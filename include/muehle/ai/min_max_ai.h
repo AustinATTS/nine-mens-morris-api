@@ -1,8 +1,12 @@
 #ifndef MUEHLE_AI_MIN_MAX_AI_H_
 #define MUEHLE_AI_MIN_MAX_AI_H_
 
+#include <cstdio>
+#include <vector>
+
+#include "muehle/field_struct.h"
 #include "muehle/mini_max/mini_max.h"
-#include "muehle/muehle_ai.h"
+#include "muehle/muehle.h"
 
 namespace muehle {
 
@@ -73,7 +77,7 @@ class MinMaxAi : public MuehleAI, mini_max::GameInterface {
             bool& player_to_move_changed, void* p_backup) override;
 
   /* Output */
-  void PrintField(unsigned it thread_no, mini_max::TwoBit value,
+  void PrintField(unsigned int thread_no, mini_max::TwoBit value,
                   unsigned int indent_spaces) override {};
   void PrintMoveInformation(unsigned int thread_no,
                             unsigned int id_possibility) override;

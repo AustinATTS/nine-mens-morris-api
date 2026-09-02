@@ -1,4 +1,11 @@
+#include <algorithm>
+#include <cctype>
+#include <fstream>
+#include <iostream>
+#include <limits>
 #include <regex>
+#include <sstream>
+#include <stdexcept>
 
 #include "muehle/api/muehle_bridge.h"
 

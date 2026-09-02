@@ -1,5 +1,8 @@
 #include "muehle/field_struct.h"
 
+#include <algorithm>
+#include <cassert>
+
 namespace muehle {
 
 /* Constructor */

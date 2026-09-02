@@ -1,6 +1,8 @@
 #include "muehle/compressor/uncompressed.h"
 
 #include <cstring>
+#include <future>
+#include <thread>
 
 namespace muehle {
 

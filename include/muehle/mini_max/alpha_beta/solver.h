@@ -6,6 +6,7 @@
 #include "muehle/mini_max/state_info.h"
 #include "muehle/utils/logger.h"
 #include "muehle/utils/thread_manager_class.h"
+#include "muehle/mini_max/alpha_beta/run_alpha_beta_vars.h"
 
 namespace muehle {
 namespace mini_max {
