@@ -1,6 +1,8 @@
 #ifndef MUEHLE_MINI_MAX_DATABASE_COMP_FILE_H_
 #define MUEHLE_MINI_MAX_DATABASE_COMP_FILE_H_
+
 #include "database_stats_struct.h"
+#include "generic_file.h"
 #include "layer_stats_struct.h"
 #include "muehle/compressor/file.h"
 #include "muehle/mini_max/game_interface.h"
@@ -18,6 +20,8 @@ class CompFile : public GenericFile {
   void CloseDatabase() override;
   bool RemoveFile(std::wstring const& file_directory) override;
   bool LoadHeader(DatabaseStatsStruct& db_stats,
+                  std::vector<LayerStatsStruct>& layer_stats) override;
+  bool SaveHeader(const DatabaseStatsStruct& db_stats,
                   const std::vector<LayerStatsStruct>& layer_stats) override;
   bool IsOpen() override;
   bool ReadSkv(unsigned int layer_num, std::vector<TwoBit>& skv) override;
@@ -38,15 +42,22 @@ class CompFile : public GenericFile {
                 this fixed size. This enables random read access. */
 
   compressor::PlatformCompApi comp; /* Compression algorithm */
-  compressor::File file{comp}; /* Compressed database file */
-  std::wstring file_name; /* Name of the database file */
-  bool file_opened = false; /* True if the database file is open */
-  DatabaseStatsStruct db_stats_cache; /* Own copy of the database stats, used when reading/writing the database. Updated when the header is loaded/written */
-  std::vector<LayerStatsStruct> layer_stats_cache; /* Own copy of the layer stats, used when reading/writing the database. Updated when the header is loaded/written */
+  compressor::File file{comp};      /* Compressed database file */
+  std::wstring file_name;           /* Name of the database file */
+  bool file_opened = false;         /* True if the database file is open */
+  DatabaseStatsStruct
+      db_stats_cache; /* Own copy of the database stats, used when
+                         reading/writing the database. Updated when the header
+                         is loaded/written */
+  std::vector<LayerStatsStruct>
+      layer_stats_cache; /* Own copy of the layer stats, used when
+                            reading/writing the database. Updated when the
+                            header is loaded/written */
 
   bool ReadSection(const std::wstring& key, std::vector<unsigned int>& buffer);
   void UpdateFileName();
-  void UpdateCache(const DatabaseStatsStruct& db_stats, const std::vector<LayerStatsStruct>& layer_stats);
+  void UpdateCache(const DatabaseStatsStruct& db_stats,
+                   const std::vector<LayerStatsStruct>& layer_stats);
 };
 
 }  // namespace database

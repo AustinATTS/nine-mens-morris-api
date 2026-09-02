@@ -51,7 +51,7 @@ class SuccessorCountManager {
       succ_count_arrays; /* One successor count array for each layer in
                             'layers_to_calculate'. (Two layers have to be
                             considered at once).*/
-  std::vector<StateQueue> states_to_process; /* Queue of states to be processed,
+  std::vector<StateQueue>& states_to_process; /* Queue of states to be processed,
                                                 one for each thread */
   bool loaded_sca_from_file =
       false; /* True if the count arrays are loaded from file, but the

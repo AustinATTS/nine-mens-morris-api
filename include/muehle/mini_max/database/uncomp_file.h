@@ -20,7 +20,7 @@ class UncompFile : public GenericFile {
   bool LoadHeader(DatabaseStatsStruct& db_stats,
                   std::vector<LayerStatsStruct>& layer_stats) override;
   bool SaveHeader(const DatabaseStatsStruct& db_stats,
-                  std::vector<LayerStatsStruct>& layer_stats) override;
+                  const std::vector<LayerStatsStruct>& layer_stats) override;
   bool IsOpen() override;
   bool ReadSkv(unsigned int layer_num, std::vector<TwoBit>& skv) override;
   bool ReadSkv(unsigned int layer_num, TwoBit& database_byte,
@@ -31,7 +31,7 @@ class UncompFile : public GenericFile {
                    std::vector<PlyInfoVarType>& ply_info) override;
   bool ReadPlyInfo(unsigned int layer_num, PlyInfoVarType& single_ply_info,
                    unsigned int state_number) override;
-  bool WritePlyInfo(unsigned int layer_num, PlyInfoVarType ply_info) override;
+  bool WritePlyInfo(unsigned int layer_num, const std::vector<PlyInfoVarType>& ply_info) override;
 
  private:
   /* Header of the short knot value file */
@@ -47,6 +47,7 @@ class UncompFile : public GenericFile {
   struct PlyInfoFileHeaderStruct {
     bool ply_info_completed = false; /* True if ply information has been
                                         calculated for all game states */
+    unsigned int num_layers = 0; /* Number of layers */
     unsigned int header_code = PLYINFO_HEADER_CODE; /* File identifier */
     unsigned int header_and_ply_infos_size =
         0; /* Size in bytes of this struct plus ...*/

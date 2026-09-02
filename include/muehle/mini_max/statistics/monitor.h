@@ -2,7 +2,6 @@
 #define MUEHLE_MINI_MAX_STATISTICS_MONITOR_H_
 
 #include "muehle/utils/logger.h"
-#include "muehle/mini_max/mini_max.h"
 #include "muehle/mini_max/type_def.h"
 
 namespace muehle {

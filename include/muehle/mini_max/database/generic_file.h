@@ -39,20 +39,26 @@ class GenericFile {
     return false;
   };
   virtual bool SaveHeader(const DatabaseStatsStruct& db_stats,
-                          std::vector<LayerStatsStruct>& layer_stats) {
+                          const std::vector<LayerStatsStruct>& layer_stats) {
     return false;
   };
   virtual bool ReadSkv(unsigned int layer_num, std::vector<TwoBit>& skv) {
     return false;
   };
-  virtual bool WriteSkv(unsigned int layer_num, std::vector<TwoBit>& skv) {
+  virtual bool ReadSkv(unsigned int layer_num, TwoBit& database_byte, unsigned int state_number) {
+    return false;
+  };
+  virtual bool WriteSkv(unsigned int layer_num, const std::vector<TwoBit>& skv) {
     return false;
   };
   virtual bool ReadPlyInfo(unsigned int layer_num,
                            std::vector<PlyInfoVarType>& ply_info) {
     return false;
   };
-  virtual bool WritePlyInfo(unsigned int layer_num, PlyInfoVarType ply_info) {
+  virtual bool ReadPlyInfo(unsigned int layer_num, PlyInfoVarType& single_ply_info, unsigned int state_number) {
+    return false;
+  };
+  virtual bool WritePlyInfo(unsigned int layer_num, const std::vector<PlyInfoVarType>& ply_info) {
     return false;
   }
   virtual ~GenericFile() { CloseDatabase(); };
