@@ -2,6 +2,7 @@
 #define MUEHLE_MINI_MAX_RETRO_ANALYSIS_INIT_RETRO_ANALYSIS_VARS_H_
 
 #include "muehle/mini_max/alpha_beta/common_thread_vars.h"
+#include "muehle/mini_max/retro_analysis/solver.h"
 
 namespace muehle {
 namespace mini_max {

@@ -2,6 +2,8 @@
 #define MUEHLE_MINI_MAX_ALPHA_BETA_INIT_ALPHA_BETA_VARS_H_
 
 #include "muehle/mini_max/alpha_beta/common_thread_vars.h"
+#include "muehle/mini_max/alpha_beta/solver.h"
+
 
 namespace muehle {
 namespace mini_max {

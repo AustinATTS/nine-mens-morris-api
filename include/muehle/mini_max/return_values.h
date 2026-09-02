@@ -1,6 +1,8 @@
 #ifndef MUEHLE_MINI_MAX_RETURN_VALUES_H_
 #define MUEHLE_MINI_MAX_RETURN_VALUES_H_
 
+#include "muehle/win_32_compat.h"
+
 namespace muehle {
 namespace mini_max {
 

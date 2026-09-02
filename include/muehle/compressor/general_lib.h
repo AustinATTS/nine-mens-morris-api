@@ -1,6 +1,8 @@
 #ifndef MUEHLE_COMPRESSOR_GENERAL_LIB_H_
 #define MUEHLE_COMPRESSOR_GENERAL_LIB_H_
 
+#include <iostream>
+#include <sstream>
 #include <string>
 
 namespace muehle {

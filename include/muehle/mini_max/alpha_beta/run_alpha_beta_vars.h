@@ -4,6 +4,7 @@
 #include "muehle/mini_max/alpha_beta/common_thread_vars.h"
 #include "muehle/mini_max/alpha_beta/knot_struct.h"
 #include "muehle/mini_max/state_address_struct.h"
+#include "muehle/mini_max/alpha_beta/solver.h"
 
 namespace muehle {
 namespace mini_max {

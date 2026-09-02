@@ -2,6 +2,7 @@
 #define MUEHLE_MINI_MAX_RETRO_ANALYSIS_SUCCESSOR_COUNT_FILE_STORAGE_H_
 
 #include "muehle/mini_max/retro_analysis/successor_count_array.h"
+#include "muehle/mini_max/return_values.h"
 
 namespace muehle {
 namespace mini_max {
