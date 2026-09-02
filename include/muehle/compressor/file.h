@@ -34,7 +34,7 @@ class File {
   bool Read(std::wstring const& key, long long position, long long num_bytes,
             void* p_bytes);
   bool Write(std::wstring const& key, long long position, long long num_bytes,
-             void* p_bytes);
+             const void* p_bytes);
   bool Flush();
   bool SetBlockSize(unsigned int new_size_in_bytes);
   long long GetSizeOfUncompressedSection(std::wstring const& key);
@@ -90,6 +90,7 @@ class File {
     unsigned int num_sections = 0; /* Number of sections in the file */
     long long sections_offset_in_file =
         0; /* Offset in file where the sections starts */
+    long long footer_offset_in_file = 0; /* offset in file where the footer starts*/
     long long file_info_offset_in_file =
         0; /* Offset in file where the file info starts*/
     unsigned int block_size_in_bytes =
@@ -119,7 +120,7 @@ class File {
    * writing of the sections, even if the file is very large */
   class TmpFile {
    public:
-    TmpFile(std::wstring cont& key_name);
+    TmpFile(std::wstring const& key_name);
     ~TmpFile();
 
     std::wstring const& GetKeyName() { return key_name; };
@@ -152,7 +153,7 @@ class File {
   std::vector<TmpFile*>
       tmp_files; /* Temporary files for writing the sections */
 
-  TmpFile& GetTmpFile(std::wstring cont& key);
+  TmpFile& GetTmpFile(std::wstring const& key);
   bool ReadFromCompressed(std::wstring const& key, long long position,
                           long long num_bytes, void* p_bytes);
 };

@@ -4,6 +4,8 @@
 #include "muehle/mini_max/database/database.h"
 #include "muehle/utils/logger.h"
 #include "muehle/utils/thread_manager_class.h"
+#include "muehle/mini_max/type_def.h"
+#include "muehle/utils/my_string.h"
 
 namespace muehle {
 namespace mini_max {
