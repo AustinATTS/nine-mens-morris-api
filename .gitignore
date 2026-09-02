@@ -1,3 +1,5 @@
 .idea/
 cmake-build-debug/
 .clang-format
+tool/*
+tools/*

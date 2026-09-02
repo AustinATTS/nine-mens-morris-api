@@ -193,6 +193,10 @@ bool mini_max::database::Database::OpenDatabase(std::wstring const& file_directo
     return log.Log(Logger::LogLevel::error,
                    L"ERROR: Loading database header failed!");
   }
+  log << L"Database reports " << layer_stats.size()
+    << L" layers." << "\n";
+
+  log << L"db_stats.num_layers = " << db_stats.num_layers << "\n";
   array_infos.Init(GetNumLayers());
   log.Log(Logger::LogLevel::info, L"Database opened.");
 

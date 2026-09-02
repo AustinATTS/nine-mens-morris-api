@@ -415,18 +415,18 @@ bool FieldStructVariables::SetSituation(const FieldArray& field,
     if (cur_player.num_stones > cur_player.num_stones_set) {
       return false;
     }
-    if (opp_player.num_stones > cur_player.num_stones_set) {
+    if (opp_player.num_stones > opp_player.num_stones_set) {
       return false;
     }
     cur_player.num_stones_missing =
         cur_player.num_stones_set - cur_player.num_stones;
     opp_player.num_stones_missing =
-        opp_player.num_stones_set - cur_player.num_stones;
+        opp_player.num_stones_set - opp_player.num_stones;
   } else {
     cur_player.num_stones_missing =
         num_stones_per_player - cur_player.num_stones;
     opp_player.num_stones_missing =
-        num_stones_per_player - cur_player.num_stones;
+        num_stones_per_player - opp_player.num_stones;
     cur_player.num_stones_set = num_stones_per_player;
     opp_player.num_stones_set = num_stones_per_player;
   }
@@ -489,7 +489,7 @@ bool FieldStructVariables::IsIntegrityOk() const {
     if (cur_player.num_stones + cur_player.num_stones_missing >= 9) {
       return false;
     }
-    if (opp_player.num_stones + opp_player.num_stones_missing >= 9) {
+    if (opp_player.num_stones + opp_player.num_stones_missing > 9) {
       return false;
     }
 

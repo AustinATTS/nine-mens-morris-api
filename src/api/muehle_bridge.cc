@@ -16,7 +16,7 @@ MuehleBridge::Response MuehleBridge::Evaluate(const Request& req) {
   Response result;
   result.search_depth = search_depth;
   result.current_player = req.current_player;
-  result.search_depth = req.setting_phase;
+  result.setting_phase = req.setting_phase;
   result.total_num_stones_missing = req.total_num_stones_missing;
 
   /* Attempt to open database */
