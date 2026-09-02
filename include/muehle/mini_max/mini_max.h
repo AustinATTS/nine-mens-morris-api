@@ -1,9 +1,12 @@
 #ifndef MUEHLE_MINI_MAX_MINI_MAX_H_
 #define MUEHLE_MINI_MAX_MINI_MAX_H_
 
-#include "integrity/checker_thread_vars.h"
+#include <numeric>
+
+#include "muehle/mini_max/alpha_beta/solver.h"
+#include "muehle/mini_max/integrity/checker_thread_vars.h"
+#include "muehle/mini_max/state_info.h"
 #include "muehle/mini_max/statistics/monitor.h"
-#include "state_info.h"
 
 namespace muehle {
 
@@ -73,7 +76,7 @@ class MiniMax {
   void CloseDatabase();
   void PauseDatabaseCalculation();
   void CancelDatabaseCalculation();
-  bool WasDatabaseCalculationCalcelled();
+  bool WasDatabaseCalculationCancelled();
   unsigned int GetLastCalculatedLayer();
   bool SetOutputStream(std::wostream& the_stream);
   bool SetNumThreads(unsigned int num_threads);
@@ -89,7 +92,7 @@ class MiniMax {
                               be calculated at once */
   ThreadManagerClass thread_manager; /* Thread manager for multi threading */
   CRITICAL_SECTION
-      sc_os_print; /* For thread safety when output is passed to os_print */
+  cs_os_print; /* For thread safety when output is passed to os_print */
 
   /* Solvers */
   alpha_beta::Solver ab_solver;

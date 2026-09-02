@@ -1,9 +1,11 @@
 #ifndef MUEHLE_MINI_MAX_RETRO_ANALYSIS_ADD_NUM_SUCCEDORS_VARS_H_
 #define MUEHLE_MINI_MAX_RETRO_ANALYSIS_ADD_NUM_SUCCEDORS_VARS_H_
+
 #include "muehle/mini_max/pred_vars.h"
 #include "muehle/mini_max/progress_counter.h"
 #include "muehle/mini_max/state_address_struct.h"
 #include "muehle/utils/thread_manager_class.h"
+#include "muehle/mini_max/retro_analysis/successor_count_manager.h"
 
 namespace muehle {
 namespace mini_max {
@@ -14,7 +16,7 @@ class AddNumSuccedorsVars : public ThreadManagerClass::ThreadVarsArrayItem {
  public:
   friend class SuccessorCountManager;
 
-  SuccessorCountManager* scm;    /* Pointer to all successor count arrays */
+  SuccessorCountManager& scm;    /* Pointer to all successor count arrays */
   unsigned int layer_number = 0; /* Current layer number being calculated */
   ProgressCounter
       states_processed; /* Number of states processed by the thread */

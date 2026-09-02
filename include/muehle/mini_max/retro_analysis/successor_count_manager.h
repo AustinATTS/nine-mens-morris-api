@@ -18,7 +18,7 @@ namespace retro_analysis {
  * 'GetPredecessors()'
  * - Initialisation is done in parallel */
 class SuccessorCountManager {
-  friend class AddNumSeccedorsVars;
+  friend class AddNumSuccedorsVars;
 
  public:
   SuccessorCountManager(Logger& log, ThreadManagerClass& tm,
