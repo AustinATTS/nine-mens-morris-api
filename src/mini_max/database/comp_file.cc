@@ -97,28 +97,44 @@ bool mini_max::database::CompFile::LoadHeader(
                    L"Cannot load header, since database is not open.");
   log << "Load database header.\n";
 
-  if (file.GetSizeOfCompressedSection(L"db_stats") > 0) {
-    file.Read(L"db_stats", 0, sizeof(db_stats), &db_stats);
+  const std::wstring& db_stats_key = L"dbStats";
+
+  unsigned int db_stats_compressed_size = file.GetSizeOfCompressedSection(db_stats_key);
+
+  log << L"dbStats compressed size: " << db_stats_compressed_size << L"\n";
+
+  if (file.GetSizeOfCompressedSection(L"dbStats") > 0) {
+    if (!file.Read(db_stats_key, 0, sizeof(db_stats), &db_stats)) {
+      return log.Log(Logger::LogLevel::error, L"Failed to read dbStats section.");
+    }
+
+    log << L"dbStats.completed = " << db_stats.completed << L"\n";
+    log << L"dbStats.num_layers = " << db_stats.num_layers << L"\n";
+
     layer_stats.resize(db_stats.num_layers);
     for (unsigned int i = 0; i < db_stats.num_layers; i++) {
       std::wstring base_key_name =
           std::wstring(L"layerStats") +
           std::to_wstring(i);  // remember the base key name for later use
-      if (!file.Read(std::wstring(L"layer_stats") + std::to_wstring(i), 0,
+      log << L"Loading " << base_key_name << L"\n";
+      if (!file.Read(std::wstring(L"layerStats") + std::to_wstring(i), 0,
                      LayerStatsStruct::num_bytes_layer_stats_header,
-                     &layer_stats[i]))
-        return false;
+                     &layer_stats[i])) {
+        return log.Log(Logger::LogLevel::error, L"Failed to read layerStats section." + base_key_name);
+      }
       if (!layer_stats[i].knots_in_layer) {
         continue;
       }
       if (!ReadSection(base_key_name + std::wstring(L".succLayers"),
-                       layer_stats[i].succ_layers))
-        return false;
+                       layer_stats[i].succ_layers)) {
+        return log.Log(Logger::LogLevel::error, L"Failed to read succLayers section." + base_key_name + std::wstring(L".succLayers"));
+      }
       // only new databases have multiple partnerLayers
       if (file.DoesKeyExist(base_key_name + std::wstring(L".partnerLayers"))) {
         if (!ReadSection(base_key_name + std::wstring(L".partnerLayers"),
-                         layer_stats[i].partner_layers))
-          return false;
+                         layer_stats[i].partner_layers)) {
+          return log.Log(Logger::LogLevel::error, L"Failed to read partnerLayers section." + base_key_name + std::wstring(L".partnerLayers"));
+        }
         // old databases have only one partnerLayer
       } else {
         layer_stats[i].partner_layers.assign({layer_stats[i].partner_layer});
@@ -127,6 +143,7 @@ bool mini_max::database::CompFile::LoadHeader(
       layer_stats[i].ply_info.clear();
     }
   } else {
+    log << L"dbStats section was not found. " << L"Creating database metadata from game definition.\n";
     db_stats.completed = false;
     db_stats.num_layers = game->GetNumberOfLayers();
     layer_stats.resize(db_stats.num_layers);
@@ -155,26 +172,26 @@ bool mini_max::database::CompFile::SaveHeader(
     return log.Log(Logger::LogLevel::error,
                    L"Cannot save header, since database is not open.");
   log << "Save database header.\n";
-  if (!file.Write(L"db_stats", 0, sizeof(db_stats), &db_stats)) {
+  if (!file.Write(L"dbStats", 0, sizeof(db_stats), &db_stats)) {
     return log.Log(Logger::LogLevel::error, L"Failed to save database stats.");
   }
   for (unsigned int i = 0; i < db_stats.num_layers; i++) {
-    if (!file.Write(std::wstring(L"layer_stats") + std::to_wstring(i), 0,
+    if (!file.Write(std::wstring(L"layerStats") + std::to_wstring(i), 0,
                     LayerStatsStruct::num_bytes_layer_stats_header,
                     &layer_stats[i])) {
       return log.Log(Logger::LogLevel::error, L"Failed to save layer stats.");
     }
     if (layer_stats[i].succ_layers.size()) {
       if (!file.Write(
-              std::wstring(L"layer_stats") + std::to_wstring(i) + std::wstring(L".succ_layers"),
+              std::wstring(L"layerStats") + std::to_wstring(i) + std::wstring(L".succLayers"),
               0, sizeof(unsigned int) * layer_stats[i].succ_layers.size(),
               layer_stats[i].succ_layers.data())) {
         return log.Log(Logger::LogLevel::error, L"Failed to save layer stats.");
       }
     }
     if (layer_stats[i].partner_layers.size()) {
-      if (!file.Write(std::wstring(L"layer_stats") + std::to_wstring(i) +
-                          std::wstring(L".partner_layers"),
+      if (!file.Write(std::wstring(L"layerStats") + std::to_wstring(i) +
+                          std::wstring(L".partnerLayers"),
                       0,
                       sizeof(unsigned int) * layer_stats[i].partner_layers.size(),
                       layer_stats[i].partner_layers.data())) {

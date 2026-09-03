@@ -281,7 +281,7 @@ bool mini_max::database::Database::UpdateLayerStats(unsigned int layer_number) {
 /* Print the statistics of the layer to the log */
 void mini_max::database::Database::ShowLayerStats(unsigned int layer_number) {
   if (layer_number >= layer_stats.size()) {
-    log.Log(Logger::LogLevel::error, L"ERROR: showLayerStats(): Layer " +
+    log.Log(Logger::LogLevel::error, L"ERROR: ShowLayerStats(): Layer " +
                                          std::to_wstring(layer_number) +
                                          L" does not exist!");
     return;

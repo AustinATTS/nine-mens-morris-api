@@ -114,10 +114,10 @@ bool mini_max::database::UncompFile::RemoveFile(
 // Desc: Loads the header and stats from the database files into memory.
 //		 New files are created if they do not exist.
 //		 The header is checked for consistency with the loaded files.
-//       dbStats and layerStats will be completely overwritten.
+//       db_stats and layer_stats will be completely overwritten.
 //		 Returns false if the header is not loaded.
-// 		 dbStats: 	 general information about the database
-// 		 layerStats: layer specific information
+// 		 db_stats: 	 general information about the database
+// 		 layer_stats: layer specific information
 //-----------------------------------------------------------------------------
 bool mini_max::database::UncompFile::LoadHeader(
     DatabaseStatsStruct& db_stats, std::vector<LayerStatsStruct>& layer_stats) {
@@ -598,7 +598,7 @@ bool mini_max::database::UncompFile::OpenSkvFile(
     }
   }
 
-  // Translation to layerStats and dbStats
+  // Translation to layer_stats and db_stats
   db_stats.completed = skvf_header.completed;
   db_stats.num_layers = skvf_header.num_layers;
   layer_stats.resize(skvf_header.num_layers);

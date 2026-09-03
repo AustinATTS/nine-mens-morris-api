@@ -3,23 +3,39 @@
 
 #include <zlib.h>
 
+#include <cstdint>
+
 #include "muehle/compressor/general_lib.h"
 
 namespace muehle {
 namespace compressor {
 
-/* Cross-platform (Linux/macOS) replacement for win_comp_api.h, which relied on
- * the Windows Compression API. This uses zlib instead */
+/*
+ * Linux implementation of the Windows Compression API's
+ * COMPRESS_ALGORITHM_MSZIP buffer mode.
+ *
+ * The existing database was generated on Windows using:
+ *
+ *   CreateCompressor(COMPRESS_ALGORITHM_MSZIP, ...)
+ *
+ * without COMPRESS_RAW.
+ *
+ * Therefore the database contains the MSZIP buffer-mode header
+ * followed by MSZIP chunks, rather than ordinary zlib streams.
+ */
 class ZLibApi : public GeneralLib {
  public:
   ZLibApi();
   ~ZLibApi();
+
   bool Compress(void* compressed_data, void* source_data,
                 unsigned int n_bytes_to_compress,
                 unsigned int& n_bytes_compressed) override;
+
   bool Decompress(void* dest_data, void* compressed_data,
                   unsigned int n_bytes_compressed,
                   unsigned int& n_bytes_decompressed) override;
+
   long long EstimateMaxSizeOfCompressedData(
       long long amount_uncompressed_data) override;
 

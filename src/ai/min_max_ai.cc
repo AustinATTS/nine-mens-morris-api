@@ -165,7 +165,7 @@ void MinMaxAi::PrintMoveInformation(unsigned int thread_no,
 }
 
 /* MinMaxAi Class Constructor */
-MinMaxAi::MinMaxAi() {
+MinMaxAi::MinMaxAi() : state_addressing(L".") {
   thread_vars.resize(mm.GetNumThreads(), ThreadVarsStruct());
 }
 
@@ -223,6 +223,15 @@ void MinMaxAi::SetSearchDepth(unsigned int depth) {
 
 const mini_max::StateInfo& MinMaxAi::GetInfoAboutChoices() const {
   return info_about_choices;
+}
+
+unsigned int MinMaxAi::GetLayerNumber(unsigned int thread_no) {
+  return state_addressing.GetLayerNumber(thread_vars[thread_no].field);
+}
+
+void MinMaxAi::GetLayerAndStateNumber (unsigned int thread_no, unsigned int& layer_num, unsigned int& state_num, unsigned int& sym_op) {
+  layer_num = state_addressing.GetLayerNumber(thread_vars[thread_no].field);
+  state_addressing.GetStateNumber(layer_num, state_num, sym_op, thread_vars[thread_no].field);
 }
 
 }  // namespace muehle

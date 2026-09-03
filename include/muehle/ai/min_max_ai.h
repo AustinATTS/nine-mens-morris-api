@@ -7,6 +7,7 @@
 #include "muehle/field_struct.h"
 #include "muehle/mini_max/mini_max.h"
 #include "muehle/muehle.h"
+#include "muehle/ai/state_addressing.h"
 
 namespace muehle {
 
@@ -99,6 +100,12 @@ class MinMaxAi : public MuehleAI, mini_max::GameInterface {
                     bool use_comp_file_if_both_exist = true) {
     return mm.OpenDatabase(directory, use_comp_file_if_both_exist);
   }
+
+  StateAddressing state_addressing;
+
+  unsigned int GetLayerNumber(unsigned int thead_no) override;
+
+  void GetLayerAndStateNumber(unsigned int thread_no, unsigned int& layer_num, unsigned int& state_number, unsigned int& sym_op) override;
 };
 
 }  // namespace muehle

@@ -486,7 +486,7 @@ bool FieldStructVariables::IsIntegrityOk() const {
 
     /* If current player set 9 stones, then it cannot be setting phase any more
      */
-    if (cur_player.num_stones + cur_player.num_stones_missing >= 9) {
+    if (cur_player.num_stones + cur_player.num_stones_missing > 9) {
       return false;
     }
     if (opp_player.num_stones + opp_player.num_stones_missing > 9) {

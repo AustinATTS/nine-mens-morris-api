@@ -13,13 +13,13 @@ namespace muehle {
 const std::wstring mini_max::database::ArrayInfoStruct::GetArrTypeName() {
   switch (type) {
     case mini_max::database::ArrayInfoStruct::ArrayType::count_array:
-      return L"countArray";
+      return L"count_array";
     case mini_max::database::ArrayInfoStruct::ArrayType::knot_already_calculated:
-      return L"knotAlreadyCalculated";
+      return L"knot_already_calculated";
     case mini_max::database::ArrayInfoStruct::ArrayType::layer_stats:
-      return L"layerStats";
+      return L"layer_stats";
     case mini_max::database::ArrayInfoStruct::ArrayType::ply_infos:
-      return L"plyInfos";
+      return L"ply_infos";
     case mini_max::database::ArrayInfoStruct::ArrayType::size:
       return L"size";
     default:
