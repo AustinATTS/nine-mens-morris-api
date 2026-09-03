@@ -36,8 +36,12 @@ class Logger {
   /* Functions */
   bool SetOutputSteam(std::wostream& stream);
   bool SetLevel(LogLevel level);
-  LogLevel GetLevel() const { return m_level; }
-  LogType GetType() const { return m_type; }
+  LogLevel GetLevel() const {
+    return m_level;
+  }
+  LogType GetType() const {
+    return m_type;
+  }
   bool Log(LogLevel level, const std::wstring& message, bool new_line = true,
            bool begin = true);
   bool Log(LogLevel level, const std::wstring& message,
@@ -52,14 +56,16 @@ class Logger {
     /* If we are at the beginning of a new line, then we need to log header
      * information */
     if (log.next_is_begin) {
-      log.Log(LogLevel::info, wss.str(), false, false);
+      log.Log(LogLevel::info, /* message: */ wss.str(), /* new_line: */ false,
+              /* begin: */ false);
       log.next_is_begin = false;
     } else {
-      log.Log(LogLevel::info, wss.str(), false, false);
+      log.Log(LogLevel::info, /* message: */ wss.str(), /* new_line: */ false,
+              /* begin: */ false);
     }
     /* If the string ends with a newline, then the next string will be at the
      * beginning of a new line */
-    if (wss.str().ends_with(L"\n")) {
+    if (wss.str().ends_with(/* x: */ L"\n")) {
       log.next_is_begin = true;
     }
     return log;
@@ -82,6 +88,6 @@ class Logger {
                             const std::wstring& file, int line);
   bool GetReturnValue(LogLevel level);
 };
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_UTILS_LOGGER_H_
+#endif /* MUEHLE_UTILS_LOGGER_H_ */

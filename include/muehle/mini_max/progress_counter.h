@@ -1,18 +1,17 @@
 #ifndef MUEHLE_MINI_MAX_PROGRESS_COUNTER_H_
 #define MUEHLE_MINI_MAX_PROGRESS_COUNTER_H_
 
-#include "muehle/utils/logger.h"
 #include "muehle/mini_max/type_def.h"
+#include "muehle/utils/logger.h"
 
 namespace muehle {
 namespace mini_max {
 
 class ProgressCounter {
-  int64_t states_processed_by_this_thread =
-      0; /* Precise number of processed states by this thread */
-  int64_t&
-      rough_total_num_states_processed; /* Roughly the number of total processes
-                                           states by all threads */
+  /* Precise number of processed states by this thread */
+  int64_t states_processed_by_this_thread = 0;
+  /* Roughly the number of total processes states by all threads */
+  int64_t& rough_total_num_states_processed;
 
  public:
   ProgressCounter(int64_t& rough_total_num_states_processed);
@@ -23,7 +22,7 @@ class ProgressCounter {
   int64_t GetStatesProcessedByThisThread() const;
 };
 
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_PROGRESS_COUNTER_H_
+#endif /* MUEHLE_MINI_MAX_PROGRESS_COUNTER_H_ */

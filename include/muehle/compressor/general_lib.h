@@ -1,14 +1,16 @@
 #ifndef MUEHLE_COMPRESSOR_GENERAL_LIB_H_
 #define MUEHLE_COMPRESSOR_GENERAL_LIB_H_
+
 #include <iosfwd>
 #include <string>
 
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif  // NOMINMAX
+#endif /* NOMINMAX */
 #include <windows.h>
-#endif // _WIN32
+#endif /* _WIN32 */
+
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -36,10 +38,18 @@ class GeneralLib {
 
  protected:
   /* Variables */
-  std::wostream* os_print; /* Steam for output. Default is cout */
-  int verbosity;           /* Output detail level. Default is 2 */
-  std::wstring name;       /* Name of the compression library */
-  LibId id;                /* ID of the compression library */
+
+  /* Steam for output. Default is cout */
+  std::wostream* os_print;
+
+  /* Output detail level. Default is 2 */
+  int verbosity;
+
+  /* Name of the compression library */
+  std::wstring name;
+
+  /* ID of the compression library */
+  LibId id;
 
   /* Constructor/Destructor */
   GeneralLib();
@@ -51,8 +61,12 @@ class GeneralLib {
     verbosity = new_verbosity;
     return true;
   };
-  std::wstring const& GetName() { return name; };
-  LibId const& GetLibId() { return id; };
+  std::wstring const& GetName() {
+    return name;
+  };
+  LibId const& GetLibId() {
+    return id;
+  };
   virtual bool Compress(void* compressed_data, void* source_data,
                         unsigned int n_bytes_to_compress,
                         unsigned int& n_bytes_compressed) {
@@ -69,7 +83,7 @@ class GeneralLib {
   };
 };
 
-}  // namespace compressor
-}  // namespace muehle
+} /* namespace compressor */
+} /* namespace muehle */
 
-#endif  // MUEHLE_COMPRESSOR_GENERAL_LIB_H_
+#endif /* MUEHLE_COMPRESSOR_GENERAL_LIB_H_ */

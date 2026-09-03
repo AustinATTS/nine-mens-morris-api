@@ -32,6 +32,6 @@ class FieldStructReverse : virtual public FieldStructVariables {
   bool AnyLonelyStone(const FieldStructReverse& field,
                       FieldPos removed_from) const;
 };
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_FIELD_STRUCT_REVERSE_H_
+#endif /* MUEHLE_FIELD_STRUCT_REVERSE_H_ */

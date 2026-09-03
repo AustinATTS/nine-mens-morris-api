@@ -3,8 +3,8 @@
 
 #ifdef _WIN32
 
-#include "muehle/compressor/general_lib.h"
 #include <compressapi.h>
+#include "muehle/compressor/general_lib.h"
 
 namespace muehle {
 namespace compressor {
@@ -32,8 +32,8 @@ class WinCompApi : public GeneralLib {
 
 using PlatformCompApi = WinCompApi;
 
-}  // namespace compressor
-}  // namespace muehle
+} /* namespace compressor */
+} /* namespace muehle */
 
-#endif  // _WIN32
-#endif  // MUEHLE_COMPRESSOR_WIN_COMP_API_H_
+#endif /* _WIN32 */
+#endif /* MUEHLE_COMPRESSOR_WIN_COMP_API_H_ */

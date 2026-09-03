@@ -37,22 +37,29 @@ class CompFile : public GenericFile {
                     const std::vector<PlyInfoVarType>& ply_info) override;
 
  private:
-  static constexpr unsigned int block_size_in_bytes =
-      10000; /* Size of one block in bytes. Each section is stored in blocks of
-                this fixed size. This enables random read access. */
+  /* Size of one block in bytes. Each section is stored in blocks of this fixed
+   * size. This enables random read access. */
+  static constexpr unsigned int block_size_in_bytes = 10000;
 
-  compressor::PlatformCompApi comp; /* Compression algorithm */
-  compressor::File file{comp};      /* Compressed database file */
-  std::wstring file_name;           /* Name of the database file */
-  bool file_opened = false;         /* True if the database file is open */
-  DatabaseStatsStruct
-      db_stats_cache; /* Own copy of the database stats, used when
-                         reading/writing the database. Updated when the header
-                         is loaded/written */
-  std::vector<LayerStatsStruct>
-      layer_stats_cache; /* Own copy of the layer stats, used when
-                            reading/writing the database. Updated when the
-                            header is loaded/written */
+  /* Compression algorithm */
+  compressor::PlatformCompApi comp;
+
+  /* Compressed database file */
+  compressor::File file{comp};
+
+  /* Name of the database file */
+  std::wstring file_name;
+
+  /* True if the database file is open */
+  bool file_opened = false;
+
+  /* Own copy of the database stats, used when reading/writing the database.
+   * Updated when the header is loaded/written */
+  DatabaseStatsStruct db_stats_cache;
+
+  /* Own copy of the layer stats, used when reading/writing the database.
+   * Updated when the header is loaded/written */
+  std::vector<LayerStatsStruct> layer_stats_cache;
 
   bool ReadSection(const std::wstring& key, std::vector<unsigned int>& buffer);
   void UpdateFileName();
@@ -60,8 +67,8 @@ class CompFile : public GenericFile {
                    const std::vector<LayerStatsStruct>& layer_stats);
 };
 
-}  // namespace database
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace database */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_DATABASE_COMP_FILE_H_
+#endif /* MUEHLE_MINI_MAX_DATABASE_COMP_FILE_H_ */

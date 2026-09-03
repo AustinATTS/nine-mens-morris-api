@@ -8,13 +8,13 @@ namespace mini_max {
 
 class ReturnValues {
  public:
-  static const bool stop_con_critical_error =
-      false; /* If true, the program will stop on critical erros */
+  /* If true, the program will stop on critical erros */
+  static const bool stop_con_critical_error = false;
 
   static bool FalseOrStop();
 };
 
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_RETURN_VALUES_H_
+#endif /* MUEHLE_MINI_MAX_RETURN_VALUES_H_ */

@@ -31,49 +31,71 @@ class UncompFile : public GenericFile {
                    std::vector<PlyInfoVarType>& ply_info) override;
   bool ReadPlyInfo(unsigned int layer_num, PlyInfoVarType& single_ply_info,
                    unsigned int state_number) override;
-  bool WritePlyInfo(unsigned int layer_num, const std::vector<PlyInfoVarType>& ply_info) override;
+  bool WritePlyInfo(unsigned int layer_num,
+                    const std::vector<PlyInfoVarType>& ply_info) override;
 
  private:
   /* Header of the short knot value file */
   struct SkvFileHeaderStruct {
-    bool completed = false;      /* True if all states have been calculated */
-    unsigned int num_layers = 0; /* Number of layers */
-    unsigned int header_code = SKV_FILE_HEADER_CODE; /* File identifier */
-    unsigned int header_and_stats_size =
-        0; /* Size in bytes of this struct plus the stats */
+    /* True if all states have been calculated */
+    bool completed = false;
+
+    /* Number of layers */
+    unsigned int num_layers = 0;
+
+    /* File identifier */
+    unsigned int header_code = SKV_FILE_HEADER_CODE;
+
+    /* Size in bytes of this struct plus the stats */
+    unsigned int header_and_stats_size = 0;
   };
 
   /* Header of the ply info file */
   struct PlyInfoFileHeaderStruct {
-    bool ply_info_completed = false; /* True if ply information has been
-                                        calculated for all game states */
-    unsigned int num_layers = 0; /* Number of layers */
-    unsigned int header_code = PLYINFO_HEADER_CODE; /* File identifier */
-    unsigned int header_and_ply_infos_size =
-        0; /* Size in bytes of this struct plus ...*/
+    /* True if ply information has been calculated for all game states */
+    bool ply_info_completed = false;
+
+    /* Number of layers */
+    unsigned int num_layers = 0;
+
+    /* File identifier */
+    unsigned int header_code = PLYINFO_HEADER_CODE;
+
+    /* Size in bytes of this struct plus ...*/
+    unsigned int header_and_ply_infos_size = 0;
   };
 
   /* Layer specific information for the short knot value file */
   struct SkvFileLayerStruct {
-    bool layer_is_completed_and_in_file =
-        false; /* Layer specific information for the short knot value file */
-    long long layer_offset =
-        0; /* Position of this struct in the short knot value file */
-    StateNumberVarType knots_in_layer =
-        0; /* Number of knots of the corresponding layer */
-    StateNumberVarType num_won_states =
-        0; /* Number of won states in this layer */
-    StateNumberVarType num_lost_states =
-        0; /* Number of lost states in this layer */
-    StateNumberVarType num_drawn_states =
-        0; /* Number of drawn states in this later */
-    StateNumberVarType num_invalid_states =
-        0;                          /* Number of invalid states in this layer */
-    unsigned int size_in_bytes = 0; /* (knots_in_layer + 3) / 4 */
-    std::vector<unsigned int> succ_layers; /* Array containing the layer ids of
-                                              the succeding layers */
-    std::vector<unsigned int> partner_layers; /* layers being calculated at the
-                                                 same time as this layer */
+    /* Layer specific information for the short knot value file */
+    bool layer_is_completed_and_in_file = false;
+
+    /* Position of this struct in the short knot value file */
+    long long layer_offset = 0;
+
+    /* Number of knots of the corresponding layer */
+    StateNumberVarType knots_in_layer = 0;
+
+    /* Number of won states in this layer */
+    StateNumberVarType num_won_states = 0;
+
+    /* Number of lost states in this layer */
+    StateNumberVarType num_lost_states = 0;
+
+    /* Number of drawn states in this later */
+    StateNumberVarType num_drawn_states = 0;
+
+    /* Number of invalid states in this layer */
+    StateNumberVarType num_invalid_states = 0;
+
+    /* (knots_in_layer + 3) / 4 */
+    unsigned int size_in_bytes = 0;
+
+    /* Array containing the layer ids of the succeding layers */
+    std::vector<unsigned int> succ_layers;
+
+    /* layers being calculated at the same time as this layer */
+    std::vector<unsigned int> partner_layers;
 
     unsigned int GetSizeInBytes() const;
     bool SaveToFile(HANDLE h_file) const;
@@ -85,28 +107,38 @@ class UncompFile : public GenericFile {
 
   /* Layer specific information for the ply info file */
   struct PlyInfoFileLayerStruct {
-    bool ply_info_is_completed_and_in_file =
-        false; /* True, after user called WritePlyInfo() storing all ply info in
-                  the file */
-    long long layer_offset =
-        0; /* position of this struct in the ply info file */
-    unsigned int size_in_bytes =
-        0; /* Size of this struct plus the array ply_info[] */
-    StateNumberVarType knots_in_layer =
-        0; /* Number of knots of the corresponding layer */
+    /* True, after user called WritePlyInfo() storing all ply info in the file
+     */
+    bool ply_info_is_completed_and_in_file = false;
+
+    /* position of this struct in the ply info file */
+    long long layer_offset = 0;
+
+    /* Size of this struct plus the array ply_info[] */
+    unsigned int size_in_bytes = 0;
+
+    /* Number of knots of the corresponding layer */
+    StateNumberVarType knots_in_layer = 0;
   };
 
-  HANDLE h_file_short_knot_values =
-      INVALID_HANDLE_VALUE; /* Handle of the file for the short knot value */
-  HANDLE h_file_ply_info =
-      INVALID_HANDLE_VALUE;        /* Handle of the file for the ply info */
-  SkvFileHeaderStruct skvf_header; /* Short knot value file header */
-  PlyInfoFileHeaderStruct ply_info_header; /* Header of the ply info file */
-  std::vector<SkvFileLayerStruct>
-      my_layer_stats; /* Array of size [num_layers] containing general layer
-                         information and the skv */
-  std::vector<PlyInfoFileLayerStruct>
-      ply_infos; /* Array of size [num_layers] containing ply information */
+  /* Handle of the file for the short knot value */
+  HANDLE h_file_short_knot_values = INVALID_HANDLE_VALUE;
+
+  /* Handle of the file for the ply info */
+  HANDLE h_file_ply_info = INVALID_HANDLE_VALUE;
+
+  /* Short knot value file header */
+  SkvFileHeaderStruct skvf_header;
+
+  /* Header of the ply info file */
+  PlyInfoFileHeaderStruct ply_info_header;
+
+  /* Array of size [num_layers] containing general layer information and the skv
+   */
+  std::vector<SkvFileLayerStruct> my_layer_stats;
+
+  /* Array of size [num_layers] containing ply information */
+  std::vector<PlyInfoFileLayerStruct> ply_infos;
 
   bool CreateAndWriteEmptySkvHeader();
   bool CreateAndWriteEmptyPlyHeader();
@@ -124,8 +156,8 @@ class UncompFile : public GenericFile {
   void UnloadDatabase();
 };
 
-}  // namespace database
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace database */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_DATABASE_UNCOMP_FILE_H_
+#endif /* MUEHLE_MINI_MAX_DATABASE_UNCOMP_FILE_H_ */

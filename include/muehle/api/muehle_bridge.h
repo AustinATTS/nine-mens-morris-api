@@ -11,9 +11,9 @@
 namespace muehle {
 
 class MuehleBridge {
-public:
+ public:
   struct Request {
-    std::array<PlayerId, FieldStruct::size> board {};
+    std::array<PlayerId, FieldStruct::size> board{};
     bool setting_phase{false};
     unsigned int total_num_stones_missing{0};
     unsigned int search_depth{0};
@@ -30,7 +30,7 @@ public:
 
   struct Response {
     bool success{false};
-    std::string engine{"none"};
+    std::string engine{/* s: */ "none"};
     unsigned int search_depth{0};
     PlayerId current_player{PlayerId::player_one};
     bool setting_phase{false};
@@ -48,12 +48,12 @@ public:
   void SetSearchDepth(unsigned int depth);
   Response Evaluate(const Request& req);
 
-private:
+ private:
   Muehle game;
   MinMaxAi ai;
   unsigned int search_depth{0};
 };
 
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_API_MUEHLE_BRIDGE_H_
+#endif /* MUEHLE_API_MUEHLE_BRIDGE_H_ */

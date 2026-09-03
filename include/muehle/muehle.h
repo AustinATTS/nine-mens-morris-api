@@ -18,8 +18,10 @@ class Muehle {
 
  public:
   struct LogItem {
-    MoveInfo move = MoveInfo{};                 /* Move which is done */
-    PlayerId player = PlayerId::square_is_free; /* Player who made the move */
+    /* Move which is done */
+    MoveInfo move = MoveInfo{};
+    /* Player who made the move */
+    PlayerId player = PlayerId::square_is_free;
 
     LogItem() = default;
     LogItem(const MoveInfo& move, PlayerId player);
@@ -31,10 +33,10 @@ class Muehle {
   };
 
   /* Constants */
-  static const unsigned int max_num_moves =
-      10000; /* Maximum number of moves which can be saved in the history */
-  static const unsigned int num_repeated_moves_to_remis =
-      3; /* Number of repeated moves after which the game is remis */
+  /* Maximum number of moves which can be saved in the history */
+  static const unsigned int max_num_moves = 10000;
+  /* Number of repeated moves after which the game is remis */
+  static const unsigned int num_repeated_moves_to_remis = 3;
 
   /* Constructor / destructor */
   Muehle();
@@ -70,14 +72,26 @@ class Muehle {
   bool WouldMillBeClosed(const MoveInfo& move) const;
   bool IsCurrentPlayerHuman() const;
   bool IsOpponentPlayerHuman() const;
-  bool InSettingPhase() const { return field.InSettingPhase(); }
-  unsigned int MustStoneBeRemoved() const { return stone_must_be_removed; }
+  bool InSettingPhase() const {
+    return field.InSettingPhase();
+  }
+  unsigned int MustStoneBeRemoved() const {
+    return stone_must_be_removed;
+  }
   bool GameHasFinished() const;
   PlayerId GetWinner() const;
-  PlayerId GetCurrentPlayer() const { return field.GetCurPlayer().id; }
-  unsigned int GetMovesDone() const { return move_log_current_index; }
-  unsigned int GetNumStonesSet() const { return field.GetNumStonesSet(); }
-  PlayerId GetBeginningPlayer() const { return beginning_player; }
+  PlayerId GetCurrentPlayer() const {
+    return field.GetCurPlayer().id;
+  }
+  unsigned int GetMovesDone() const {
+    return move_log_current_index;
+  }
+  unsigned int GetNumStonesSet() const {
+    return field.GetNumStonesSet();
+  }
+  PlayerId GetBeginningPlayer() const {
+    return beginning_player;
+  }
   unsigned int GetNumStonesOfCurPlayer() const {
     return field.GetCurPlayer().num_stones;
   }
@@ -90,28 +104,32 @@ class Muehle {
 
  private:
   /* Variables */
-  bool stone_must_be_removed =
-      false; /* True if a mill was closed and the player must remove a stone.
-                This also indicates that the move is not completed yet. */
-  unsigned int move_log_current_index =
-      0; /* Index pointing to the current move in the history, when the user
-            already went back on some moves */
-  unsigned int num_moves_to_remis = 205; /* Number of moves after which the game
-              is remis. This is not the current but the initial value. */
-  std::vector<LogItem>
-      move_log; /* Array containing the history of moves done. */
-  MuehleAI* player_one_ai = nullptr; /* Class pointer to the AI of player one */
-  MuehleAI* player_two_ai = nullptr; /* Class pointer to the AI of player two */
-  FieldStruct field;                 /* Current field */
-  FieldStruct initial_field; /* Undo of the last move is done by setting the
-                                initial field and performing all moves saved in
-                                history. the initial field is not necessarily an
-                                empty field. It can be any state. */
-  PlayerId beginning_player =
-      PlayerId::player_one; /* PlayerId of the player who makes the first move
-                             */
+
+  /* True if a mill was closed and the player must remove a stone. This also
+   * indicates that the move is not completed yet. */
+  bool stone_must_be_removed = false;
+  /* Index pointing to the current move in the history, when the user already
+   * went back on some moves */
+  unsigned int move_log_current_index = 0;
+  /* Number of moves after which the game is remis. This is not the current but
+   * the initial value. */
+  unsigned int num_moves_to_remis = 205;
+  /* Array containing the history of moves done. */
+  std::vector<LogItem> move_log;
+  /* Class pointer to the AI of player one */
+  MuehleAI* player_one_ai = nullptr;
+  /* Class pointer to the AI of player two */
+  MuehleAI* player_two_ai = nullptr;
+  /* Current field */
+  FieldStruct field;
+  /* Undo of the last move is done by setting the initial field and performing
+   * all moves saved in history. the initial field is not necessarily an empty
+   * field. It can be any state. */
+  FieldStruct initial_field;
+  /* PlayerId of the player who makes the first move */
+  PlayerId beginning_player = PlayerId::player_one;
 };
 
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_MUEHLE_H_
+#endif /* MUEHLE_MUEHLE_H_ */

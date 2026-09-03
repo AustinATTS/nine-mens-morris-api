@@ -10,27 +10,37 @@ namespace alpha_beta {
 
 /* This represents a state of the game */
 struct KnotStruct {
-  bool player_to_move_changed = true; /* The player to move switched compared to
-                                         the parent/origin knot/state */
-  float float_value =
-      0.0f; /* Value of knot (for normal mode). Must be symmetric around 0 from
-               the view of the current player */
-  TwoBit short_value = SKV_VALUE_INVALID; /* Value of knot (for database) */
-  unsigned int best_move_id = 0;          /* For calling class */
-  unsigned int num_possibilities =
-      0; /* Number of branches - differs from possibility_ids.size() in case of
-            cut off */
-  PlyInfoVarType ply_info = 0; /* Number of moves till win/lose */
-  KnotStruct* branches =
-      nullptr; /* Pointer to branches, in sync with possibility_ids */
-  unsigned int freq_values_sub_moves[SKV_NUM_VALUES] = {
-      0, 0, 0, 0}; /* Number of branches leading to a state with a certain
-                      value, from the perspective of the current player */
-  std::vector<unsigned int>
-      possibility_ids; /* Filled by game->GetPossibilities(); contains IDs for
-                          all possible moves, while 'branches' points to the
-                          corresponding KnotStructs for moves that are actually
-                          explored (may differ in size if cutoffs occur) */
+  /* The player to move switched compared to the parent/origin knot/state */
+  bool player_to_move_changed = true;
+
+  /* Value of knot (for normal mode). Must be symmetric around 0 from the view
+   * of the current player */
+  float float_value = 0.0f;
+
+  /* Value of knot (for database) */
+  TwoBit short_value = SKV_VALUE_INVALID;
+
+  /* For calling class */
+  unsigned int best_move_id = 0;
+
+  /* Number of branches - differs from possibility_ids.size() in case of cut off
+   */
+  unsigned int num_possibilities = 0;
+
+  /* Number of moves till win/lose */
+  PlyInfoVarType ply_info = 0;
+
+  /* Pointer to branches, in sync with possibility_ids */
+  KnotStruct* branches = nullptr;
+
+  /* Number of branches leading to a state with a certain value, from the
+   * perspective of the current player */
+  unsigned int freq_values_sub_moves[SKV_NUM_VALUES] = {0, 0, 0, 0};
+
+  /* Filled by game->GetPossibilities(); contains IDs for all possible moves,
+   * while 'branches' points to the corresponding KnotStructs for moves that are
+   * actually explored (may differ in size if cutoffs occur) */
+  std::vector<unsigned int> possibility_ids;
 
   bool InitForCaclulation(KnotStruct* branch_array);
   void SetInvalid();
@@ -44,8 +54,8 @@ struct KnotStruct {
   bool CanCutOff(unsigned int cur_poss, float& alpha, float& beta);
 };
 
-}  // namespace alpha_beta
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace alpha_beta */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_ALPHA_BETA_KNOT_STRUCT_H_
+#endif /* MUEHLE_MINI_MAX_ALPHA_BETA_KNOT_STRUCT_H_ */

@@ -2,11 +2,11 @@
 #define MUEHLE_MINI_MAX_ALPHA_BETA_SOLVER_H_
 
 #include "muehle/mini_max/alpha_beta/knot_struct.h"
+#include "muehle/mini_max/alpha_beta/run_alpha_beta_vars.h"
 #include "muehle/mini_max/database/database.h"
 #include "muehle/mini_max/state_info.h"
 #include "muehle/utils/logger.h"
 #include "muehle/utils/thread_manager_class.h"
-#include "muehle/mini_max/alpha_beta/run_alpha_beta_vars.h"
 
 namespace muehle {
 namespace mini_max {
@@ -25,20 +25,33 @@ class Solver {
   void SetSearchDepth(unsigned int max_alpha_beta_search_depth);
 
  private:
-  Logger& log;            /* Logger, used for output */
-  database::Database& db; /* Database, for storing the calculated values */
-  GameInterface&
-      game; /* Game interface, for getting the game specific information */
-  ThreadManagerClass& tm; /* Thread manager, for parallel processing */
-  int64_t total_num_states_processed =
-      0; /* Number of states processed by all threads */
-  int64_t rough_total_num_states_processed =
-      0; /* Number of states processed by all threads (roughly) */
-  unsigned int depth_of_full_tree =
-      0; /* Maximum search depth, equivalent to the maximum number of plies */
-  unsigned int max_num_branches = 0; /* Maximum number of branches/moves */
-  bool calc_database =
-      false; /* True if the database is currently being calculated */
+  /* Logger, used for output */
+  Logger& log;
+
+  /* Database, for storing the calculated values */
+  database::Database& db;
+
+  /* Game interface, for getting the game specific information */
+  GameInterface& game;
+
+  /* Thread manager, for parallel processing */
+  ThreadManagerClass& tm;
+
+  /* Number of states processed by all threads */
+  int64_t total_num_states_processed = 0;
+
+  /* Number of states processed by all threads (roughly) */
+  int64_t rough_total_num_states_processed = 0;
+
+  /* Maximum search depth, equivalent to the maximum number of plies */
+  unsigned int depth_of_full_tree = 0;
+
+  /* Maximum number of branches/moves */
+  unsigned int max_num_branches = 0;
+
+  /* True if the database is currently being calculated */
+  bool calc_database = false;
+
   std::mutex mutex;
 
   bool Init(unsigned int layer_number);
@@ -56,19 +69,19 @@ class Solver {
                       unsigned int layer_number, unsigned int state_number);
 
   /* Static thread functions */
-  static DWORD InitThreadProc(
-      void* p_parameter,
-      int64_t index); /* Used to initialise the database calculation */
-  static DWORD RunThreadProc(
-      void* p_parameter,
-      int64_t index); /* Used to run the database calculation */
-  static DWORD MinMaxThreadProc(
-      void* p_parameter,
-      int64_t index); /* Used to run the min-max calculation without database */
+
+  /* Used to initialise the database calculation */
+  static DWORD InitThreadProc(void* p_parameter, int64_t index);
+
+  /* Used to run the database calculation */
+  static DWORD RunThreadProc(void* p_parameter, int64_t index);
+
+  /* Used to run the min-max calculation without database */
+  static DWORD MinMaxThreadProc(void* p_parameter, int64_t index);
 };
 
-}  // namespace alpha_beta
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace alpha_beta */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_ALPHA_BETA_SOLVER_H_
+#endif /* MUEHLE_MINI_MAX_ALPHA_BETA_SOLVER_H_ */

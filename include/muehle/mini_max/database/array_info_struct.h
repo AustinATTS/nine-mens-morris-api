@@ -18,17 +18,23 @@ struct ArrayInfoStruct {
     size
   };
 
-  ArrayType type = ArrayType::invalid; /* Use case of the array */
-  long long size_in_bytes = 0;         /* Size of the array in bytes */
-  long long compresed_size_in_bytes =
-      0; /* Size of the array in bytes after compression */
-  unsigned int belongs_to_layer = 0; /* Layer number the array belongs to */
+  /* Use case of the array */
+  ArrayType type = ArrayType::invalid;
+
+  /* Size of the array in bytes */
+  long long size_in_bytes = 0;
+
+  /* Size of the array in bytes after compression */
+  long long compresed_size_in_bytes = 0;
+
+  /* Layer number the array belongs to */
+  unsigned int belongs_to_layer = 0;
 
   const std::wstring GetArrTypeName();
 };
 
-}  // namespace database
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace database */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_DATABASE_ARRAY_INFO_STRUCT_H_
+#endif /* MUEHLE_MINI_MAX_DATABASE_ARRAY_INFO_STRUCT_H_ */

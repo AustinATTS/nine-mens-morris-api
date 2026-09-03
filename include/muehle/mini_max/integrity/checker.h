@@ -2,10 +2,10 @@
 #define MUEHLE_MINI_MAX_INTEGRITY_CHECKER_H_
 
 #include "muehle/mini_max/database/database.h"
-#include "muehle/utils/logger.h"
-#include "muehle/utils/thread_manager_class.h"
 #include "muehle/mini_max/type_def.h"
+#include "muehle/utils/logger.h"
 #include "muehle/utils/my_string.h"
+#include "muehle/utils/thread_manager_class.h"
 
 namespace muehle {
 namespace mini_max {
@@ -15,8 +15,9 @@ namespace integrity {
 class Checker {
   friend class CheckerThreadVars;
 
-public:
-  Checker(Logger& log, ThreadManagerClass& tm, database::Database& db, GameInterface& game);
+ public:
+  Checker(Logger& log, ThreadManagerClass& tm, database::Database& db,
+          GameInterface& game);
 
   /* Tests GameInterface */
   bool TestSetSituationAndGetStateNum(unsigned int layer_number);
@@ -37,7 +38,7 @@ public:
     this->max_num_states_to_test = max_num_states_to_test;
   }
 
-private:
+ private:
   /* Variables */
   GameInterface& game;
   Logger& log;
@@ -49,16 +50,19 @@ private:
 #ifdef _DEBUG
   unsigned int output_every_nth_states = 10000;
   unsigned int load_full_layer_threshold = 10000;
-#else // _DEBUG
+#else  /* _DEBUG */
   unsigned int output_every_nth_states = 10000000;
   unsigned int load_full_layer_threshold = 100000;
-#endif // _DEBUG
+#endif /* _DEBUG */
   unsigned int max_num_branches = 0;
-  unsigned int max_num_states_to_test = std::numeric_limits<unsigned int>::max();
-  std::vector<unsigned int> succ_layers; /* Stores the indices of successor layers for integrity checks */
+  unsigned int max_num_states_to_test =
+      std::numeric_limits<unsigned int>::max();
+  /* Stores the indices of successor layers for integrity checks */
+  std::vector<unsigned int> succ_layers;
 
   /* Helper functions */
-  bool StartTestThreads(unsigned int layer_number, DWORD thread_prc(void* p_parameter, int64_t index));
+  bool StartTestThreads(unsigned int layer_number,
+                        DWORD thread_prc(void* p_parameter, int64_t index));
   unsigned int GetIncrement(unsigned int layer_number);
 
   /* Static thread functions */
@@ -67,11 +71,12 @@ private:
   static DWORD TestSetSituationThreadProc(void* p_parameter, int64_t index);
   static DWORD TestGetPredecessorsThreadProc(void* p_parameter, int64_t index);
   static DWORD TestGetPossibilitiesThreadProc(void* p_parameter, int64_t index);
-  static DWORD TestSymStatesSameValueThreadProc(void* p_parameter, int64_t index);
+  static DWORD TestSymStatesSameValueThreadProc(void* p_parameter,
+                                                int64_t index);
 };
 
-} // namespace integrity
-} // namespace mini_max
-}  // namespace muehle
+} /* namespace integrity */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_INTEGRITY_CHECKER_H_
+#endif /* MUEHLE_MINI_MAX_INTEGRITY_CHECKER_H_ */

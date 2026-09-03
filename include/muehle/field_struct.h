@@ -29,6 +29,6 @@ class FieldStruct : public FieldStructForward, public FieldStructReverse {
   /* Operators */
   bool operator==(const FieldStruct& other) const;
 };
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_FIELD_STRUCT_H_
+#endif /* MUEHLE_FIELD_STRUCT_H_ */

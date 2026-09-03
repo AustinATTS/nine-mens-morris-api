@@ -1,7 +1,7 @@
 #ifndef MUEHLE_AI_STATE_ADDRESSING_H_
 #define MUEHLE_AI_STATE_ADDRESSING_H_
 
-#include<filesystem>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -28,18 +28,31 @@ class StateAddressing {
   friend class StateAddressingTest_totalNumMissingStones_Test;
 
  public:
-  using GroupStateNumber =
-      unsigned int; /* number of a state within a group (without considering
-                       symmetry and the amount of white/black stones) */
-  using GroupIndex =
-      unsigned int; /* number of a state within a group (considering symmetry
-                       and the amount of white/black stones) */
-  using NumWhiteStones = unsigned int; /* number of white stones */
-  using NumBlackStones = unsigned int; /* number of black stones */
-  using SymOperationId = unsigned int; /* number of a symmetry operation */
-  using SubLayerId = unsigned int;     /* number of a sublayer within a layer */
-  using LayerId = unsigned int;        /* number of a layer */
-  using StateId = unsigned int;        /* number of a state within a layer */
+  /* number of a state within a group (without considering symmetry and the
+   * amount of white/black stones) */
+  using GroupStateNumber = unsigned int;
+
+  /* number of a state within a group (considering symmetry and the amount of
+   * white/black stones) */
+  using GroupIndex = unsigned int;
+
+  /* number of white stones */
+  using NumWhiteStones = unsigned int;
+
+  /* number of black stones */
+  using NumBlackStones = unsigned int;
+
+  /* number of a symmetry operation */
+  using SymOperationId = unsigned int;
+
+  /* number of a sublayer within a layer */
+  using SubLayerId = unsigned int;
+
+  /* number of a layer */
+  using LayerId = unsigned int;
+
+  /* number of a state within a layer */
+  using StateId = unsigned int;
 
   /* The number of layers is calculated as follows:
    - 10 x 10 since each color can range from 0 to 9 stones
@@ -48,9 +61,10 @@ class StateAddressing {
   static const unsigned int MAX_NUM_SUB_LAYERS = 100;
   static const unsigned int LAYER_INDEX_MOVING_PHASE = 0;
   static const unsigned int LAYER_INDEX_SETTING_PHASE = 1;
-  static constexpr unsigned int NOT_INDEXED =
-      0xFFFFFFFFu; /* a constant that is used to indicate that a layer is not
-                    indexed */
+
+  /* a constant that is used to indicate that a layer is not indexed */
+  static constexpr unsigned int NOT_INDEXED = 0xFFFFFFFFu;
+
   static const unsigned int NUM_STONES_PER_PLAYER = 9;
 
   /* Symmetry Operations */
@@ -73,8 +87,9 @@ class StateAddressing {
   static constexpr SymOperationId NUM_SYM_OPERATIONS = 16;
 
  private:
-  static constexpr unsigned int num_squares_group_a =
-      4; /* number of stone fields in group A */
+  /* number of stone fields in group A */
+  static constexpr unsigned int num_squares_group_a = 4;
+
   static constexpr unsigned int num_squares_group_b = 4;
   static constexpr unsigned int num_squares_group_c = 8;
   static constexpr unsigned int num_squares_group_d = 8;
@@ -82,18 +97,25 @@ class StateAddressing {
   static const unsigned int group_order_b = 3;
   static const unsigned int group_order_c = 15;
   static const unsigned int group_order_d = 7;
-  static const unsigned int GROUP_A = 0; /* index of the group */
+
+  /* index of the group */
+  static const unsigned int GROUP_A = 0;
+
   static const unsigned int GROUP_B = 1;
   static const unsigned int GROUP_C = 2;
   static const unsigned int GROUP_D = 3;
-  static const unsigned int MAX_NUM_SITUATIONS_A =
-      81; /* 3^num_squares_group_a; */
-  static const unsigned int MAX_NUM_SITUATIONS_B =
-      81; /* 3^num_squares_group_b; */
-  static const unsigned int MAX_NUM_SITUATIONS_C =
-      81 * 81; /* 3^num_squares_group_c; */
-  static const unsigned int MAX_NUM_SITUATIONS_D =
-      81 * 81; /* 3^num_squares_group_d; */
+
+  /* 3^num_squares_group_a; */
+  static const unsigned int MAX_NUM_SITUATIONS_A = 81;
+
+  /* 3^num_squares_group_b; */
+  static const unsigned int MAX_NUM_SITUATIONS_B = 81;
+
+  /* 3^num_squares_group_c; */
+  static const unsigned int MAX_NUM_SITUATIONS_C = 81 * 81;
+
+  /* 3^num_squares_group_d; */
+  static const unsigned int MAX_NUM_SITUATIONS_D = 81 * 81;
 
   /* Define the four groups */
   static constexpr unsigned int square_index_group_a[] = {3, 5, 20, 18};
@@ -172,36 +194,51 @@ class StateAddressing {
       7,  4,  1, 15, 11, 6, 18, 10, 3, 21, 9,  0};
 
   /* structs */
+
   /* each layer is divided into sublayers, based on the number of white/black
    * stones in group C and D */
   struct SubLayerStruct {
-    GroupIndex min_ndex;  /* index of the first state of this sublayer in the
-                             database */
-    GroupIndex max_index; /* index of the last  state of this sublayer in the
-                             database */
-    NumWhiteStones num_white_stones_group_c_d; /* number of white stones in
-                                                  group C and D */
-    NumBlackStones num_black_stones_group_c_d; /* number of black stones in
-                                                  group C and D */
-    NumWhiteStones num_white_stones_group_a_b; /* number of white stones in
-                                                  group A and B */
-    NumBlackStones num_black_stones_group_a_b; /* number of black stones in
-                                                  group A and B */
+    /* index of the first state of this sublayer in the database */
+    GroupIndex min_ndex;
+
+    /* index of the last state of this sublayer in the database */
+    GroupIndex max_index;
+
+    /* number of white stones in group C and D */
+    NumWhiteStones num_white_stones_group_c_d;
+
+    /* number of black stones in group C and D */
+    NumBlackStones num_black_stones_group_c_d;
+
+    /* number of white stones in group A and B */
+    NumWhiteStones num_white_stones_group_a_b;
+
+    /* number of black stones in group A and B */
+    NumBlackStones num_black_stones_group_a_b;
   };
 
   /* layer */
   struct LayerStruct {
-    NumWhiteStones amount_white_stones; /* number of white stones */
-    NumBlackStones amount_black_stones; /* number of black stones */
-    SubLayerId num_sub_layers;          /* number of sublayers */
+    /* number of white stones */
+    NumWhiteStones amount_white_stones;
+
+    /* number of black stones */
+    NumBlackStones amount_black_stones;
+
+    /* number of sublayers */
+    SubLayerId num_sub_layers;
+
+    /* unused */
     SubLayerId sub_layer_index_a_b[NUM_STONES_PER_PLAYER + 1]
-                                  [NUM_STONES_PER_PLAYER + 1]; /* unused */
+                                  [NUM_STONES_PER_PLAYER + 1];
+
+    /* mapping [number of white stones in group CD][number of black stones in
+     * group CD] to index within subLayer[] */
     SubLayerId sub_layer_index_c_d[NUM_STONES_PER_PLAYER + 1]
-                                  [NUM_STONES_PER_PLAYER +
-                                   1]; /* mapping [number of white stones in
-                                       group CD][number of black stones in group
-                                       CD] to index within subLayer[] */
-    SubLayerStruct sub_layer[MAX_NUM_SUB_LAYERS]; /* sublayers */
+                                  [NUM_STONES_PER_PLAYER + 1];
+
+    /* sublayers */
+    SubLayerStruct sub_layer[MAX_NUM_SUB_LAYERS];
 
     unsigned int GetStateNumberWithInSubLayer(StateId state_number,
                                               bool setting_phase) const;
@@ -230,17 +267,17 @@ class StateAddressing {
 
   template <typename T>
   static void ResizeVector2D(Vector2D<T>& vec, T value, size_t x, size_t y) {
-    vec.resize(x, Vector1D<T>(y, value));
+    vec.resize(x, /* x: */ Vector1D<T>(y, value));
   }
 
   template <typename T>
   static void ResizeVector3D(Vector3D<T>& vec, T value, size_t x, size_t y,
                              size_t z) {
-    vec.resize(x, Vector2D<T>(y, Vector1D<T>(z, value)));
+    vec.resize(x, /* x: */ Vector2D<T>(y, /* value: */ Vector1D<T>(z, value)));
   }
 
   /* Since the calculation of the variables takes some time, they are cached in
-  the file pre_calced_vars.dat */
+   * the file pre_calced_vars.dat */
   class CacheFile {
    private:
     struct FileHeaderStruct {
@@ -250,14 +287,16 @@ class StateAddressing {
     template <typename T>
     static bool WriteVector(std::fstream& file, const Vector1D<T>& vec) {
       file.write(reinterpret_cast<const char*>(vec.data()),
-                 sizeof(T) * vec.size());
+                 /* n: */ sizeof(T) * vec.size());
       return file.good();
     }
 
     template <typename T>
     static bool WriteVector(std::fstream& file, const Vector2D<T>& vec) {
       for (const auto& sub_vec : vec) {
-        if (!WriteVector(file, sub_vec)) return false;
+        if (!WriteVector(file, sub_vec)) {
+          return false;
+        }
       }
       return true;
     }
@@ -266,7 +305,9 @@ class StateAddressing {
     static bool WriteVector(std::fstream& file, const Vector3D<T>& vec) {
       for (const auto& sub_vec_2d : vec) {
         for (const auto& sub_vec : sub_vec_2d) {
-          if (!WriteVector(file, sub_vec)) return false;
+          if (!WriteVector(file, sub_vec)) {
+            return false;
+          }
         }
       }
       return true;
@@ -274,14 +315,17 @@ class StateAddressing {
 
     template <typename T>
     static bool ReadVector(std::fstream& file, Vector1D<T>& vec) {
-      file.read(reinterpret_cast<char*>(vec.data()), sizeof(T) * vec.size());
+      file.read(reinterpret_cast<char*>(vec.data()),
+                /* n: */ sizeof(T) * vec.size());
       return file.good();
     }
 
     template <typename T>
     static bool ReadVector(std::fstream& file, Vector2D<T>& vec) {
       for (auto& sub_vec : vec) {
-        if (!ReadVector(file, sub_vec)) return false;
+        if (!ReadVector(file, sub_vec)) {
+          return false;
+        }
       }
       return true;
     }
@@ -290,7 +334,9 @@ class StateAddressing {
     static bool ReadVector(std::fstream& file, Vector3D<T>& vec) {
       for (auto& sub_vec_2d : vec) {
         for (auto& sub_vec : sub_vec_2d) {
-          if (!ReadVector(file, sub_vec)) return false;
+          if (!ReadVector(file, sub_vec)) {
+            return false;
+          }
         }
       }
       return true;
@@ -376,55 +422,61 @@ class StateAddressing {
       unsigned int num_squares_in_group) const;
 
   /* internal variables */
-  Vector1D<GroupIndex> group_index_a_b; /* mapping [GroupStateNumber] to
-                                        GroupIndex within group AB */
-  Vector1D<GroupIndex> group_index_c_d; /* mapping [GroupStateNumber] to
-                                        GroupIndex within group CD */
-  Vector3D<GroupStateNumber>
-      group_state_a_b; /* mapping [number of white stones][number of black
-                       stones][GroupIndex] to GroupStateNumber with in group
-                       AB */
-  Vector3D<GroupStateNumber>
-      group_state_c_d; /* mapping [number of white stones][number of black
-                       stones][GroupIndex] to GroupStateNumber with in group
-                       CD */
-  Vector2D<GroupIndex>
-      amount_situations_a_b; /* mapping [number of white stones][number of
-                             black stones] to number of situations for group
-                             A and B (considering symmetry operations). this
-                             corresponds to the maximum GroupIndex within
-                             group AB */
-  Vector2D<GroupIndex>
-      amount_situations_c_d; /* mapping [number of white stones][number of
-                             black stones] to number of situations for group
-                             C and D (considering symmetry operations). this
-                             corresponds to the maximum GroupIndex within
-                             group CD */
-  Vector1D<SymOperationId>
-      symmetry_operation_c_d; /* index of symmetry operation used to get from
-                              the symmetric state to one listed in
-                              group_index_c_d */
-  Vector1D<unsigned int> power_of_three; /* 3^0, 3^1, 3^2, ... */
-  Vector2D<unsigned int> m_over_n;       /* mapping [m][n] to m over n */
-  Vector1D<SymOperationId>
-      reverse_sym_operation; /* index of the reverse symmetry operation:
-                             [symmetry operation] -> reverse symmetry
-                             operation */
-  Vector2D<unsigned int>
-      symmetry_transformation_table; /* matrix used for application of the
-                                      symmetry operations to the field:
-                                      [symmetry operation][field position] */
-  Vector3D<unsigned int>
-      layer_index;             /* mapping [moving/setting phase][number of white
-                               stones][number of black stones] to layer index */
-  Vector1D<LayerStruct> layer; /* information about the layers */
+
+  /* mapping [GroupStateNumber] to GroupIndex within group AB */
+  Vector1D<GroupIndex> group_index_a_b;
+
+  /* mapping [GroupStateNumber] to GroupIndex within group CD */
+  Vector1D<GroupIndex> group_index_c_d;
+
+  /* mapping [number of white stones][number of black stones][GroupIndex] to
+   * GroupStateNumber with in group AB */
+  Vector3D<GroupStateNumber> group_state_a_b;
+
+  /* mapping [number of white stones][number of black stones][GroupIndex] to
+   * GroupStateNumber with in group CD */
+  Vector3D<GroupStateNumber> group_state_c_d;
+
+  /* mapping [number of white stones][number of black stones] to number of
+   * situations for group A and B (considering symmetry operations). this
+   * corresponds to the maximum GroupIndex within group AB */
+  Vector2D<GroupIndex> amount_situations_a_b;
+
+  /* mapping [number of white stones][number of black stones] to number of
+   * situations for group C and D (considering symmetry operations). this
+   * corresponds to the maximum GroupIndex within group CD */
+  Vector2D<GroupIndex> amount_situations_c_d;
+
+  /* index of symmetry operation used to get from the symmetric state to one
+   * listed in group_index_c_d */
+  Vector1D<SymOperationId> symmetry_operation_c_d;
+
+  /* 3^0, 3^1, 3^2, ... */
+  Vector1D<unsigned int> power_of_three;
+
+  /* mapping [m][n] to m over n */
+  Vector2D<unsigned int> m_over_n;
+
+  /* index of the reverse symmetry operation: [symmetry operation] -> reverse
+   * symmetry operation */
+  Vector1D<SymOperationId> reverse_sym_operation;
+
+  /* matrix used for application of the symmetry operations to the field:
+   * [symmetry operation][field position] */
+  Vector2D<unsigned int> symmetry_transformation_table;
+
+  /* mapping [moving/setting phase][number of white stones][number of black
+   * stones] to layer index */
+  Vector3D<unsigned int> layer_index;
+
+  /* information about the layers */
+  Vector1D<LayerStruct> layer;
 
  public:
-  Vector2D<SymOperationId>
-      conc_sym_operation; /* symmetry operation, which is identical to applying
-                             those two concatenated symmetry operations:
-                             [symmetry operation 1][symmetry operation 2] ->
-                             resulting symmetry operation */
+  /* symmetry operation, which is identical to applying those two concatenated
+   * symmetry operations: [symmetry operation 1][symmetry operation 2] ->
+   * resulting symmetry operation */
+  Vector2D<SymOperationId> conc_sym_operation;
 
   /* constructor */
   StateAddressing(std::wstring const& directory);
@@ -457,6 +509,6 @@ class StateAddressing {
                                const FieldStruct::Core& field) const;
 };
 
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_AI_STATE_ADDRESSING_H_
+#endif /* MUEHLE_AI_STATE_ADDRESSING_H_ */

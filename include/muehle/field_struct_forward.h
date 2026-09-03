@@ -55,6 +55,6 @@ class FieldStructForward : virtual public FieldStructVariables {
                              FieldPos stone_three, PlayerId acting_player);
 };
 
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_FIELD_STRUCT_FORWARD_H_
+#endif /* MUEHLE_FIELD_STRUCT_FORWARD_H_ */

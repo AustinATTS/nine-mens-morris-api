@@ -4,10 +4,10 @@
 #include <cstdio>
 #include <vector>
 
+#include "muehle/ai/state_addressing.h"
 #include "muehle/field_struct.h"
 #include "muehle/mini_max/mini_max.h"
 #include "muehle/muehle.h"
-#include "muehle/ai/state_addressing.h"
 
 namespace muehle {
 
@@ -23,8 +23,8 @@ class MinMaxAi : public MuehleAI, mini_max::GameInterface {
   /* Classes */
   class FieldClass : public FieldStruct {
    public:
-    WarningArray
-        warnings; /* Array containing the warnings for each field position */
+    /* Array containing the warnings for each field position */
+    WarningArray warnings;
 
     FieldClass();
     FieldClass(const FieldStruct& the_field);
@@ -42,24 +42,35 @@ class MinMaxAi : public MuehleAI, mini_max::GameInterface {
   };
 
   struct ThreadVarsStruct {
-    FieldClass field; /* Pointer to the current field [changed by Move()] */
-    float current_value =
-        0; /* Value of current situation for field->current_player */
-    unsigned int cur_search_depth = 0;    /* Current level */
-    std::vector<BackupStruct> old_states; /* For Undo() function */
+    /* Pointer to the current field [changed by Move()] */
+    FieldClass field;
+
+    /* Value of current situation for field->current_player */
+    float current_value = 0;
+
+    /* Current level */
+    unsigned int cur_search_depth = 0;
+
+    /* For Undo() function */
+    std::vector<BackupStruct> old_states;
   };
 
-  /* Variables
-   * 'mm' is the minimax algorithm instance
+  /* Variables */
+
+  /* 'mm' is the minimax algorithm instance
    * 'this' passes the current AI as the game interface
    * '100' sets the maximum search depth (chosen as a sape upper bound for
-   * practical search limits). */
-  mini_max::MiniMax mm{this, 100}; /* Minimax algorithm*/
-  unsigned int depth_of_full_tree =
-      0; /* Search depth where the whole tree is explored */
-  mini_max::StateInfo info_about_choices;    /* Best move summary from the most
-                                                recent Play() call */
-  std::vector<ThreadVarsStruct> thread_vars; /* Information for each thread */
+   * practical search limits). Minimax algorithm */
+  mini_max::MiniMax mm{this, 100};
+
+  /* Search depth where the whole tree is explored */
+  unsigned int depth_of_full_tree = 0;
+
+  /* Best move summary from the most recent Play() call */
+  mini_max::StateInfo info_about_choices;
+
+  /* Information for each thread */
+  std::vector<ThreadVarsStruct> thread_vars;
 
   /* Init */
   void PrepareCalculation() override;
@@ -105,9 +116,11 @@ class MinMaxAi : public MuehleAI, mini_max::GameInterface {
 
   unsigned int GetLayerNumber(unsigned int thead_no) override;
 
-  void GetLayerAndStateNumber(unsigned int thread_no, unsigned int& layer_num, unsigned int& state_number, unsigned int& sym_op) override;
+  void GetLayerAndStateNumber(unsigned int thread_no, unsigned int& layer_num,
+                              unsigned int& state_number,
+                              unsigned int& sym_op) override;
 };
 
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_AI_MIN_MAX_AI_H_
+#endif /* MUEHLE_AI_MIN_MAX_AI_H_ */

@@ -1,5 +1,6 @@
 #ifndef MUEHLE_MINI_MAX_DATABASE_ARRAY_INFO_CONTAINER_H_
 #define MUEHLE_MINI_MAX_DATABASE_ARRAY_INFO_CONTAINER_H_
+
 #include <list>
 
 #include "muehle/mini_max/database/array_info_change.h"
@@ -15,23 +16,32 @@ namespace database {
  * statements are passed to the logger */
 class ArrayInfoContainer {
  public:
-  typedef std::list<ArrayInfoStruct>::iterator
-      ais_itr; /* Iterator for the list of array info objects */
+  /* Iterator for the list of array info objects */
+  typedef std::list<ArrayInfoStruct>::iterator ais_itr;
 
  private:
-  long long memory_used = 0;   /* Total memory in bytes used for storing: ply
-                                  information, short knot value and ... */
-  unsigned int num_layers = 0; /* Number of layers */
-  Logger& log;                 /* Callback function to update the GUI */
-  std::list<ArrayInfoChange>
-      array_infos_to_be_updated; /* Arrays which have been updated in the GUI */
-  std::list<ArrayInfoStruct>
-      list_arrays; /* All arrays added via AddArray() in a list */
-  std::vector<ais_itr>
-      vector_arrays; /* Iterators referencing all arrays. Indexing via
-                        [layer_number*ArrayInfoStruct::ArrayType::size + type]
-                      */
-  std::mutex mutex;  /* Mutex for thread safety */
+  /* Total memory in bytes used for storing: ply information, short knot value
+   * and ... */
+  long long memory_used = 0;
+
+  /* Number of layers */
+  unsigned int num_layers = 0;
+
+  /* Callback function to update the GUI */
+  Logger& log;
+
+  /* Arrays which have been updated in the GUI */
+  std::list<ArrayInfoChange> array_infos_to_be_updated;
+
+  /* All arrays added via AddArray() in a list */
+  std::list<ArrayInfoStruct> list_arrays;
+
+  /* Iterators referencing all arrays. Indexing via
+   * [layer_number*ArrayInfoStruct::ArrayType::size + type] */
+  std::vector<ais_itr> vector_arrays;
+
+  /* Mutex for thread safety */
+  std::mutex mutex;
 
   size_t GetVectorArrayIndex(unsigned int layer_number,
                              ArrayInfoStruct::ArrayType type);
@@ -49,11 +59,13 @@ class ArrayInfoContainer {
 
   bool AnyArrayInfoToUpdate();
   ArrayInfoChange GetArrayInfoForUpdate();
-  long long GetMemoryUsed() { return memory_used; };
+  long long GetMemoryUsed() {
+    return memory_used;
+  };
 };
 
-}  // namespace database
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace database */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_DATABASE_ARRAY_INFO_CONTAINER_H_
+#endif /* MUEHLE_MINI_MAX_DATABASE_ARRAY_INFO_CONTAINER_H_ */

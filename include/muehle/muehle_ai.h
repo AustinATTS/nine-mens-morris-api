@@ -1,5 +1,6 @@
 #ifndef MUEHLE_MUEHLE_AI_H_
 #define MUEHLE_MUEHLE_AI_H_
+
 #include "muehle/field_struct.h"
 
 namespace muehle {
@@ -14,6 +15,7 @@ class MuehleAI {
   /* Functions */
   virtual void Play(const FieldStruct& the_field, MoveInfo& move) = 0;
 };
-}  // namespace muehle
 
-#endif  // MUEHLE_MUEHLE_AI_H_
+} /* namespace muehle */
+
+#endif /* MUEHLE_MUEHLE_AI_H_ */

@@ -9,13 +9,14 @@ namespace database {
 
 /* Helper structure to update the GUI */
 struct ArrayInfoChange {
-  unsigned int item_index = 0xffffffff;  /* Index of the GUI element */
-  ArrayInfoStruct* array_info = nullptr; /* Pointer to the array info, which has
-                                            to be updated. Can be a nullptr */
+  /* Index of the GUI element */
+  unsigned int item_index = 0xffffffff;
+  /* Pointer to the array info, which has to be updated. Can be a nullptr */
+  ArrayInfoStruct* array_info = nullptr;
 };
 
-}  // namespace database
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace database */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_DATABASE_ARRAY_INFO_CHANGE_H_
+#endif /* MUEHLE_MINI_MAX_DATABASE_ARRAY_INFO_CHANGE_H_ */

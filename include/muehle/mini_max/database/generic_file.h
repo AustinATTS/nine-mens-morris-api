@@ -8,9 +8,8 @@ namespace muehle {
 namespace mini_max {
 namespace database {
 
-const int SKV_FILE_HEADER_CODE =
-    0xF4f5; /* Constant to identify the header. These are the first two bytes of
-               the file */
+/* Constant to identify the header. These are the first two bytes of the file */
+const int SKV_FILE_HEADER_CODE = 0xF4f5;
 const int PLYINFO_HEADER_CODE = 0xF3F2;
 
 /* This is a generic glass for reading and writing the database files. It is
@@ -33,7 +32,9 @@ class GenericFile {
   virtual bool RemoveFile(std::wstring const& file_directory = L"") {
     return false;
   };
-  virtual bool IsOpen() { return false; };
+  virtual bool IsOpen() {
+    return false;
+  };
   virtual bool LoadHeader(DatabaseStatsStruct& db_stats,
                           std::vector<LayerStatsStruct>& layer_stats) {
     return false;
@@ -45,36 +46,47 @@ class GenericFile {
   virtual bool ReadSkv(unsigned int layer_num, std::vector<TwoBit>& skv) {
     return false;
   };
-  virtual bool ReadSkv(unsigned int layer_num, TwoBit& database_byte, unsigned int state_number) {
+  virtual bool ReadSkv(unsigned int layer_num, TwoBit& database_byte,
+                       unsigned int state_number) {
     return false;
   };
-  virtual bool WriteSkv(unsigned int layer_num, const std::vector<TwoBit>& skv) {
+  virtual bool WriteSkv(unsigned int layer_num,
+                        const std::vector<TwoBit>& skv) {
     return false;
   };
   virtual bool ReadPlyInfo(unsigned int layer_num,
                            std::vector<PlyInfoVarType>& ply_info) {
     return false;
   };
-  virtual bool ReadPlyInfo(unsigned int layer_num, PlyInfoVarType& single_ply_info, unsigned int state_number) {
+  virtual bool ReadPlyInfo(unsigned int layer_num,
+                           PlyInfoVarType& single_ply_info,
+                           unsigned int state_number) {
     return false;
   };
-  virtual bool WritePlyInfo(unsigned int layer_num, const std::vector<PlyInfoVarType>& ply_info) {
+  virtual bool WritePlyInfo(unsigned int layer_num,
+                            const std::vector<PlyInfoVarType>& ply_info) {
     return false;
   }
-  virtual ~GenericFile() { CloseDatabase(); };
-  std::wstring GetFileDirectory() { return file_directory; };
+  virtual ~GenericFile() {
+    CloseDatabase();
+  };
+  std::wstring GetFileDirectory() {
+    return file_directory;
+  };
 
  protected:
   GenericFile(GameInterface* game, Logger& log) : game{game}, log{log} {};
 
-  Logger& log;                   /* Logger */
-  std::wstring file_directory;   /* Path of the folder where the database files
-                                    are located */
-  GameInterface* game = nullptr; /* Master class */
+  /* Logger */
+  Logger& log;
+  /* Path of the folder where the database files are located */
+  std::wstring file_directory;
+  /* Master class */
+  GameInterface* game = nullptr;
 };
 
-}  // namespace database
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace database */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_DATABASE_GENERIC_FILE_H_
+#endif /* MUEHLE_MINI_MAX_DATABASE_GENERIC_FILE_H_ */

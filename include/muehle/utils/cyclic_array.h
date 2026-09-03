@@ -3,9 +3,9 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#else  // _WIN32
+#else /* _WIN32 */
 #include "muehle/win_32_compat.h"
-#endif  // _WIN32
+#endif /* _WIN32 */
 #include <iostream>
 #include <string>
 
@@ -18,41 +18,67 @@ namespace muehle {
  * The class is designed for high performance file access of single bytes, on a
  * very large file. The reading and writing operations are buffered in memory,
  * and are only written to the file when the buffer is full. The class is not
- * thread safe
- */
+ * thread safe */
 class CyclicArray {
  private:
   /* Constants */
-  static const uint64_t MAX_BLOCK_SIZE = 1e9;      /* 1 GB */
-  static const uint64_t MAX_NUM_BLOCKS = 1e8;      /* 1 Million */
-  static const uint64_t MAX_FILE_SIZE = 1e15;      /* 1 PetaByte */
-  static const unsigned int MAX_PATH_LENGTH = 260; /* Max length of a path */
-  static const unsigned int MAX_NUM_RETRIES =
-      10; /* Max number of retries for reading/writing to file */
-  static const unsigned int SLEEP_TIME_IN_MS =
-      1000; /* Sleep time in ms for waiting for file access */
+
+  /* 1 GB */
+  static const uint64_t MAX_BLOCK_SIZE = 1e9;
+
+  /* 1 Million */
+  static const uint64_t MAX_NUM_BLOCKS = 1e8;
+
+  /* 1 PetaByte */
+  static const uint64_t MAX_FILE_SIZE = 1e15;
+
+  /* Max length of a path */
+  static const unsigned int MAX_PATH_LENGTH = 260;
+
+  /* Max number of retries for reading/writing to file */
+  static const unsigned int MAX_NUM_RETRIES = 10;
+
+  /* Sleep time in ms for waiting for file access */
+  static const unsigned int SLEEP_TIME_IN_MS = 1000;
 
   /* Variables */
-  Logger& log;   /* Logger, used for output */
-  HANDLE h_file; /* Handle of the file */
-  unsigned char*
-      reading_block; /* Array of size [block_size] containing the data of the
-                        block, where reading is taking place */
+
+  /* Logger, used for output */
+  Logger& log;
+
+  /* Handle of the file */
+  HANDLE h_file;
+
+  /* Array of size [block_size] containing the data of the block, where reading
+   * is taking place */
+  unsigned char* reading_block;
+
   unsigned char* writing_block;
-  unsigned char*
-      cur_reading_pointer; /* Pointer to the byte which is currently read */
+
+  /* Pointer to the byte which is currently read */
+  unsigned char* cur_reading_pointer;
+
   unsigned char* cur_writing_pointer;
-  uint64_t
-      cur_reading_pos; /* Position in the file, where reading is taking place */
+
+  /* Position in the file, where reading is taking place */
+  uint64_t cur_reading_pos;
+
   uint64_t cur_writing_pos;
-  uint64_t
-      cur_reading_block; /* Index of the block where reading is taking place */
-  uint64_t
-      cur_writing_block; /* Index of the block where writing is taking place */
-  const uint64_t block_size;     /* Size in bytes of a block */
-  const uint64_t num_blocks;     /* Amount of blocks */
-  bool read_write_in_same_round; /* True if cur_reading_block >
-                                    cur_writing_block, false otherwise */
+
+  /* Index of the block where reading is taking place */
+  uint64_t cur_reading_block;
+
+  /* Index of the block where writing is taking place */
+  uint64_t cur_writing_block;
+
+  /* Size in bytes of a block */
+  const uint64_t block_size;
+
+  /* Amount of blocks */
+  const uint64_t num_blocks;
+
+  /* True if cur_reading_block > cur_writing_block, false otherwise */
+  bool read_write_in_same_round;
 
   /* Functions */
   bool WriteDataToFile(HANDLE h_file, uint64_t offset,
@@ -74,9 +100,11 @@ class CyclicArray {
   bool SaveFile(std::wstring const& file_name);
   uint64_t BytesAvailable() const;
   uint64_t WriteableBytes() const;
-  uint64_t GetNumBlocks() const { return num_blocks; }
+  uint64_t GetNumBlocks() const {
+    return num_blocks;
+  }
 };
 
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_UTILS_CYCLIC_ARRAY_H_
+#endif /* MUEHLE_UTILS_CYCLIC_ARRAY_H_ */

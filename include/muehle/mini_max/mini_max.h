@@ -5,9 +5,9 @@
 #ifdef _WIN32
 #include <Shlwapi.h>
 #include <windows.h>
-#else // _WIN32
+#else /* _WIN32 */
 #include "muehle/win_32_compat.h"
-#endif // _WIN32
+#endif /* _WIN32 */
 
 /* Std */
 #include <cstdio>
@@ -15,8 +15,8 @@
 #include <list>
 #include <sstream>
 #ifdef _WIN32
-#define <intrin.h>
-#endif // _WIN32
+#define < intrin.h>
+#endif /* _WIN32 */
 #include <algorithm>
 #include <ctime>
 #include <filesystem>
@@ -24,8 +24,8 @@
 
 /* Utils */
 #include "muehle/utils/logger.h"
-#include "muehle/utils/thread_manager_class.h"
 #include "muehle/utils/my_string.h"
+#include "muehle/utils/thread_manager_class.h"
 
 /* Other mini_max headers */
 #include "muehle/mini_max/alpha_beta/solver.h"
@@ -36,12 +36,12 @@
 #include "muehle/mini_max/type_def.h"
 
 #ifdef _WIN32
-#pragma intrinsic(_rotl8, _rotr8) /* For shifting bits */
-#endif // _WIN32
+/* For shifting bits */
+#pragma intrinsic(_rotl8, _rotr8)
+#endif /* _WIN32 */
 
-#include "game_interface.h"
+#include "muehle/mini_max/game_interface.h"
 #include "muehle/mini_max/state_info.h"
-
 
 namespace muehle {
 
@@ -61,6 +61,7 @@ namespace muehle {
  */
 
 namespace mini_max {
+
 /* The MinMax class manages the MinMax algorithm and related operations for game
  * state evaluation.
  * Reponsobilities:
@@ -118,33 +119,40 @@ class MiniMax {
 
  private:
   /* Variables that typically remain unchanged during database calculation */
-  std::wstring file_directory; /* Path of the folder where the database files
-                                  are located */
-  std::list<unsigned int>
-      last_calculated_layer; /* List of the recentyl calculated layers */
-  std::vector<unsigned int>
-      layers_to_calculate; /* Layers to calculate, in case multiple layers must
-                              be calculated at once */
-  ThreadManagerClass thread_manager; /* Thread manager for multi threading */
-  CRITICAL_SECTION
-  cs_os_print; /* For thread safety when output is passed to os_print */
+
+  /* Path of the folder where the database files are located */
+  std::wstring file_directory;
+
+  /* List of the recentyl calculated layers */
+  std::list<unsigned int> last_calculated_layer;
+
+  /* Layers to calculate, in case multiple layers must be calculated at once */
+  std::vector<unsigned int> layers_to_calculate;
+
+  /* Thread manager for multi threading */
+  ThreadManagerClass thread_manager;
+
+  /* For thread safety when output is passed to os_print */
+  CRITICAL_SECTION cs_os_print;
 
   /* Solvers */
   alpha_beta::Solver ab_solver;
   retro_analysis::Solver rt_solver;
 
   /* Thread specific or non constant variables */
-  long long num_states_processed =
-      0; /* Number of states processed by all threads */
-  unsigned int cur_calculated_layer =
-      0; /* Id of the currently calculated layer */
+
+  /* Number of states processed by all threads */
+  long long num_states_processed = 0;
+
+  /* Id of the currently calculated layer */
+  unsigned int cur_calculated_layer = 0;
 
   /* Progress report functions */
   bool CalcLayer(unsigned int layer_number);
   void SetCurrentActivity(Activity new_action);
 };
 
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_MINI_MAX_H_
+#endif /* MUEHLE_MINI_MAX_MINI_MAX_H_ */

@@ -30,8 +30,8 @@ class Monitor {
   GameInterface *game = nullptr;
   Logger &log;
 };
-}  // namespace statistics
-}  // namespace mini_max
-}  // namespace muehle
+}  /* namespace statistics */
+}  /* namespace mini_max */
+}  /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_STATISTICS_MONITOR_H_
+#endif  /* MUEHLE_MINI_MAX_STATISTICS_MONITOR_H_ */

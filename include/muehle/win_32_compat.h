@@ -40,14 +40,14 @@ using LPWSTR = wchar_t*;
 
 #ifndef TRUE
 #define TRUE 1
-#endif  // TRUE
+#endif /* TRUE */
 #ifndef FALSE
 #define FALSE 0
-#endif  // FALSE
+#endif /* FALSE */
 
 #ifndef WINAPI
 #define WINAPI
-#endif  // WINAPI
+#endif /* WINAPI */
 
 /* Large Integer */
 union LARGE_INTEGER {
@@ -79,13 +79,17 @@ namespace win_32_compat {
 struct ThreadSuspendState {
   sem_t resume_sem;
 
-  ThreadSuspendState() { sem_init(&resume_sem, 0, 0); }
-  ~ThreadSuspendState() { sem_destroy(&resume_sem); }
+  ThreadSuspendState() {
+    sem_init(&resume_sem, /* pshared: */ 0, /* value: */ 0);
+  }
+  ~ThreadSuspendState() {
+    sem_destroy(&resume_sem);
+  }
 };
 
 inline thread_local ThreadSuspendState* tl_my_suspend_state = nullptr;
 inline thread_local DWORD tl_thread_id = 0;
-inline std::atomic<DWORD> g_next_thread_id{1};
+inline std::atomic<DWORD> g_next_thread_id{/* i: */ 1};
 
 /* SIGUSR1 is used to interrupt a thread at it's current point of execution and
  * have it block until resumed. This mirrors Win32's
@@ -104,7 +108,7 @@ inline void InstallSuspendHandlerOnce() {
     sa.sa_handler = SuspendSignalHandler;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
-    sigaction(SIGUSR1, &sa, nullptr);
+    sigaction(/* sig: */ SIGUSR1, &sa, /* oact: */ nullptr);
   });
 }
 
@@ -113,13 +117,15 @@ inline std::string ToNativePath(const wchar_t* wpath) {
    * already used elsewhere in the code. */
   return std::filesystem::path(wpath).string();
 }
-}  // namespace win_32_compat
+} /* namespace win_32_compat */
 
 struct HANDLE__ {
-  int fd = -1; /* File descriptor for file handles */
-  bool is_process_pseudo =
-      false; /* True for the pseudo handle returned by GetCurrentProcess() */
-  std::thread* thr = nullptr; /* For thread handles */
+  /* File descriptor for file handles */
+  int fd = -1;
+  /* True for the pseudo handle returned by GetCurrentProcess() */
+  bool is_process_pseudo = false;
+  /* For thread handles */
+  std::thread* thr = nullptr;
   pthread_t pthread_handle{};
   win_32_compat::ThreadSuspendState* suspend_state = nullptr;
   DWORD thread_id = 0;
@@ -148,7 +154,7 @@ inline HANDLE CreateFile(const wchar_t* path, DWORD access, DWORD /* share */,
     posix_flags |= O_CREAT;
   }
 
-  int fd = ::open(native_path.c_str(), posix_flags, 0644);
+  int fd = ::open(/* file: */ native_path.c_str(), posix_flags, 0644);
   if (fd < 0) {
     return INVALID_HANDLE_VALUE;
   }
@@ -244,7 +250,9 @@ inline BOOL CloseHandle(HANDLE h) {
     return TRUE; /* Singleton, never deleted */
   }
 
-  if (h->fd > 0) ::close(h->fd);
+  if (h->fd > 0) {
+    ::close(h->fd);
+  }
   if (h->thr) {
     if (h->thr->joinable()) {
       h->thr->join();
@@ -258,7 +266,7 @@ inline BOOL CloseHandle(HANDLE h) {
 
 inline BOOL CreateDirectory(LPCWSTR path, LPVOID /* security_attributes */) {
   std::error_code ec;
-  std::filesystem::create_directories(std::filesystem::path(path), ec);
+  std::filesystem::create_directories(/* p: */ std::filesystem::path(path), ec);
   return ec ? FALSE : TRUE;
 }
 
@@ -274,13 +282,15 @@ inline unsigned char _rotr8(unsigned char value, unsigned char shift) {
 constexpr DWORD INVALID_FILE_ATTRIBUTES = 0xFFFFFFFFu;
 inline DWORD GetFileAttributes(LPCWSTR path) {
   std::error_code ec;
-  bool exists = std::filesystem::exists(std::filesystem::path(path), ec);
+  bool exists =
+      std::filesystem::exists(/* p: */ std::filesystem::path(path), ec);
   return (exists && !ec) ? 0u : INVALID_FILE_ATTRIBUTES;
 }
 
 inline int _wremove(LPCWSTR path) {
   std::error_code ec;
-  bool removed = std::filesystem::remove(std::filesystem::path(path), ec);
+  bool removed =
+      std::filesystem::remove(/* p: */ std::filesystem::path(path), ec);
   return (removed && !ec) ? 0 : -1;
 }
 
@@ -335,23 +345,32 @@ struct CRITICAL_SECTION {
 };
 inline void InitializeCriticalSection(CRITICAL_SECTION*) {}
 inline void DeleteCriticalSection(CRITICAL_SECTION*) {}
-inline void EnterCriticalSection(CRITICAL_SECTION* cs) { cs->m.lock(); }
-inline void LeaveCriticalSection(CRITICAL_SECTION* cs) { cs->m.unlock(); }
+inline void EnterCriticalSection(CRITICAL_SECTION* cs) {
+  cs->m.lock();
+}
+inline void LeaveCriticalSection(CRITICAL_SECTION* cs) {
+  cs->m.unlock();
+}
 
 /* Sleep / High resolution timers */
 inline void Sleep(DWORD milliseconds) {
-  std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+  std::this_thread::sleep_for(
+      /* rtime */ std::chrono::milliseconds(milliseconds));
 }
 
 inline BOOL QueryPerformanceFrequency(LARGE_INTEGER* freq) {
-  freq->QuadPart = 1000000000LL; /* Counts in nanoseconds */
+  /* Counts in nanoseconds */
+  freq->QuadPart = 1000000000LL;
   return TRUE;
 }
 
 inline BOOL QueryPerformanceCounter(LARGE_INTEGER* counter) {
-  counter->QuadPart = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                          std::chrono::steady_clock::now().time_since_epoch())
-                          .count();
+  counter->QuadPart =
+      std::chrono::duration_cast<std::chrono::nanoseconds>(
+          /* d: */ std::chrono::steady_clock::
+              now()                    /* time_point<steady_clock> */
+                  .time_since_epoch()) /* _enable_if_is_duration<nanosaconds> */
+          .count();                    /* long */
   return TRUE;
 }
 
@@ -366,7 +385,9 @@ inline void GetSystemInfo(SYSTEM_INFO* si) {
   si->dw_number_of_processors = (n == 0) ? 1 : n;
 }
 
-inline DWORD GetCurrentThreadId() { return win_32_compat::tl_thread_id; }
+inline DWORD GetCurrentThreadId() {
+  return win_32_compat::tl_thread_id;
+}
 
 inline HANDLE CreateThread(void* /* sa */, SIZE_T /* stack_size */,
                            LPTHREAD_START_ROUTINE start_addr, LPVOID param,
@@ -374,7 +395,7 @@ inline HANDLE CreateThread(void* /* sa */, SIZE_T /* stack_size */,
   HANDLE h = new HANDLE__();
   h->suspend_state = new win_32_compat::ThreadSuspendState();
 
-  DWORD new_id = win_32_compat::g_next_thread_id.fetch_add(1);
+  DWORD new_id = win_32_compat::g_next_thread_id.fetch_add(/* i: */ 1);
   h->thread_id = new_id;
   if (thread_id_out) {
     *thread_id_out = new_id;
@@ -382,7 +403,7 @@ inline HANDLE CreateThread(void* /* sa */, SIZE_T /* stack_size */,
 
   bool start_suspended = (creation_flags & CREATE_SUSPENDED) != 0;
 
-  h->thr = new std::thread([=]() {
+  h->thr = new std::thread(/* f: */ [=]() {
     win_32_compat::tl_thread_id = new_id;
     win_32_compat::tl_my_suspend_state = h->suspend_state;
     win_32_compat::InstallSuspendHandlerOnce();
@@ -395,11 +416,13 @@ inline HANDLE CreateThread(void* /* sa */, SIZE_T /* stack_size */,
   return h;
 }
 
-inline BOOL SetThreadPriority(HANDLE, int) { return TRUE; }
+inline BOOL SetThreadPriority(HANDLE, int) {
+  return TRUE;
+}
 
 inline DWORD SuspendThread(HANDLE h) {
   if (h && h != INVALID_HANDLE_VALUE) {
-    pthread_kill(h->pthread_handle, SIGUSR1);
+    pthread_kill(h->pthread_handle, /* signo: */ SIGUSR1);
   }
   return 0;
 }
@@ -416,9 +439,10 @@ inline DWORD WaitForSingleObject(HANDLE h, DWORD /* milliseconds */) {
     return 0xFFFFFFFFu;
   }
   if (h->is_process_pseudo) {
-    /* used by returnValues::falseOrStop() to hang the program */
+    /* used by ReturnValues::FalseOrStop() to hang the program */
     for (;;) {
-      std::this_thread::sleep_for(std::chrono::hours(1));
+      std::this_thread::sleep_for(
+          /* rtime: */ std::chrono::hours(/* rep: */ 1));
     }
   }
   if (h->thr && h->thr->joinable()) {
@@ -448,8 +472,8 @@ inline HANDLE GetCurrentProcess() {
   return &pseudo;
 }
 
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // _WIN32
+#endif /* _WIN32 */
 
-#endif  // MUEHLE_WIN_32_COMPAT_H_
+#endif /* MUEHLE_WIN_32_COMPAT_H_ */

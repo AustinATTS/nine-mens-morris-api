@@ -2,20 +2,19 @@
 #define MUEHLE_MINI_MAX_RETRO_ANALYSIS_SUCCESSOR_COUNT_ARRAY_H_
 
 #include "muehle/mini_max/database/database.h"
+#include "muehle/mini_max/retro_analysis/state_queue.h"
+#include "muehle/mini_max/type_def.h"
 #include "muehle/utils/logger.h"
 #include "muehle/utils/thread_manager_class.h"
-#include "muehle/mini_max/type_def.h"
-#include "muehle/mini_max/retro_analysis/state_queue.h"
 
 namespace muehle {
 namespace mini_max {
 
-/* Using 2 Bytes for counting the number of predecessors allows a maximum of
- * 65535 predecessors. */
-typedef unsigned short
-    CountArrayVarType; /* 2 Bytes for counting predecessors */
-const CountArrayVarType COUNT_ARRAY_MAX_VALUE =
-    65535; /* Maximum value for the count array */
+/* 2 Bytes for counting predecessors */
+typedef unsigned short CountArrayVarType;
+
+/* Maximum value for the count array */
+const CountArrayVarType COUNT_ARRAY_MAX_VALUE = 65535;
 
 namespace retro_analysis {
 
@@ -30,19 +29,28 @@ class SuccessorCountArray {
   ~SuccessorCountArray();
   CountArrayVarType IncreaseCounter(StateNumberVarType state_number);
   CountArrayVarType DecreaseCounter(StateNumberVarType state_number);
-  unsigned int GetLayerNumber() const { return layer_number; }
+  unsigned int GetLayerNumber() const {
+    return layer_number;
+  }
 
-  Logger& log;            /* Logger, used for output */
-  database::Database& db; /* Database, for storing the calculated values */
-  const unsigned int layer_number; /* Layer number */
-  std::vector<CountArrayVarType>
-      succ_count_array; /* Count array for the number of drawn/unknown
-                           successors for each state */
-  std::mutex succ_count_array_mutex; /* Mutex for the count array */
+  /* Logger, used for output */
+  Logger& log;
+
+  /* Database, for storing the calculated values */
+  database::Database& db;
+
+  /* Layer number */
+  const unsigned int layer_number;
+
+  /* Count array for the number of drawn/unknown successors for each state */
+  std::vector<CountArrayVarType> succ_count_array;
+
+  /* Mutex for the count array */
+  std::mutex succ_count_array_mutex;
 };
 
-}  // namespace retro_analysis
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace retro_analysis */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_RETRO_ANALYSIS_SUCCESSOR_COUNT_ARRAY_H_
+#endif /* MUEHLE_MINI_MAX_RETRO_ANALYSIS_SUCCESSOR_COUNT_ARRAY_H_ */

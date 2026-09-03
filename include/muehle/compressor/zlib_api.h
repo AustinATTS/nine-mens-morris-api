@@ -46,7 +46,7 @@ class ZLibApi : public GeneralLib {
 
 using PlatformCompApi = ZLibApi;
 
-}  // namespace compressor
-}  // namespace muehle
+} /* namespace compressor */
+} /* namespace muehle */
 
-#endif  // MUEHLE_COMPRESSOR_ZLIB_API_H_
+#endif /* MUEHLE_COMPRESSOR_ZLIB_API_H_ */

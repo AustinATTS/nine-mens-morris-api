@@ -5,9 +5,9 @@
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif  // NOMINMAX
+#endif /* NOMINMAX */
 #include <windows.h>
-#endif // _WIN32
+#endif /* _WIN32 */
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -59,26 +59,41 @@ class File {
   struct SectionInfo {
     struct BlockInfo {
       /* Data copied directly to file */
-      unsigned int offset_in_section =
-          0; /* Offset in bytes within the section */
-      unsigned int compressed_size =
-          0; /* Size of the compressed block in bytes */
+
+      /* Offset in bytes within the section */
+      unsigned int offset_in_section = 0;
+
+      /* Size of the compressed block in bytes */
+      unsigned int compressed_size = 0;
     };
 
     /* Data copied directly to file */
-    long long offset_in_file = 0; /* Offset in bytes within the file */
-    long long uncompressed_size =
-        0; /* Size of the uncompressed section in bytes */
-    long long compressed_size =
-        0;                       /* Size of the compressed section in bytres */
-    unsigned int num_blocks = 0; /* Number of blocks in the section */
-    unsigned int section_id = 0; /* index of the section in the file */
-    unsigned int key_length_in_bytes = 0; /* Length of the key in bytes */
+
+    /* Offset in bytes within the file */
+    long long offset_in_file = 0;
+
+    /* Size of the uncompressed section in bytes */
+    long long uncompressed_size = 0;
+
+    /* Size of the compressed section in bytres */
+    long long compressed_size = 0;
+
+    /* Number of blocks in the section */
+    unsigned int num_blocks = 0;
+
+    /* index of the section in the file */
+    unsigned int section_id = 0;
+
+    /* Length of the key in bytes */
+    unsigned int key_length_in_bytes = 0;
 
     /* Abstract data (cannot be written to file) */
-    std::wstring key_name; /* Key of the section, by which the section is
-                              addressed in the file */
-    std::vector<BlockInfo> blocks; /* Data */
+
+    /* Key of the section, by which the section is addressed in the file */
+    std::wstring key_name;
+
+    /* Data */
+    std::vector<BlockInfo> blocks;
 
     /* Functions */
     bool Write(std::fstream& fs, FooterStruct& footer);
@@ -92,25 +107,38 @@ class File {
   /* Footer of the file, containing infos about the sections */
   struct FooterStruct {
     /* Data copied directly to file */
-    short type_id = 0x7d67;        /* Unique ID of the file format */
-    short version_id = 1;          /* Version of the file format */
-    unsigned int num_sections = 0; /* Number of sections in the file */
-    long long sections_offset_in_file =
-        0; /* Offset in file where the sections starts */
-    long long footer_offset_in_file = 0; /* offset in file where the footer starts*/
-    long long file_info_offset_in_file =
-        0; /* Offset in file where the file info starts*/
-    unsigned int block_size_in_bytes =
-        1000; /* Each section is separated in blocks to enable random read
-                 access */
-    GeneralLib::LibId used_lib =
-        GeneralLib::LibId::undefined; /* Id of the used compression
-                                         algorithm/library */
+
+    /* Unique ID of the file format */
+    short type_id = 0x7d67;
+
+    /* Version of the file format */
+    short version_id = 1;
+
+    /* Number of sections in the file */
+    unsigned int num_sections = 0;
+
+    /* Offset in file where the sections starts */
+    long long sections_offset_in_file = 0;
+
+    /* offset in file where the footer starts */
+    long long footer_offset_in_file = 0;
+
+    /* Offset in file where the file info starts */
+    long long file_info_offset_in_file = 0;
+
+    /* Each section is separated in blocks to enable random read access */
+    unsigned int block_size_in_bytes = 1000;
+
+    /* Id of the used compression algorithm/library */
+    GeneralLib::LibId used_lib = GeneralLib::LibId::undefined;
 
     /* Abstract data (cannot be written directly to file) */
-    std::map<std::wstring, size_t>
-        dictionary; /* Mapping from keys to section indices */
-    std::vector<SectionInfo> sections; /* Data */
+
+    /* Mapping from keys to section indices */
+    std::map<std::wstring, size_t> dictionary;
+
+    /* Data */
+    std::vector<SectionInfo> sections;
 
     /* Functions */
     bool DoesKeyExist(std::wstring const& key) {
@@ -130,8 +158,12 @@ class File {
     TmpFile(std::wstring const& key_name);
     ~TmpFile();
 
-    std::wstring const& GetKeyName() { return key_name; };
-    std::wstring const& GetFilePath() { return file_path; };
+    std::wstring const& GetKeyName() {
+      return key_name;
+    };
+    std::wstring const& GetFilePath() {
+      return file_path;
+    };
     long long GetSize();
     bool Write(long long position, long long num_bytes, const void* p_bytes);
     bool Read(long long position, long long num_bytes, void* p_bytes);
@@ -139,39 +171,50 @@ class File {
     static bool DoesExist(std::wstring const& key_name);
 
    private:
-    std::wstring key_name;  /* Key of the section */
-    std::wstring file_path; /* Path to the temporary file */
-    std::fstream
-        fs_tmp; /* File stream for reading/writing the temporary file */
+    /* Key of the section */
+    std::wstring key_name;
+
+    /* Path to the temporary file */
+    std::wstring file_path;
+
+    /* File stream for reading/writing the temporary file */
+    std::fstream fs_tmp;
 
     bool OpenIfNotOpen();
   };
 
  private:
-  static const size_t max_key_length =
-      240; /* Each section in the file is identified by a string key. This is
-              the maximum length of the key. */
-  FooterStruct
-      footer; /* Footer of the file, containing infos about the sections */
-  std::fstream
-      fs; /* File stream for reading/writing the actual file on the disk */
-  GeneralLib* comp = nullptr;  /* Pointer to the compression library */
-  bool read_only_mode = false; /* If true, no writing is allowed */
-  std::vector<TmpFile*>
-      tmp_files; /* Temporary files for writing the sections */
+  /* Each section in the file is identified by a string key. This is the maximum
+   * length of the key. */
+  static const size_t max_key_length = 240;
+
+  /* Footer of the file, containing infos about the sections */
+  FooterStruct footer;
+
+  /* File stream for reading/writing the actual file on the disk */
+  std::fstream fs;
+
+  /* Pointer to the compression library */
+  GeneralLib* comp = nullptr;
+
+  /* If true, no writing is allowed */
+  bool read_only_mode = false;
+
+  /* Temporary files for writing the sections */
+  std::vector<TmpFile*> tmp_files;
 
   TmpFile& GetTmpFile(std::wstring const& key);
   bool ReadFromCompressed(std::wstring const& key, long long position,
                           long long num_bytes, void* p_bytes);
 };
 
-}  // namespace compressor
-}  // namespace muehle
+} /* namespace compressor */
+} /* namespace muehle */
 
 #ifdef _WIN32
 #include "muehle/compressor/win_comp_api.h"
-#else  // _WIN32
+#else /* _WIN32 */
 #include "muehle/compressor/zlib_api.h"
-#endif  // _WIN32
+#endif /* _WIN32 */
 
-#endif  // MUEHLE_COMPRESSOR_FILE_H_
+#endif /* MUEHLE_COMPRESSOR_FILE_H_ */

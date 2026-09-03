@@ -1,5 +1,6 @@
 #ifndef MUEHLE_MINI_MAX_DATABASE_DATABASE_H_
 #define MUEHLE_MINI_MAX_DATABASE_DATABASE_H_
+
 #include <print>
 #include <vector>
 
@@ -39,11 +40,15 @@ class Database {
   bool SetLoadingOfFullLayerOnRead();
 
   /* Getter */
-  bool IsOpen() { return file ? file->IsOpen() : false; };
+  bool IsOpen() {
+    return file ? file->IsOpen() : false;
+  };
   bool IsComplete();
   bool IsLayerCompleteAndInFile(unsigned int layer_number);
   unsigned int GetNumberOfKnots(unsigned int layer_number);
-  unsigned int GetNumLayers() { return db_stats.num_layers; };
+  unsigned int GetNumLayers() {
+    return db_stats.num_layers;
+  };
   const PartnerLayerList& GetPartnerLayers(unsigned int layer_number) {
     if (layer_number >= layer_stats.size()) {
       return partner_layer_dummy;
@@ -56,7 +61,9 @@ class Database {
     }
     return layer_stats[layer_number].succ_layers;
   };
-  long long GetMemoryUsed() { return array_infos.GetMemoryUsed(); };
+  long long GetMemoryUsed() {
+    return array_infos.GetMemoryUsed();
+  };
   StateNumberVarType GetNumWonStates(unsigned int layer_number);
   StateNumberVarType GetNumLostStates(unsigned int layer_number);
   StateNumberVarType GetNumDrawnStates(unsigned int layer_number);
@@ -65,7 +72,7 @@ class Database {
   std::wstring GetFileDirectory() {
     if (file) {
       return file->GetFileDirectory();
-      }
+    }
     return L"";
   };
 
@@ -82,8 +89,8 @@ class Database {
   bool LoadLayerFromFile(unsigned int layer_number);
   bool SaveLayerToFile(unsigned int layer_number);
 
-  /* Functions for GUI output */
-  ArrayInfoContainer array_infos; /* Information about the arrays in memory */
+  /* Information about the arrays in memory */
+  ArrayInfoContainer array_infos;
 
  private:
   /* Functions */
@@ -91,35 +98,57 @@ class Database {
   bool ResizeSkv(LayerStatsStruct& my_lss, unsigned int layer_number);
 
   /* General */
-  Logger& log;                   /* Logger */
-  GameInterface* game = nullptr; /* Master class */
-  GenericFile* file = nullptr;   /* File handler */
-  std::mutex cs_database_mutex;  /* Mutex for I/O operations */
-  DatabaseStatsStruct db_stats;  /* General information about the database */
-  std::vector<LayerStatsStruct> layer_stats; /* Layer specific information */
-  SuccLayerList succ_layer_dummy;            /* Dummy for empty return value */
-  PartnerLayerList partner_layer_dummy;      /* Dummy for empty return value */
-  bool load_full_layer_on_read = false;      /* Load full layer on read? */
+
+  /* Logger */
+  Logger& log;
+
+  /* Master class */
+  GameInterface* game = nullptr;
+
+  /* File handler */
+  GenericFile* file = nullptr;
+
+  /* Mutex for I/O operations */
+  std::mutex cs_database_mutex;
+
+  /* General information about the database */
+  DatabaseStatsStruct db_stats;
+
+  /* Layer specific information */
+  std::vector<LayerStatsStruct> layer_stats;
+
+  /* Dummy for empty return value */
+  SuccLayerList succ_layer_dummy;
+
+  /* Dummy for empty return value */
+  PartnerLayerList partner_layer_dummy;
+
+  /* Load full layer on read? */
+  bool load_full_layer_on_read = false;
 
   /* Performance measurement */
   Speedometer::PrintFunctType print_iops = [&](std::wstring& name,
                                                float operations_per_sec) {};
+
+  /* Measure database io operations per seconds of read operations */
   Speedometer speedo_read_skv{L"Read knot value ", MEASURE_TIME_FREQUENCY,
-                              print_iops}; /* Measure database io operations per
-                                              seconds of read operations */
+                              print_iops};
+
+  /* Measure database io operations per second of write operations */
   Speedometer speedo_write_skv{L"Write knot value ", MEASURE_TIME_FREQUENCY,
-                               print_iops}; /* Measure database io operations
-                                               per second of write operations */
+                               print_iops};
+
+  /* Measure database io operations per seconds of read operations */
   Speedometer speedo_read_ply{L"Read ply info ", MEASURE_TIME_FREQUENCY,
-                              print_iops}; /* Measure database io operations per
-                                              seconds of read operations */
+                              print_iops};
+
+  /* Measure database io operations per second of write operations */
   Speedometer speedo_write_ply{L"Write ply info ", MEASURE_TIME_FREQUENCY,
-                               print_iops}; /* Measure database io operations
-                                               per second of write operations */
+                               print_iops};
 };
 
-}  // namespace database
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace database */
+} /* namespace mini_max */
+} /* namespace muehle */
 
-#endif  // MUEHLE_MINI_MAX_DATABASE_DATABASE_H_
+#endif /* MUEHLE_MINI_MAX_DATABASE_DATABASE_H_ */

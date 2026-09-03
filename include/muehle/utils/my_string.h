@@ -3,9 +3,9 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#else  // _WIN32
+#else /* _WIN32 */
 #include <muehle/win_32_compat.h>
-#endif  // _WIN32
+#endif /* _WIN32 */
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,6 +43,6 @@ class MyString {
   MyString &Assign(const WCHAR *c_str);
 };
 
-}  // namespace muehle
+} /* namespace muehle */
 
-#endif  // MUEHLE_UTILS_MY_STRING_H_
+#endif /* MUEHLE_UTILS_MY_STRING_H_ */

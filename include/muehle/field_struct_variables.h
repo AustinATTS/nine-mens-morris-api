@@ -32,23 +32,35 @@ class FieldStructVariables : public FieldStructTypes {
 
  protected:
   /* More constants */
-  static const Array2d<FieldPos, size, 4>
-      connected_square; /* Array containing the index of the neighbour or 'size'
-                         */
-  static const Array3d<FieldPos, size, 2, 2>
-      neighbour; /* Array containing the two neighbours of each squares */
+
+  /* Array containing the index of the neighbour or 'size' */
+  static const Array2d<FieldPos, size, 4> connected_square;
+
+  /* Array containing the two neighbours of each squares */
+  static const Array3d<FieldPos, size, 2, 2> neighbour;
 
   /* Core variables */
-  FieldArray field; /* One of the values above for each position, initialised
-                       with square_is_free */
-  bool setting_phase = true; /* True if stones_set < 18 */
+
+  /* One of the values above for each position, initialised with square_is_free
+   */
+  FieldArray field;
+
+  /* True if stones_set < 18 */
+  bool setting_phase = true;
 
   /* Deduced variables */
-  MillArray
-      stone_part_of_mill;  /* The number of mills this stone is a part of */
-  PlayerStruct cur_player; /* Pointers to the current player */
-  PlayerStruct opp_player; /* Pointers to the opponent player */
-  bool game_has_finished = false; /* Someone has won or current field is full */
+
+  /* The number of mills this stone is a part of */
+  MillArray stone_part_of_mill;
+
+  /* Pointers to the current player */
+  PlayerStruct cur_player;
+
+  /* Pointers to the opponent player */
+  PlayerStruct opp_player;
+
+  /* Someone has won or current field is full */
+  bool game_has_finished = false;
 
   /* Helper functions */
   char GetCharFromStone(PlayerId stone) const;
@@ -69,6 +81,7 @@ class FieldStructVariables : public FieldStructTypes {
   void CalcNumStones();
   void CalcNumStonesSet(unsigned int total_num_stones_missing);
 };
-}  // namespace muehle
 
-#endif  // MUEHLE_FIELD_STRUCT_VARIABLES_H_
+} /* namespace muehle */
+
+#endif /* MUEHLE_FIELD_STRUCT_VARIABLES_H_ */
