@@ -19,8 +19,8 @@ Logger::Logger(LogLevel level, LogType type, const std::wstring& filename) {
     if (m_filename.empty()) {
       throw std::runtime_error("Logger filename is empty.");
     }
-    m_file.open(std::filesystem::path(m_filename),
-                std::ios::out | std::ios::app);
+    m_file.open(/* s: */ std::filesystem::path(m_filename),
+                /* mode: */ std::ios::out | std::ios::app);
     if (!m_file.is_open()) {
       throw std::runtime_error("Failed to open log file.");
     }
@@ -58,8 +58,8 @@ Logger::~Logger() {
   /* The destroyer_flag is used to ensure that the log file is closed only once,
    * even if multiple logger instances are destroyed, preventing double-close
    * issues. */
-  static std::atomic<bool> destroyed_flag{false};
-  if (!destroyed_flag.exchange(true)) {
+  static std::atomic<bool> destroyed_flag{/* i: */ false};
+  if (!destroyed_flag.exchange(/* i: */ true)) {
     if ((m_type == LogType::file || m_type == LogType::both) &&
         m_file.is_open()) {
       m_file.close();
@@ -98,12 +98,16 @@ bool Logger::Log(LogLevel level, const std::wstring& message, bool new_line,
     std::lock_guard<std::mutex> lock(m_mutex);
 
     if (m_type == LogType::console || m_type == LogType::both) {
-      *stream << (begin ? GetLogString(level, message, L"", L"", 0) : message)
+      *stream << (begin ? GetLogString(level, message, /* function: */ L"",
+                                       /* file: */ L"", /* line: */ 0)
+                        : message)
               << (new_line ? L"\n" : L"") << std::flush;
     }
 
     if (m_type == LogType::file || m_type == LogType::both) {
-      m_file << (begin ? GetLogString(level, message, L"", L"", 0) : message)
+      m_file << (begin ? GetLogString(level, message, /* function: */ L"",
+                                      /* file: */ L"", /* line: */ 0)
+                       : message)
              << (new_line ? L"\n" : L"") << std::flush;
     }
   }
@@ -152,16 +156,16 @@ std::wstring Logger::GetLevelString(LogLevel level) {
 
 /* Get the current time as a string */
 std::wstring Logger::GetTimeString() {
-  std::time_t t = std::time(nullptr);
+  std::time_t t = std::time(/* timer: */ nullptr);
   std::tm tm;
 #ifdef _WIN32
   localtime_s(&tm, &t);
-#else
+#else  /* _WIN32 */
   localtime_r(&t, &tm);
-#endif
+#endif /* _WIN32 */
 
   std::wstringstream ss;
-  ss << std::put_time(&tm, L"%Y-%m-%d %H:%M:%S");
+  ss << std::put_time(&tm, /* fmt: */ L"%Y-%m-%d %H:%M:%S");
   return ss.str();
 }
 
@@ -194,4 +198,4 @@ bool Logger::GetReturnValue(LogLevel level) {
   }
 }
 
-}  // namespace muehle
+} /* namespace muehle */

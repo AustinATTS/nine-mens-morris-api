@@ -1,9 +1,11 @@
 #include "muehle/mini_max/alpha_beta/common_thread_vars.h"
 
 #ifdef _MSC_VER
-#define NOMINMAX /* Prevent macro conflicts with min/max in Windows header */
-#endif // _MSC_VER
-#include <algorithm> /* For std::min */
+/* Prevent macro conflicts with min/max in Windows header */
+#define NOMINMAX
+#endif /* _MSC_VER */
+/* For std::min */
+#include <algorithm>
 
 namespace muehle {
 
@@ -14,7 +16,7 @@ bool mini_max::CommonThreadVars::LoadDataToBuffer() {
   if (h_file == NULL || h_file == INVALID_HANDLE_VALUE) {
     return log.Log(
         Logger::LogLevel::error,
-        L"File not open for reading. Loading data to buffer failed!");
+        /* messag: */L"File not open for reading. Loading data to buffer failed!");
   }
 
   /* Read data from file */

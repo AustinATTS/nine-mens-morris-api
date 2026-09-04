@@ -43,15 +43,17 @@ CyclicArray::CyclicArray(unsigned int block_size_in_bytes,
   writing_block = new unsigned char[block_size];
   Reset();
   log.Log(Logger::LogLevel::trace,
-          L"CyclicArray created: " + file_name + L" with block_size: " +
-              std::to_wstring(block_size) + L" bytes and " +
-              std::to_wstring(num_blocks) + L" blocks.");
+          /* message: */ L"CyclicArray created: " + file_name +
+              L" with block_size: " + std::to_wstring(/* val: */ block_size) +
+              L" bytes and " + std::to_wstring(/* val: */ num_blocks) +
+              L" blocks.");
 
   /* Open Database file (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH |
    * FILE_FLAG_RANDOM_ACCESS) */
-  h_file = CreateFile(file_name.c_str(), GENERIC_READ | GENERIC_WRITE,
-                      FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
-                      FILE_ATTRIBUTE_NORMAL, NULL);
+  h_file = CreateFile(/* path: */ file_name.c_str(),
+                      /* access: */ GENERIC_READ | GENERIC_WRITE,
+                      FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                      /* creation: */ OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
   /* Opened file succesfully */
   if (h_file == INVALID_HANDLE_VALUE) {
@@ -91,31 +93,36 @@ void CyclicArray::Reset() {
 bool CyclicArray::WriteDataToFile(HANDLE h_file, uint64_t offset,
                                   unsigned int size_in_bytes, void* p_data) {
   if (h_file == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: File handle is NULL");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: File handle is NULL");
   }
   if (size_in_bytes == 0) {
     return true;
   }
   if (p_data == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: Pointer to data is NULL");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: Pointer to data is NULL");
   }
   if (size_in_bytes > MAX_FILE_SIZE) {
     return log.Log(
         Logger::LogLevel::error,
-        L"ERROR: Size of data to write is too large! size_in_bytes: " +
+        /* message: */
+            L"ERROR: Size of data to write is too large! size_in_bytes: " +
             std::to_wstring(size_in_bytes) + L" bytes!");
   }
   if (offset < 0) {
     return log.Log(Logger::LogLevel::error,
-                   L"ERROR: Offset is negative! offset:" +
+                   /* message: */ L"ERROR: Offset is negative! offset:" +
                        std::to_wstring(offset) + L" bytes!");
   }
   if (offset + size_in_bytes > MAX_FILE_SIZE) {
-    return log.Log(Logger::LogLevel::error,
-                   L"ERROR: Offset + size_in_bytes is greater than max file "
-                   L"size! offset: " +
-                       std::to_wstring(offset) + L" bytes! size_in_bytes: " +
-                       std::to_wstring(size_in_bytes) + L" bytes!");
+    return log.Log(
+        Logger::LogLevel::error,
+        /* message: */
+            L"ERROR: Offset + size_in_bytes is greater than max file "
+            L"size! offset: " +
+            std::to_wstring(offset) + L" bytes! size_in_bytes: " +
+            std::to_wstring(size_in_bytes) + L" bytes!");
   }
 
   DWORD dw_bytes_written;
@@ -125,13 +132,14 @@ bool CyclicArray::WriteDataToFile(HANDLE h_file, uint64_t offset,
 
   li_distance_to_move.QuadPart = offset;
 
-  while (!SetFilePointerEx(h_file, li_distance_to_move, NULL, FILE_BEGIN)) {
+  while (!SetFilePointerEx(h_file, li_distance_to_move, /* new_pos: */ NULL,
+                           /* method: */ FILE_BEGIN)) {
     log << L"SetFilePointerEx failed! Retry counter:" << num_retries << L"\n";
     num_retries++;
     if (num_retries > MAX_NUM_RETRIES) {
       return false;
     }
-    Sleep(SLEEP_TIME_IN_MS);
+    Sleep(/* milliseconds: */ SLEEP_TIME_IN_MS);
   }
 
   while (resting_bytes > 0) {
@@ -147,10 +155,10 @@ bool CyclicArray::WriteDataToFile(HANDLE h_file, uint64_t offset,
       num_retries++;
       if (num_retries > MAX_NUM_RETRIES) {
         return log.Log(Logger::LogLevel::error,
-                       L"ERROR: WriteFile failed! num_retries:" +
+                       /* message: */ L"ERROR: WriteFile failed! num_retries:" +
                            std::to_wstring(num_retries));
       }
-      Sleep(SLEEP_TIME_IN_MS);
+      Sleep(/* milliseconds: */ SLEEP_TIME_IN_MS);
     }
   }
   return true;
@@ -160,31 +168,36 @@ bool CyclicArray::WriteDataToFile(HANDLE h_file, uint64_t offset,
 bool CyclicArray::ReadDataFromFile(HANDLE h_file, uint64_t offset,
                                    unsigned int size_in_bytes, void* p_data) {
   if (h_file == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: File handle is NULL");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: File handle is NULL");
   }
   if (size_in_bytes == 0) {
     return true;
   }
   if (p_data == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: Pointer to data is NULL");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: Pointer to data is NULL");
   }
   if (size_in_bytes > MAX_FILE_SIZE) {
     return log.Log(
         Logger::LogLevel::error,
-        L"ERROR: Size of data to write is too large! size_in_bytes: " +
+        /* message: */
+            L"ERROR: Size of data to write is too large! size_in_bytes: " +
             std::to_wstring(size_in_bytes) + L" bytes!");
   }
   if (offset < 0) {
     return log.Log(Logger::LogLevel::error,
-                   L"ERROR: Offset is negative! offset:" +
+                   /* message: */ L"ERROR: Offset is negative! offset:" +
                        std::to_wstring(offset) + L" bytes!");
   }
   if (offset + size_in_bytes > MAX_FILE_SIZE) {
-    return log.Log(Logger::LogLevel::error,
-                   L"ERROR: Offset + size_in_bytes is greater than max file "
-                   L"size! offset: " +
-                       std::to_wstring(offset) + L" bytes! size_in_bytes: " +
-                       std::to_wstring(size_in_bytes) + L" bytes!");
+    return log.Log(
+        Logger::LogLevel::error,
+        /* message: */
+            L"ERROR: Offset + size_in_bytes is greater than max file "
+            L"size! offset: " +
+            std::to_wstring(offset) + L" bytes! size_in_bytes: " +
+            std::to_wstring(size_in_bytes) + L" bytes!");
   }
 
   DWORD dw_bytes_written;
@@ -194,18 +207,19 @@ bool CyclicArray::ReadDataFromFile(HANDLE h_file, uint64_t offset,
 
   li_distance_to_move.QuadPart = offset;
 
-  while (!SetFilePointerEx(h_file, li_distance_to_move, NULL, FILE_BEGIN)) {
+  while (!SetFilePointerEx(h_file, li_distance_to_move, /* new_pos: */ NULL,
+                           /* method: */ FILE_BEGIN)) {
     log << L"SetFilePointerEx failed! Retry counter:" << num_retries << L"\n";
     num_retries++;
     if (num_retries > MAX_NUM_RETRIES) {
       return false;
     }
-    Sleep(SLEEP_TIME_IN_MS);
+    Sleep(/* milliseconds: */ SLEEP_TIME_IN_MS);
   }
 
   while (resting_bytes > 0) {
-    if (ReadFile(h_file, p_data, size_in_bytes, &dw_bytes_written, NULL) ==
-        TRUE) {
+    if (ReadFile(h_file, /* buf: */ p_data, size_in_bytes, &dw_bytes_written,
+                 NULL) == TRUE) {
       resting_bytes -= dw_bytes_written;
       p_data = (void*)(((unsigned char*)p_data) + dw_bytes_written);
       if (resting_bytes > 0) {
@@ -216,10 +230,10 @@ bool CyclicArray::ReadDataFromFile(HANDLE h_file, uint64_t offset,
       num_retries++;
       if (num_retries > MAX_NUM_RETRIES) {
         return log.Log(Logger::LogLevel::error,
-                       L"ERROR: ReadFile failed! num_retries:" +
+                       /* message: */ L"ERROR: ReadFile failed! num_retries:" +
                            std::to_wstring(num_retries));
       }
-      Sleep(SLEEP_TIME_IN_MS);
+      Sleep(/* milliseconds: */ SLEEP_TIME_IN_MS);
     }
   }
   return true;
@@ -270,16 +284,19 @@ bool CyclicArray::AddBytes(unsigned int num_bytes,
     return true;
   }
   if (p_data == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: Pointer to data is NULL!");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: Pointer to data is NULL!");
   }
   if (h_file == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: File handle is NULL!");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: File handle is NULL!");
   }
   if (num_bytes > WriteableBytes()) {
-    return log.Log(Logger::LogLevel::error,
-                   L"ERROR: Not enough space in cyclic array! num_bytes:" +
-                       std::to_wstring(num_bytes) + L" bytes! writeable_bytes" +
-                       std::to_wstring(WriteableBytes()) + L" bytes!");
+    return log.Log(
+        Logger::LogLevel::error,
+        /* message: */ L"ERROR: Not enough space in cyclic array! num_bytes:" +
+            std::to_wstring(num_bytes) + L" bytes! writeable_bytes" +
+            std::to_wstring(/* val: */ WriteableBytes()) + L" bytes!");
   }
 
   /* Locals */
@@ -299,7 +316,7 @@ bool CyclicArray::AddBytes(unsigned int num_bytes,
       /* Copy data into reading block, if reading block is the same as writing
        * block */
       if (cur_reading_block == cur_writing_block) {
-        memcpy(reading_block, writing_block, block_size);
+        memcpy(reading_block, writing_block, /* n: */ block_size);
         /* Until now the reading pointer was using the writing block. Now it has
          * to use the reading block */
         cur_reading_pointer =
@@ -307,13 +324,14 @@ bool CyclicArray::AddBytes(unsigned int num_bytes,
       }
 
       /* Store block in file */
-      if (!WriteDataToFile(h_file, block_size * cur_writing_block, block_size,
-                           writing_block)) {
-        return log.Log(Logger::LogLevel::error,
-                       L"ERROR: WriteDataToFile failed! cur_writing_block:" +
-                           std::to_wstring(cur_writing_block) +
-                           L" bytes_written:" + std::to_wstring(bytes_written) +
-                           L" bytes!");
+      if (!WriteDataToFile(h_file, /* offset: */ block_size * cur_writing_block,
+                           block_size, writing_block)) {
+        return log.Log(
+            Logger::LogLevel::error,
+            /* message: */ L"ERROR: WriteDataToFile failed! "
+                           L"cur_writing_block:" +
+                std::to_wstring(cur_writing_block) + L" bytes_written:" +
+                std::to_wstring(bytes_written) + L" bytes!");
       }
 
       /* Set pointer to beginning of writing block */
@@ -338,16 +356,19 @@ bool CyclicArray::TakeBytes(unsigned int num_bytes, unsigned char* p_data) {
     return true;
   }
   if (p_data == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: Pointer to data is NULL!");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: Pointer to data is NULL!");
   }
   if (h_file == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: File handle is NULL!");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: File handle is NULL!");
   }
   if (num_bytes > WriteableBytes()) {
-    return log.Log(Logger::LogLevel::error,
-                   L"ERROR: Not enough space in cyclic array! num_bytes:" +
-                       std::to_wstring(num_bytes) + L" bytes! writeable_bytes" +
-                       std::to_wstring(WriteableBytes()) + L" bytes!");
+    return log.Log(
+        Logger::LogLevel::error,
+        /* message: */ L"ERROR: Not enough space in cyclic array! num_bytes:" +
+            std::to_wstring(num_bytes) + L" bytes! writeable_bytes" +
+            std::to_wstring(/* val: */ WriteableBytes()) + L" bytes!");
   }
 
   /* Locals */
@@ -379,14 +400,16 @@ bool CyclicArray::TakeBytes(unsigned int num_bytes, unsigned char* p_data) {
         /* Set pointer to beginning of the reading block */
         cur_reading_pointer = reading_block;
 
-            /* Store block in file */
-            if (!ReadDataFromFile(h_file, block_size * cur_reading_block,
-                                  block_size, reading_block)) {
-          return log.Log(Logger::LogLevel::error,
-                         L"ERROR: ReadDataFromFile failed! cur_reading_block:" +
-                             std::to_wstring(cur_reading_block) +
-                             L" bytes_written:" + std::to_wstring(bytes_read) +
-                             L" bytes!");
+        /* Store block in file */
+        if (!ReadDataFromFile(h_file,
+                              /* offset: */ block_size * cur_reading_block,
+                              block_size, reading_block)) {
+          return log.Log(
+              Logger::LogLevel::error,
+              /* message: */
+                  L"ERROR: ReadDataFromFile failed! cur_reading_block:" +
+                  std::to_wstring(cur_reading_block) + L" bytes_written:" +
+                  std::to_wstring(bytes_read) + L" bytes!");
         }
       }
     }
@@ -415,18 +438,22 @@ bool CyclicArray::LoadFile(std::wstring const& file_name,
 
   /* Cyclic array file must be open */
   if (h_file == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: File handle is NULL!");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: File handle is NULL!");
   }
 
   /* Open Database File (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH |
    * FILE_FLAG_RANDOM_ACCESS) */
-  h_load_file = CreateFile(file_name.c_str(), GENERIC_READ, FILE_SHARE_READ,
-                           NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  h_load_file =
+      CreateFile(/* path: */ file_name.c_str(), /* access: */ GENERIC_READ,
+                 FILE_SHARE_READ, NULL, /* creation: */ OPEN_EXISTING,
+                 FILE_ATTRIBUTE_NORMAL, NULL);
 
   /* Opened file succesfully */
   if (h_load_file == INVALID_HANDLE_VALUE) {
-    return log.Log(Logger::LogLevel::error,
-                   L"ERROR: File handle is NULL! file_name:" + file_name);
+    return log.Log(
+        Logger::LogLevel::error,
+        /* message: */ L"ERROR: File handle is NULL! file_name:" + file_name);
   }
 
   /* Does data of the file fit into cyclic array? */
@@ -436,9 +463,9 @@ bool CyclicArray::LoadFile(std::wstring const& file_name,
   if (max_file_size < large_int.QuadPart) {
     CloseHandle(h_load_file);
     return log.Log(Logger::LogLevel::error,
-                   L"ERROR: File too large! file_name:" + file_name +
-                       L" max_file_size:" + std::to_wstring(max_file_size) +
-                       L" bytes! file_size:" +
+                   /* message: */ L"ERROR: File too large! file_name:" +
+                       file_name + L" max_file_size:" +
+                       std::to_wstring(max_file_size) + L" bytes! file_size:" +
                        std::to_wstring(large_int.QuadPart) + L" bytes!");
   }
 
@@ -457,10 +484,11 @@ bool CyclicArray::LoadFile(std::wstring const& file_name,
     if (!ReadDataFromFile(h_load_file, cur_offset, block_size, data_in_file)) {
       delete[] data_in_file;
       CloseHandle(h_load_file);
-      return log.Log(Logger::LogLevel::error,
-                     L"ERROR: ReadDataFromFile failed! cur_block:" +
-                         std::to_wstring(cur_block) + L" bytes_loaded: " +
-                         std::to_wstring(num_bytes_loaded) + L" bytes!");
+      return log.Log(
+          Logger::LogLevel::error,
+          /* message: */ L"ERROR: ReadDataFromFile failed! cur_block:" +
+              std::to_wstring(cur_block) + L" bytes_loaded: " +
+              std::to_wstring(num_bytes_loaded) + L" bytes!");
     }
 
     /* Put block in cyclic array */
@@ -468,7 +496,7 @@ bool CyclicArray::LoadFile(std::wstring const& file_name,
       delete[] data_in_file;
       CloseHandle(h_load_file);
       return log.Log(Logger::LogLevel::error,
-                     L"ERROR: AddBytes failed! cur_block:" +
+                     /* message: */ L"ERROR: AddBytes failed! cur_block:" +
                          std::to_wstring(cur_block) + L" bytes_loaded: " +
                          std::to_wstring(num_bytes_loaded) + L" bytes!");
     }
@@ -480,9 +508,11 @@ bool CyclicArray::LoadFile(std::wstring const& file_name,
   if (!AddBytes(num_bytes_in_last_block, data_in_file)) {
     delete[] data_in_file;
     CloseHandle(h_load_file);
-    return log.Log(Logger::LogLevel::error,
-                   L"ERROR: AddBytes failed for last block! bytes_loaded: " +
-                       std::to_wstring(num_bytes_loaded) + L" bytes!");
+    return log.Log(
+        Logger::LogLevel::error,
+        /* message: */ L"ERROR: AddBytes failed for last block! "
+                       L"bytes_loaded: " +
+            std::to_wstring(num_bytes_loaded) + L" bytes!");
   }
   cur_offset += num_bytes_in_last_block;
   num_bytes_loaded = cur_offset;
@@ -512,18 +542,22 @@ bool CyclicArray::SaveFile(std::wstring const& file_name) {
 
   /* Cyclic array must be open */
   if (h_file == NULL) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: File handle is NULL!");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: File handle is NULL!");
   }
 
   /* Open Database File (FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH |
    * FILE_FLAG_RANDOM_ACCESS) */
-  h_save_file = CreateFile(file_name.c_str(), GENERIC_READ, FILE_SHARE_READ,
-                           NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+  h_save_file =
+      CreateFile(/* path: */ file_name.c_str(), /* access: */ GENERIC_READ,
+                 FILE_SHARE_READ, NULL, /* creation: */ OPEN_ALWAYS,
+                 FILE_ATTRIBUTE_NORMAL, NULL);
 
   /* Opened file succesfully */
   if (h_save_file == INVALID_HANDLE_VALUE) {
-    return log.Log(Logger::LogLevel::error,
-                   L"ERROR: File handle is NULL! file_name:" + file_name);
+    return log.Log(
+        Logger::LogLevel::error,
+        /* message: */ L"ERROR: File handle is NULL! file_name:" + file_name);
   }
 
   /* Alloc mem */
@@ -559,14 +593,15 @@ bool CyclicArray::SaveFile(std::wstring const& file_name) {
       bytes_to_write = block_size - (cur_reading_pointer - reading_block);
       /* Store data from file */
     } else {
-      if (!ReadDataFromFile(h_file, cur_block * block_size, block_size,
-                            data_in_file)) {
+      if (!ReadDataFromFile(h_file, /* offset: */ cur_block * block_size,
+                            block_size, data_in_file)) {
         delete[] data_in_file;
         CloseHandle(h_file);
-        return log.Log(Logger::LogLevel::error,
-                       L"ERROR: ReadDataFromFile failed! cur_block:" +
-                           std::to_wstring(cur_block) + L" bytes_written: " +
-                           std::to_wstring(total_bytes_written) + L" bytes!");
+        return log.Log(
+            Logger::LogLevel::error,
+            /* message: */ L"ERROR: ReadDataFromFile failed! cur_block:" +
+                std::to_wstring(cur_block) + L" bytes_written: " +
+                std::to_wstring(total_bytes_written) + L" bytes!");
       }
       pointer = data_in_file;
       bytes_to_write = block_size;
@@ -577,14 +612,14 @@ bool CyclicArray::SaveFile(std::wstring const& file_name) {
                          pointer)) {
       delete[] data_in_file;
       CloseHandle(h_save_file);
-      return log.Log(Logger::LogLevel::error,
-                     L"ERROR: WriteDataFromFile failed! cur_block:" +
-                         std::to_wstring(cur_block) + L" bytes_written: " +
-                         std::to_wstring(total_bytes_written) + L" bytes!");
+      return log.Log(
+          Logger::LogLevel::error,
+          /* message: */ L"ERROR: WriteDataFromFile failed! cur_block:" +
+              std::to_wstring(cur_block) + L" bytes_written: " +
+              std::to_wstring(total_bytes_written) + L" bytes!");
     }
     total_bytes_written += bytes_to_write;
     cur_block = (cur_block + 1) % num_blocks;
-    ;
     iteration_count++;
   };
 
@@ -594,6 +629,7 @@ bool CyclicArray::SaveFile(std::wstring const& file_name) {
     delete[] data_in_file;
     CloseHandle(h_save_file);
     return log.Log(Logger::LogLevel::error,
+                   /* message: */
                    L"ERROR: SaveFile exceeded maxmimum iterations, possible "
                    L"corrupted state!");
   }
@@ -604,4 +640,4 @@ bool CyclicArray::SaveFile(std::wstring const& file_name) {
   return true;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

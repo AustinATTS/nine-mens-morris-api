@@ -124,7 +124,7 @@ bool CompressChunk(const unsigned char* source, unsigned int source_size,
     }
   }
 
-  int result = deflate(&stream, /* flush: */Z_FINISH);
+  int result = deflate(&stream, /* flush: */ Z_FINISH);
 
   if (result != Z_STREAM_END) {
     deflateEnd(&stream);
@@ -155,7 +155,8 @@ bool CompressChunk(const unsigned char* source, unsigned int source_size,
   destination[0] = MSZIP_SIGNATURE[0];
   destination[1] = MSZIP_SIGNATURE[1];
 
-  std::memcpy(/* dest: */destination + 2, /* src: */compressed.data(), actual_compressed_size);
+  std::memcpy(/* dest: */ destination + 2, /* src: */ compressed.data(),
+              actual_compressed_size);
 
   return true;
 }
@@ -205,7 +206,7 @@ bool DecompressChunk(const unsigned char* compressed,
     }
   }
 
-  const int result = inflate(&stream, /* flush: */Z_FINISH);
+  const int result = inflate(&stream, /* flush: */ Z_FINISH);
 
   if (result != Z_STREAM_END) {
     inflateEnd(&stream);
@@ -219,7 +220,7 @@ bool DecompressChunk(const unsigned char* compressed,
   return true;
 }
 
-}  /* namespace */
+} /* namespace */
 
 ZLibApi::ZLibApi() {
   /* IMPORTANT:
@@ -261,10 +262,11 @@ bool ZLibApi::Compress(void* compressed_data, void* source_data,
   output.reserve(compressed_buffer_size);
 
   /* Reserve header. */
-  output.resize(MSZIP_HEADER_SIZE, /* x: */0);
+  output.resize(MSZIP_HEADER_SIZE, /* x: */ 0);
 
   /* Header magic. */
-  std::memcpy(/* dest: */output.data(), /* src: */MSZIP_MAGIC, /* n: */sizeof(MSZIP_MAGIC));
+  std::memcpy(/* dest: */ output.data(), /* src: */ MSZIP_MAGIC,
+              /* n: */ sizeof(MSZIP_MAGIC));
 
   /* CRC/check byte.
    *
@@ -278,16 +280,16 @@ bool ZLibApi::Compress(void* compressed_data, void* source_data,
   output[7] = MSZIP_ALGORITHM;
 
   /* Total uncompressed size. */
-  WriteUInt64LE(/* data: */output.data() + 8,
+  WriteUInt64LE(/* data: */ output.data() + 8,
                 static_cast<std::uint64_t>(n_bytes_to_compress));
 
   /* First chunk size.
    *
    * This is the uncompressed size of the first chunk. */
   const unsigned int first_chunk_size =
-      std::min(/* a: */n_bytes_to_compress, /* b: */MSZIP_MAX_CHUNK_SIZE);
+      std::min(/* a: */ n_bytes_to_compress, /* b: */ MSZIP_MAX_CHUNK_SIZE);
 
-  WriteUInt64LE(/* data: */output.data() + 16,
+  WriteUInt64LE(/* data: */ output.data() + 16,
                 static_cast<std::uint64_t>(first_chunk_size));
 
   /* MSZIP carries the last 32 KiB of the previous chunk as the
@@ -298,18 +300,21 @@ bool ZLibApi::Compress(void* compressed_data, void* source_data,
 
   while (source_offset < n_bytes_to_compress) {
     const unsigned int chunk_size =
-        std::min(/* a: */MSZIP_MAX_CHUNK_SIZE, /* b: */n_bytes_to_compress - source_offset);
+        std::min(/* a: */ MSZIP_MAX_CHUNK_SIZE,
+                 /* b: */ n_bytes_to_compress - source_offset);
 
-    if (!CompressChunk(source + source_offset, /* source_size: */chunk_size, output,
-                       /* dictionary: */dictionary.empty() ? nullptr : dictionary.data(),
-                       /* dictionary_size: */static_cast<unsigned int>(dictionary.size()))) {
+    if (!CompressChunk(
+            source + source_offset, /* source_size: */ chunk_size, output,
+            /* dictionary: */ dictionary.empty() ? nullptr : dictionary.data(),
+            /* dictionary_size: */
+            static_cast<unsigned int>(dictionary.size()))) {
       return false;
     }
 
     /* The dictionary for the next block is the last 32 KiB of the
      * current uncompressed block. */
-    dictionary.assign(/* first: */source + source_offset,
-                      /* last: */source + source_offset + chunk_size);
+    dictionary.assign(/* first: */ source + source_offset,
+                      /* last: */ source + source_offset + chunk_size);
 
     source_offset += chunk_size;
   }
@@ -319,7 +324,8 @@ bool ZLibApi::Compress(void* compressed_data, void* source_data,
     return false;
   }
 
-  std::memcpy(compressed_data, /* src: */output.data(), /* n: */output.size());
+  std::memcpy(compressed_data, /* src: */ output.data(),
+              /* n: */ output.size());
 
   n_bytes_compressed = static_cast<unsigned int>(output.size());
 
@@ -343,7 +349,8 @@ bool ZLibApi::Decompress(void* dest_data, void* compressed_data,
   const auto* source = reinterpret_cast<const unsigned char*>(compressed_data);
 
   /* Verify MSZIP header magic. */
-  if (std::memcmp(/* s1: */source, /* s2: */MSZIP_MAGIC, /* n: */sizeof(MSZIP_MAGIC)) != 0) {
+  if (std::memcmp(/* s1: */ source, /* s2: */ MSZIP_MAGIC,
+                  /* n: */ sizeof(MSZIP_MAGIC)) != 0) {
     return false;
   }
 
@@ -352,7 +359,8 @@ bool ZLibApi::Decompress(void* dest_data, void* compressed_data,
     return false;
   }
 
-  const std::uint64_t expected_uncompressed_size = ReadUInt64LE(/* data: */source + 8);
+  const std::uint64_t expected_uncompressed_size =
+      ReadUInt64LE(/* data: */ source + 8);
 
   /* Our destination buffer is sized to the requested section size. */
   if (expected_uncompressed_size >
@@ -377,7 +385,8 @@ bool ZLibApi::Decompress(void* dest_data, void* compressed_data,
       return false;
     }
 
-    const std::uint32_t chunk_size = ReadUInt32LE(/* data: */source + source_offset);
+    const std::uint32_t chunk_size =
+        ReadUInt32LE(/* data: */ source + source_offset);
 
     source_offset += 4;
 
@@ -409,15 +418,17 @@ bool ZLibApi::Decompress(void* dest_data, void* compressed_data,
     }
 
     const unsigned int maximum_chunk_output =
-        std::min(/* a: */remaining_output, /* b: */MSZIP_MAX_CHUNK_SIZE);
+        std::min(/* a: */ remaining_output, /* b: */ MSZIP_MAX_CHUNK_SIZE);
 
     unsigned int chunk_output_size = 0;
 
-    if (!DecompressChunk(/* compressed: */source + source_offset, /* compressed_size: */chunk_size,
-                         destination + destination_offset, /* destination_size: */maximum_chunk_output,
-                         /* dictionary: */dictionary.empty() ? nullptr : dictionary.data(),
-                         /* dictionary_size: */static_cast<unsigned int>(dictionary.size()),
-                         /* bytes_decompressed: */chunk_output_size)) {
+    if (!DecompressChunk(
+            /* compressed: */ source + source_offset,
+            /* compressed_size: */ chunk_size, destination + destination_offset,
+            /* destination_size: */ maximum_chunk_output,
+            /* dictionary: */ dictionary.empty() ? nullptr : dictionary.data(),
+            /* dictionary_size: */ static_cast<unsigned int>(dictionary.size()),
+            /* bytes_decompressed: */ chunk_output_size)) {
       return false;
     }
 
@@ -430,13 +441,14 @@ bool ZLibApi::Decompress(void* dest_data, void* compressed_data,
 
     /* Preserve the current chunk as the dictionary for the next
      * chunk. */
-    dictionary.assign(/* first: */destination + destination_offset - chunk_output_size,
-                      /* last: */destination + destination_offset);
+    dictionary.assign(
+        /* first: */ destination + destination_offset - chunk_output_size,
+        /* last: */ destination + destination_offset);
 
     /* The MSZIP dictionary is limited to 32 KiB. */
     if (dictionary.size() > MSZIP_MAX_CHUNK_SIZE) {
-      dictionary.erase(/* first: */dictionary.begin(),
-                       /* last: */dictionary.end() - MSZIP_MAX_CHUNK_SIZE);
+      dictionary.erase(/* first: */ dictionary.begin(),
+                       /* last: */ dictionary.end() - MSZIP_MAX_CHUNK_SIZE);
     }
 
     source_offset += chunk_size;
@@ -469,6 +481,7 @@ long long ZLibApi::EstimateMaxSizeOfCompressedData(
    *   2-byte CK signature for every chunk
    *
    * Give ourselves a generous additional margin. */
+
   const long long number_of_chunks =
       (amount_uncompressed_data + MSZIP_MAX_CHUNK_SIZE - 1) /
       MSZIP_MAX_CHUNK_SIZE;
@@ -489,5 +502,5 @@ long long ZLibApi::EstimateMaxSizeOfCompressedData(
   return compressed_buffer_size;
 }
 
-}  /* namespace compressor */
-}  /* namespace muehle */
+} /* namespace compressor */
+} /* namespace muehle */

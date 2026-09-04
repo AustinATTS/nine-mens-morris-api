@@ -78,7 +78,8 @@ void ThreadManagerClass::WaitForAllThreadsToTerminate() {
   }
 
   /* Wait for every thread to end */
-  WaitForMultipleObjects(num_threads, h_threads.data(), true, INFINITE);
+  WaitForMultipleObjects(/* count: */ num_threads,
+                         /* handles: */ h_threads.data(), true, INFINITE);
 
   /* Close all thread handles upon completion */
   for (auto& thread : threads) {
@@ -108,7 +109,9 @@ void ThreadManagerClass::WaitForOtherThreads() {
 }
 
 /* Returns the number of threads */
-unsigned int ThreadManagerClass::GetNumThreads() { return num_threads; }
+unsigned int ThreadManagerClass::GetNumThreads() {
+  return num_threads;
+}
 
 /* Returns true if any thread is running */
 bool ThreadManagerClass::AnyThreadRunning() {
@@ -166,7 +169,9 @@ void ThreadManagerClass::CancelExecution() {
 }
 
 /* Tells if the execution was cancelled */
-bool ThreadManagerClass::WasExecutionCancelled() { return execution_cancelled; }
+bool ThreadManagerClass::WasExecutionCancelled() {
+  return execution_cancelled;
+}
 
 /* Returns a number from 0 to 'num_threads'-1. Returns num_threads if the
  * function fails */
@@ -219,9 +224,11 @@ unsigned int ThreadManagerClass::ExecuteInParallel(
   for (cur_thread_no = 0; cur_thread_no < num_threads; cur_thread_no++) {
     void* p_user =
         (void*)(((char*)p_parameter) + cur_thread_no * parameter_struct_size);
-    threads[cur_thread_no].h_thread = CreateThread(
-        NULL, dw_stack_size, (LPTHREAD_START_ROUTINE)ThreadProc, p_user,
-        CREATE_SUSPENDED, &threads[cur_thread_no].thread_id);
+    threads[cur_thread_no].h_thread =
+        CreateThread(NULL, dw_stack_size, (LPTHREAD_START_ROUTINE)ThreadProc,
+                     /* param: */ p_user,
+                     /* creation_flags: */ CREATE_SUSPENDED,
+                     &threads[cur_thread_no].thread_id);
     SetThreadPriority(threads[cur_thread_no].h_thread,
                       THREAD_PRIORITY_BELOW_NORMAL);
 
@@ -256,8 +263,7 @@ unsigned int ThreadManagerClass::ExecuteInParallel(
  * a chunk to work on. p_parameter is an array of size num_threads containing
  * the user defined structures. final_value is part of the iteration, meaning
  * that index ranges from initial_value to final_value including both border
- * values.
- */
+ * values. */
 unsigned int ThreadManagerClass::ExecuteParallelLoop(
     DWORD ThreadProc(void* p_parameter, int64_t index), void* p_parameter,
     unsigned int parameter_struct_size, unsigned int schedule_type,
@@ -281,7 +287,7 @@ unsigned int ThreadManagerClass::ExecuteParallelLoop(
   if (increment == 0) {
     return TM_RETURN_VALUE_INVALID_PARAM;
   }
-  if (abs(final_value - initial_value) + 1 < abs(increment)) {
+  if (abs(/* x: */ final_value - initial_value) + 1 < abs(increment)) {
     return TM_RETURN_VALUE_INVALID_PARAM;
   }
 
@@ -344,8 +350,9 @@ unsigned int ThreadManagerClass::ExecuteParallelLoop(
     /* Create suspend thread */
     threads[cur_thread_no].h_thread =
         CreateThread(NULL, dw_stack_size, ThreadForLoop,
-                     (LPVOID)(&for_loop_parameters[cur_thread_no]),
-                     CREATE_SUSPENDED, &threads[cur_thread_no].thread_id);
+                     /* param: */ (LPVOID)(&for_loop_parameters[cur_thread_no]),
+                     /* creation_flags: */ CREATE_SUSPENDED,
+                     &threads[cur_thread_no].thread_id);
     SetThreadPriority(threads[cur_thread_no].h_thread,
                       THREAD_PRIORITY_BELOW_NORMAL);
     if (threads[cur_thread_no].h_thread == NULL) {
@@ -406,7 +413,9 @@ DWORD ThreadManagerClass::ThreadForLoop(LPVOID lp_parameter) {
             break;
         }
         /* Check if the execution was cancelled */
-        if (for_loop_parameters->thread_manager->terminate_all_threads) break;
+        if (for_loop_parameters->thread_manager->terminate_all_threads) {
+          break;
+        }
       }
       break;
     case TM_SCHEDULE_DYNAMIC:
@@ -423,4 +432,4 @@ DWORD ThreadManagerClass::ThreadForLoop(LPVOID lp_parameter) {
   return TM_RETURN_VALUE_OK;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

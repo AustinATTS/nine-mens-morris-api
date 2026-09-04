@@ -33,5 +33,5 @@ bool mini_max::StateAddressStruct::operator>(
   return (state_number > rhs.state_number);
 }
 
-}  // namespace mini_max
-}  // namespace muehle
+}  /* namespace mini_max */
+}  /* namespace muehle */

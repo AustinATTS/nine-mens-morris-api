@@ -30,4 +30,4 @@ void mini_max::integrity::CheckerThreadVars::Reduce() {
       this->states_processed.GetStatesProcessedByThisThread();
 }
 
-}  // namespace muehle
+} /* namespace muehle */

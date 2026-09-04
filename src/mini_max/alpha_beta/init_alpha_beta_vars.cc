@@ -14,4 +14,4 @@ mini_max::alpha_beta::InitAlphaBetaVars::InitAlphaBetaVars(
                        r_solver.rough_total_num_states_processed,
                        r_solver.total_num_states_processed, r_solver.log) {}
 
-}  // namespace muehle
+} /* namespace muehle */

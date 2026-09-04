@@ -3,9 +3,9 @@
 #include "muehle/mini_max/mini_max.h"
 #ifdef _WIN32
 #include <windows.h>
-#else // _WIN32
+#else /* _WIN32 */
 #include <muehle/win_32_compat.h>
-#endif // _WIN32
+#endif /* _WIN32 */
 
 namespace muehle {
 
@@ -41,17 +41,19 @@ bool mini_max::statistics::Monitor::CalcLayerStatistics(
 
   /* Database must be open */
   if (!db->IsOpen()) {
-    return log.Log(Logger::LogLevel::error,
-                   L"Database must be open to calculate statistics!");
+    return log.Log(
+        Logger::LogLevel::error,
+        /* message: */ L"Database must be open to calculate statistics!");
   }
 
   /* Open statistics file */
   std::wofstream stat_file(statistics_file_name,
-                           std::ios::out | std::ios::trunc);
+                           /* mode: */ std::ios::out | std::ios::trunc);
 
   /* Opened file successfully? */
   if (!stat_file.is_open()) {
-    return log.Log(Logger::LogLevel::error, L"Failed to open statistics file");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"Failed to open statistics file");
   }
 
   /* Headline */
@@ -85,7 +87,7 @@ bool mini_max::statistics::Monitor::CalcLayerStatistics(
     /* Only calc sats of completed layers */
     if (!db->UpdateLayerStats(cur_state.layer_number)) {
       return log.Log(Logger::LogLevel::error,
-                     L"Failed to update layer stats of layer: " +
+                     /* message: */ L"Failed to update layer stats of layer: " +
                          std::to_wstring(cur_state.layer_number) + L"\n");
     }
 
@@ -119,9 +121,10 @@ bool mini_max::statistics::Monitor::CalcLayerStatistics(
       if (!CalcMaxPlyInfo(cur_state.layer_number, max_ply_info_won,
                           max_ply_state_won, max_ply_info_lost,
                           max_ply_state_lost)) {
-        return log.Log(Logger::LogLevel::error,
-                       L"Failed to calculate max ply info for layer: " +
-                           std::to_wstring(cur_state.layer_number) + L"\n");
+        return log.Log(
+            Logger::LogLevel::error,
+            /* message: */ L"Failed to calculate max ply info for layer: " +
+                std::to_wstring(cur_state.layer_number) + L"\n");
       }
       stat_file << L"," << max_ply_info_won << L"," << max_ply_state_won << L","
                 << max_ply_info_lost << L"," << max_ply_state_lost;
@@ -166,16 +169,18 @@ bool mini_max::statistics::Monitor::CalcMaxPlyInfo(
     /* Get state value */
     if (!db->ReadKnotValueFromDatabase(layer_number, cur_state_number,
                                        cur_state_value)) {
-      return log.Log(Logger::LogLevel::error,
-                     L"ERROR: Reading knot value from database failed!");
+      return log.Log(
+          Logger::LogLevel::error,
+          /* message: */ L"ERROR: Reading knot value from database failed!");
     }
 
     if (cur_state_value == SKV_VALUE_GAME_WON ||
         cur_state_value == SKV_VALUE_GAME_LOST) {
       if (!db->ReadPlyInfoFromDatabase(layer_number, cur_state_number,
                                        cur_ply_info)) {
-        return log.Log(Logger::LogLevel::error,
-                       L"ERROR: Reading ply info from database failed!");
+        return log.Log(
+            Logger::LogLevel::error,
+            /* message: */ L"ERROR: Reading ply info from database failed!");
       }
     } else {
       continue;
@@ -239,4 +244,4 @@ mini_max::statistics::Monitor::Monitor(MiniMax* p_mini_max, Logger& log)
   mm = p_mini_max;
   db = &p_mini_max->db;
 }
-}  // namespace muehle
+} /* namespace muehle */

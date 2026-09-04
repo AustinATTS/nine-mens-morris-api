@@ -29,7 +29,7 @@ void ProgressCounter::StateProcessed(Logger& log,
     std::wstringstream wss;
     wss << text << rough_total_num_states_processed << " of "
         << num_knots_in_layer << " states being " << percentage << " %";
-    log.Log(Logger::LogLevel::info, wss.str().c_str());
+    log.Log(Logger::LogLevel::info, /* message: */ wss.str().c_str());
   }
 }
 
@@ -37,5 +37,5 @@ int64_t ProgressCounter::GetStatesProcessedByThisThread() const {
   return states_processed_by_this_thread;
 }
 
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace mini_max */
+} /* namespace muehle */

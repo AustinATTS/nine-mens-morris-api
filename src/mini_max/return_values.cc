@@ -7,10 +7,10 @@ namespace mini_max {
  * This is practical for debugging. */
 bool mini_max::ReturnValues::FalseOrStop() {
   if (ReturnValues::stop_con_critical_error) {
-    WaitForSingleObject(GetCurrentProcess(), INFINITE);
+    WaitForSingleObject(/* h: */ GetCurrentProcess(), INFINITE);
   }
   return false;
 }
 
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace mini_max */
+} /* namespace muehle */

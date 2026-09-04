@@ -8,6 +8,6 @@ bool DatabaseStatsStruct::operator==(const DatabaseStatsStruct& other) const {
   return completed == other.completed && num_layers == other.num_layers;
 }
 
-}  // namespace database
-}  // namespace mini_max
-} // namespace muehle
+} /* namespace database */
+} /* namespace mini_max */
+} /* namespace muehle */

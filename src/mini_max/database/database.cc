@@ -6,7 +6,7 @@
 #include "muehle/mini_max/database/uncomp_file.h"
 #ifdef _WIN32
 #include <intrin.h>
-#endif // _WIN32
+#endif /* _WIN32 */
 
 namespace muehle {
 
@@ -14,11 +14,11 @@ namespace muehle {
 mini_max::database::Database::Database(GameInterface& gi, Logger& log)
     : game(&gi), log(log), array_infos(log) {}
 
-
 /* destructor */
-mini_max::database::Database::~Database() { CloseDatabase(); }
+mini_max::database::Database::~Database() {
+  CloseDatabase();
+}
 
-/* Name: setAsComplete() */
 /* Set the database as completly calculated */
 bool mini_max::database::Database::SetAsComplete() {
   if (!IsOpen()) {
@@ -36,13 +36,12 @@ bool mini_max::database::Database::SetAsComplete() {
           L"ERROR: Layer " + std::to_wstring(layer_number) +
               L" is not completely calculated and saved in the file!");
     }
-       }
+  }
   log.Log(Logger::LogLevel::info, L"Database is set as complete.");
   db_stats.completed = true;
   return true;
 }
 
-/* Name: setLoadingOfFullLayerOnRead() */
 /* When a reading operation is performed, the full layer is loaded into */
 /* memory. */
 bool mini_max::database::Database::SetLoadingOfFullLayerOnRead() {
@@ -50,7 +49,6 @@ bool mini_max::database::Database::SetLoadingOfFullLayerOnRead() {
   return true;
 }
 
-/* Name: unload() */
 /* The database file is kept open, the header information stays, but the */
 /* data is unloaded from memory. */
 void mini_max::database::Database::Unload() {
@@ -58,25 +56,24 @@ void mini_max::database::Database::Unload() {
        layer_number++) {
     LayerStatsStruct& my_lss = layer_stats[layer_number];
 
-    array_infos.RemoveArray(layer_number, ArrayInfoStruct::ArrayType::layer_stats,
-                           my_lss.skv.size() * sizeof(TwoBit), 0);
+    array_infos.RemoveArray(layer_number,
+                            ArrayInfoStruct::ArrayType::layer_stats,
+                            my_lss.skv.size() * sizeof(TwoBit), 0);
     my_lss.skv.clear();
     my_lss.skv.shrink_to_fit();
     my_lss.is_skv_resized = false;
 
     array_infos.RemoveArray(layer_number, ArrayInfoStruct::ArrayType::ply_infos,
-                           my_lss.ply_info.size() * sizeof(PlyInfoVarType), 0);
+                            my_lss.ply_info.size() * sizeof(PlyInfoVarType), 0);
     my_lss.ply_info.clear();
     my_lss.ply_info.shrink_to_fit();
     my_lss.is_ply_info_resized = false;
-       }
+  }
   log.Log(Logger::LogLevel::info, L"Database data unloaded from memory.");
 }
 
-/* Name: resizePlyInfo() */
-/* */
 bool mini_max::database::Database::ResizeSkv(LayerStatsStruct& my_lss,
-                                            unsigned int layer_number) {
+                                             unsigned int layer_number) {
   /* lock the database mutex to prevent other threads from accessing the */
   /* database while resizing */
   std::lock_guard<std::mutex> lock(cs_database_mutex);
@@ -84,8 +81,10 @@ bool mini_max::database::Database::ResizeSkv(LayerStatsStruct& my_lss,
   /* check again if layer is already loaded, since another thread might have */
   /* loaded it in the meantime */
   if (!my_lss.is_skv_resized) {
-    /* reserve memory for this layer & create array for skv with default value */
-    my_lss.skv.resize((my_lss.knots_in_layer + 3) / 4, SKV_WHOLE_BYTE_IS_INVALID);
+    /* reserve memory for this layer & create array for skv with default value
+     */
+    my_lss.skv.resize((my_lss.knots_in_layer + 3) / 4,
+                      SKV_WHOLE_BYTE_IS_INVALID);
 
     /* if layer is in database and completed, then load layer from file into */
     /* memory, set default value otherwise */
@@ -93,26 +92,25 @@ bool mini_max::database::Database::ResizeSkv(LayerStatsStruct& my_lss,
       if (!file->ReadSkv(layer_number, my_lss.skv)) {
         return log.Log(Logger::LogLevel::error,
                        L"ERROR: Reading skv of layer " +
-                           std::to_wstring(layer_number) + L" from file failed!");
+                           std::to_wstring(layer_number) +
+                           L" from file failed!");
       }
     }
 
     if (!array_infos.AddArray(layer_number,
-                             ArrayInfoStruct::ArrayType::layer_stats,
-                             my_lss.skv.size() * sizeof(TwoBit), 0)) {
+                              ArrayInfoStruct::ArrayType::layer_stats,
+                              my_lss.skv.size() * sizeof(TwoBit), 0)) {
       return log.Log(Logger::LogLevel::error,
                      L"ERROR: Adding array to arrayInfos failed!");
-                             }
+    }
 
     my_lss.is_skv_resized = true;
   }
   return true;
 }
 
-/* Name: resizePlyInfo() */
-/* */
 bool mini_max::database::Database::ResizePlyInfo(LayerStatsStruct& my_lss,
-                                                unsigned int layer_number) {
+                                                 unsigned int layer_number) {
   /* lock the database mutex to prevent other threads from accessing the */
   /* database while resizing */
   std::lock_guard<std::mutex> lock(cs_database_mutex);
@@ -130,27 +128,27 @@ bool mini_max::database::Database::ResizePlyInfo(LayerStatsStruct& my_lss,
       if (!file->ReadPlyInfo(layer_number, my_lss.ply_info)) {
         return log.Log(Logger::LogLevel::error,
                        L"ERROR: Reading ply info of layer " +
-                           std::to_wstring(layer_number) + L" from file failed!");
+                           std::to_wstring(layer_number) +
+                           L" from file failed!");
       }
     }
 
     /* statistics */
-    if (!array_infos.AddArray(layer_number, ArrayInfoStruct::ArrayType::ply_infos,
-                             my_lss.ply_info.size() * sizeof(PlyInfoVarType),
-                             0)) {
+    if (!array_infos.AddArray(
+            layer_number, ArrayInfoStruct::ArrayType::ply_infos,
+            my_lss.ply_info.size() * sizeof(PlyInfoVarType), 0)) {
       return log.Log(Logger::LogLevel::error,
                      L"ERROR: Adding array to arrayInfos failed!");
-                             }
+    }
 
     my_lss.is_ply_info_resized = true;
   }
   return true;
 }
 
-/* Name: openDatabase() */
 /* Open the database file and load the header information. */
-bool mini_max::database::Database::OpenDatabase(std::wstring const& file_directory,
-                                               bool use_comp_file_if_both_exist) {
+bool mini_max::database::Database::OpenDatabase(
+    std::wstring const& file_directory, bool use_comp_file_if_both_exist) {
   /* do not open the database if it is already open */
   if (file) {
     return log.Log(Logger::LogLevel::error,
@@ -159,19 +157,22 @@ bool mini_max::database::Database::OpenDatabase(std::wstring const& file_directo
 
   /* check if database path is valid */
   if (file_directory.size() && !std::filesystem::exists(file_directory)) {
-    return log.Log(Logger::LogLevel::error, std::wstring{L"ERROR: Database path "} +
-                                                file_directory +
-                                                std::wstring{L" not valid!"});
+    return log.Log(Logger::LogLevel::error,
+                   std::wstring{L"ERROR: Database path "} + file_directory +
+                       std::wstring{L" not valid!"});
   }
 
   /* check which database file exists */
   bool has_comp = std::filesystem::exists(file_directory + L"/database.dat");
-  bool has_uncomp = std::filesystem::exists(file_directory + L"/shortKnotValue.dat") &&
-                   std::filesystem::exists(file_directory + L"/plyInfo.dat");
-  if (has_comp && (!has_uncomp || (has_uncomp && use_comp_file_if_both_exist))) {
+  bool has_uncomp =
+      std::filesystem::exists(file_directory + L"/shortKnotValue.dat") &&
+      std::filesystem::exists(file_directory + L"/plyInfo.dat");
+  if (has_comp &&
+      (!has_uncomp || (has_uncomp && use_comp_file_if_both_exist))) {
     log.Log(Logger::LogLevel::info, L"Using compressed database file.");
     file = new CompFile{game, log};
-  } else if (has_uncomp && (!has_comp || (has_comp && !use_comp_file_if_both_exist))) {
+  } else if (has_uncomp &&
+             (!has_comp || (has_comp && !use_comp_file_if_both_exist))) {
     log.Log(Logger::LogLevel::info, L"Using uncompressed database files.");
     file = new UncompFile{game, log};
   } else {
@@ -193,8 +194,7 @@ bool mini_max::database::Database::OpenDatabase(std::wstring const& file_directo
     return log.Log(Logger::LogLevel::error,
                    L"ERROR: Loading database header failed!");
   }
-  log << L"Database reports " << layer_stats.size()
-    << L" layers." << "\n";
+  log << L"Database reports " << layer_stats.size() << L" layers." << "\n";
 
   log << L"db_stats.num_layers = " << db_stats.num_layers << "\n";
   array_infos.Init(GetNumLayers());
@@ -203,7 +203,6 @@ bool mini_max::database::Database::OpenDatabase(std::wstring const& file_directo
   return true;
 }
 
-/* Name: closeDatabase() */
 /* Close the database file and unload all data from memory. */
 bool mini_max::database::Database::CloseDatabase() {
   if (!file) {
@@ -217,7 +216,6 @@ bool mini_max::database::Database::CloseDatabase() {
   return true;
 }
 
-/* Name: saveHeader() */
 /* Save the header information to the database file. */
 bool mini_max::database::Database::SaveHeader() {
   if (!file) {
@@ -226,7 +224,6 @@ bool mini_max::database::Database::SaveHeader() {
   return file->SaveHeader(db_stats, layer_stats);
 }
 
-/* Name: removeDatabaseFiles() */
 /* Remove the database files from the file system. */
 bool mini_max::database::Database::RemoveDatabaseFiles() {
   if (!file) {
@@ -235,7 +232,6 @@ bool mini_max::database::Database::RemoveDatabaseFiles() {
   return file->RemoveFile(file->GetFileDirectory());
 }
 
-/* Name: updateLayerStats() */
 /* Count the number of states in the layer - the number of won, lost, */
 /* drawn and invalid states */
 bool mini_max::database::Database::UpdateLayerStats(unsigned int layer_number) {
@@ -256,16 +252,17 @@ bool mini_max::database::Database::UpdateLayerStats(unsigned int layer_number) {
        cur_state.state_number < GetNumberOfKnots(cur_state.layer_number);
        cur_state.state_number++) {
     /* get state value */
-    if (!ReadKnotValueFromDatabase(cur_state.layer_number, cur_state.state_number,
-                                   cur_state_value)) {
+    if (!ReadKnotValueFromDatabase(cur_state.layer_number,
+                                   cur_state.state_number, cur_state_value)) {
       return log.Log(Logger::LogLevel::error,
                      L"ERROR: Reading knot value from database failed!");
-                                   }
+    }
     stats_value_counter[cur_state_value]++;
-       }
+  }
 
   /* store statistics */
-  layer_stats[layer_number].num_won_states = stats_value_counter[SKV_VALUE_GAME_WON];
+  layer_stats[layer_number].num_won_states =
+      stats_value_counter[SKV_VALUE_GAME_WON];
   layer_stats[layer_number].num_lost_states =
       stats_value_counter[SKV_VALUE_GAME_LOST];
   layer_stats[layer_number].num_drawn_states =
@@ -277,7 +274,6 @@ bool mini_max::database::Database::UpdateLayerStats(unsigned int layer_number) {
   return true;
 }
 
-/* Name: showLayerStats() */
 /* Print the statistics of the layer to the log */
 void mini_max::database::Database::ShowLayerStats(unsigned int layer_number) {
   if (layer_number >= layer_stats.size()) {
@@ -295,78 +291,7 @@ void mini_max::database::Database::ShowLayerStats(unsigned int layer_number) {
   log << " draw    states: " << GetNumDrawnStates(layer_number) << "\n";
   log << " invalid states: " << GetNumInvalidStates(layer_number) << "\n";
 }
-#pragma endregion
 
-#pragma region getter
-/* Name: isComplete() */
-/* Returns true if all layers of the database are completely calculated. */
-bool mini_max::database::Database::IsComplete() { return db_stats.completed; }
-
-/* Name: isLayerCompleteAndInFile() */
-/* Returns true if the layer is completely calculated and saved in the */
-/* file. */
-bool mini_max::database::Database::IsLayerCompleteAndInFile(
-    unsigned int layer_number) {
-  if (layer_number >= layer_stats.size()) {
-    return log.Log(
-        Logger::LogLevel::error,
-        L"ERROR: Layer " + std::to_wstring(layer_number) + L" does not exist!");
-  }
-  return layer_stats[layer_number].completed_and_in_file;
-}
-
-/* Name: getNumberOfKnots() */
-/* Returns the number of knots in the layer. */
-unsigned int mini_max::database::Database::GetNumberOfKnots(
-    unsigned int layer_number) {
-  if (layer_number >= layer_stats.size()) return 0;
-  return layer_stats[layer_number].knots_in_layer;
-}
-
-/* Name: getLayerSizeInBytes() */
-/* Returns the size of the layer in bytes, which might differ from the */
-/* number of knots. */
-long long mini_max::database::Database::GetLayerSizeInBytes(
-    unsigned int layer_num) {
-  if (layer_num >= layer_stats.size()) return 0;
-  return layer_stats[layer_num].GetLayerSizeInBytesForSkv() +
-         layer_stats[layer_num].GetLayerSizeInBytesForPlyInfo();
-}
-
-/* Name: getNumWonStates() */
-/* Returns the number of won states in the layer. */
-mini_max::StateNumberVarType mini_max::database::Database::GetNumWonStates(
-    unsigned int layer_num) {
-  if (layer_num >= layer_stats.size()) return 0;
-  return layer_stats[layer_num].num_won_states;
-}
-
-/* Name: getNumLostStates() */
-/* Returns the number of lost states in the layer. */
-mini_max::StateNumberVarType mini_max::database::Database::GetNumLostStates(
-    unsigned int layer_num) {
-  if (layer_num >= layer_stats.size()) return 0;
-  return layer_stats[layer_num].num_lost_states;
-}
-
-/* Name: getNumDrawnStates() */
-/* Returns the number of drawn states in the layer. */
-mini_max::StateNumberVarType mini_max::database::Database::GetNumDrawnStates(
-    unsigned int layer_num) {
-  if (layer_num >= layer_stats.size()) return 0;
-  return layer_stats[layer_num].num_drawn_states;
-}
-
-/* Name: getNumInvalidStates() */
-/* Returns the number of invalid states in the layer. */
-mini_max::StateNumberVarType mini_max::database::Database::GetNumInvalidStates(
-    unsigned int layer_num) {
-  if (layer_num >= layer_stats.size()) return 0;
-  return layer_stats[layer_num].num_invalid_states;
-}
-#pragma endregion
-
-/* Name: saveLayerToFile() */
 /* Save the layer to the file, which is already in memory. */
 /* The layer is marked as completed and saved in the file. */
 /* The layer is not saved if it is empty. */
@@ -387,13 +312,14 @@ bool mini_max::database::Database::SaveLayerToFile(unsigned int layer_number) {
 
   /* save layer if there are any states */
   if (!my_lss.skv.size()) {
-    return log.Log(Logger::LogLevel::error,
-                   L"ERROR: Layer " + std::to_wstring(layer_number) + L" is empty!");
-  }
-  if (!my_lss.ply_info.size()) {
     return log.Log(
         Logger::LogLevel::error,
-        L"ERROR: Ply info of layer " + std::to_wstring(layer_number) + L" is empty!");
+        L"ERROR: Layer " + std::to_wstring(layer_number) + L" is empty!");
+  }
+  if (!my_lss.ply_info.size()) {
+    return log.Log(Logger::LogLevel::error, L"ERROR: Ply info of layer " +
+                                                std::to_wstring(layer_number) +
+                                                L" is empty!");
   }
 
   cur_action = Activity::saving_layer_to_file;
@@ -417,13 +343,13 @@ bool mini_max::database::Database::SaveLayerToFile(unsigned int layer_number) {
   return true;
 }
 
-/* Name: loadLayerFromFile() */
 /* Load the layer from the file into memory. */
 /* The layer must be marked as completed and already saved in the */
 /* file. */
 /* The layer is not load if it not complete. */
 /* The header is not loaded, and must be loaded in advance. */
-bool mini_max::database::Database::LoadLayerFromFile(unsigned int layer_number) {
+bool mini_max::database::Database::LoadLayerFromFile(
+    unsigned int layer_number) {
   /* checks */
   if (!file || !IsOpen()) {
     return log.Log(Logger::LogLevel::error, L"ERROR: No database file open!");
@@ -454,7 +380,6 @@ bool mini_max::database::Database::LoadLayerFromFile(unsigned int layer_number) 
   return true;
 }
 
-/* Name: readKnotValueFromDatabase() */
 /* Read the knot value from the database. */
 /* If the layer is in memory, the data is read from memory. */
 /* If the layer is not in memory, the data is loaded from the file */
@@ -463,7 +388,8 @@ bool mini_max::database::Database::LoadLayerFromFile(unsigned int layer_number) 
 bool mini_max::database::Database::ReadKnotValueFromDatabase(
     unsigned int layer_number, unsigned int state_number, TwoBit& knot_value) {
   /* checks */
-  if (layer_number >= layer_stats.size() || layer_number > db_stats.num_layers) {
+  if (layer_number >= layer_stats.size() ||
+      layer_number > db_stats.num_layers) {
     knot_value = SKV_VALUE_INVALID;
     return log.Log(
         Logger::LogLevel::error,
@@ -490,7 +416,8 @@ bool mini_max::database::Database::ReadKnotValueFromDatabase(
   }
 
   /* if database is complete get just single byte from file directly */
-  if ((db_stats.completed || my_lss.completed_and_in_file) && !load_full_layer_on_read) {
+  if ((db_stats.completed || my_lss.completed_and_in_file) &&
+      !load_full_layer_on_read) {
     std::lock_guard<std::mutex> lock(cs_database_mutex);
     file->ReadSkv(layer_number, database_byte, state_number);
   } else {
@@ -503,7 +430,9 @@ bool mini_max::database::Database::ReadKnotValueFromDatabase(
     database_byte = my_lss.skv[state_number / 4];
 
     /* measure io-operations per second */
-    if (MEASURE_IOPS) speedo_read_skv.MeasureIops();
+    if (MEASURE_IOPS) {
+      speedo_read_skv.MeasureIops();
+    }
   }
 
   /* make half byte */
@@ -512,16 +441,17 @@ bool mini_max::database::Database::ReadKnotValueFromDatabase(
   return true;
 }
 
-/* Name: readPlyInfoFromDatabase() */
 /* Read the ply info from the database. */
 /* If the layer is in memory, the data is read from memory. */
 /* If the layer is not in memory, the data is loaded from the file */
 /* into memory. */
 /* Apart from changes in the header information, reading is thread safe. */
 bool mini_max::database::Database::ReadPlyInfoFromDatabase(
-    unsigned int layer_number, unsigned int state_number, PlyInfoVarType& value) {
+    unsigned int layer_number, unsigned int state_number,
+    PlyInfoVarType& value) {
   /* checks */
-  if (layer_number >= layer_stats.size() || layer_number > db_stats.num_layers) {
+  if (layer_number >= layer_stats.size() ||
+      layer_number > db_stats.num_layers) {
     value = PLYINFO_VALUE_INVALID;
     return log.Log(Logger::LogLevel::error,
                    L"ERROR: INVALID layerNumber in readPlyInfoFromDatabase()!");
@@ -543,7 +473,8 @@ bool mini_max::database::Database::ReadPlyInfoFromDatabase(
   }
 
   /* if database is complete get whole byte from file */
-  if ((db_stats.completed || my_lss.completed_and_in_file) && !load_full_layer_on_read) {
+  if ((db_stats.completed || my_lss.completed_and_in_file) &&
+      !load_full_layer_on_read) {
     std::lock_guard<std::mutex> lock(cs_database_mutex);
     file->ReadPlyInfo(layer_number, value, state_number);
   } else {
@@ -556,13 +487,14 @@ bool mini_max::database::Database::ReadPlyInfoFromDatabase(
     value = my_lss.ply_info[state_number];
 
     /* measure io-operations per second */
-    if (MEASURE_IOPS) speedo_read_ply.MeasureIops();
+    if (MEASURE_IOPS) {
+      speedo_read_ply.MeasureIops();
+    }
   }
 
   return true;
 }
 
-/* Name: writeKnotValueInDatabase() */
 /* Save the knot value in the database. */
 /* If the layer is in memory, the data is saved to memory. */
 /* If the layer is not in memory, the data is loaded from the file */
@@ -573,7 +505,8 @@ bool mini_max::database::Database::ReadPlyInfoFromDatabase(
 bool mini_max::database::Database::WriteKnotValueInDatabase(
     unsigned int layer_number, unsigned int state_number, TwoBit knot_value) {
   /* checks */
-  if (layer_number >= layer_stats.size() || layer_number > db_stats.num_layers) {
+  if (layer_number >= layer_stats.size() ||
+      layer_number > db_stats.num_layers) {
     return log.Log(
         Logger::LogLevel::error,
         L"ERROR: INVALID layerNumber in writeKnotValueInDatabase()!");
@@ -615,26 +548,27 @@ bool mini_max::database::Database::WriteKnotValueInDatabase(
   int32_t* p_short_knot_value =
       ((int32_t*)&my_lss.skv[0]) + state_number / ((sizeof(int32_t) * 8) / 2);
   int32_t num_bits_to_shift =
-      2 *
-      (state_number % ((sizeof(int32_t) * 8) / 2));  /* little-endian byte-order */
+      2 * (state_number %
+           ((sizeof(int32_t) * 8) / 2)); /* little-endian byte-order */
   int32_t mask = 0x00000003 << num_bits_to_shift;
   int32_t cur_short_knot_value_long, new_short_knot_value_long;
   std::atomic_ref<int32_t> atomic_short_knot_value(*p_short_knot_value);
 
   do {
     cur_short_knot_value_long = atomic_short_knot_value.load();
-    new_short_knot_value_long =
-        (cur_short_knot_value_long & (~mask)) + (knot_value << num_bits_to_shift);
-  } while (!atomic_short_knot_value.compare_exchange_weak(cur_short_knot_value_long,
-                                                       new_short_knot_value_long));
+    new_short_knot_value_long = (cur_short_knot_value_long & (~mask)) +
+                                (knot_value << num_bits_to_shift);
+  } while (!atomic_short_knot_value.compare_exchange_weak(
+      cur_short_knot_value_long, new_short_knot_value_long));
 
   /* measure io-operations per second */
-  if (MEASURE_IOPS) speedo_write_skv.MeasureIops();
+  if (MEASURE_IOPS) {
+    speedo_write_skv.MeasureIops();
+  }
 
   return true;
 }
 
-/* Name: writePlyInfoInDatabase() */
 /* Save the ply info in the database. */
 /* If the layer is in memory, the data is saved to memory. */
 /* If the layer is not in memory, the data is loaded from the file */
@@ -643,9 +577,11 @@ bool mini_max::database::Database::WriteKnotValueInDatabase(
 /* If the layer is already completed and in the file, the function returns */
 /* false. */
 bool mini_max::database::Database::WritePlyInfoInDatabase(
-    unsigned int layer_number, unsigned int state_number, PlyInfoVarType value) {
+    unsigned int layer_number, unsigned int state_number,
+    PlyInfoVarType value) {
   /* checks */
-  if (layer_number >= layer_stats.size() || layer_number > db_stats.num_layers) {
+  if (layer_number >= layer_stats.size() ||
+      layer_number > db_stats.num_layers) {
     return log.Log(Logger::LogLevel::error,
                    L"ERROR: INVALID layerNumber in writePlyInfoInDatabase()!");
   }
@@ -657,7 +593,7 @@ bool mini_max::database::Database::WritePlyInfoInDatabase(
       value > PLYINFO_VALUE_INVALID) {
     return log.Log(Logger::LogLevel::error,
                    L"ERROR: INVALID value in writePlyInfoInDatabase()!");
-      }
+  }
 
   /* locals */
   LayerStatsStruct& my_lss = layer_stats[layer_number];
@@ -684,9 +620,11 @@ bool mini_max::database::Database::WritePlyInfoInDatabase(
   my_lss.ply_info[state_number] = value;
 
   /* measure io-operations per second */
-  if (MEASURE_IOPS) speedo_write_ply.MeasureIops();
+  if (MEASURE_IOPS) {
+    speedo_write_ply.MeasureIops();
+  }
 
   return true;
 }
 
-}
+} /* namespace muehle */

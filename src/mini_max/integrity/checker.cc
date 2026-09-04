@@ -60,8 +60,8 @@ bool mini_max::integrity::Checker::StartTestThreads(
   rough_total_num_states_processed = 0;
   ThreadManagerClass::ThreadVarsArray<CheckerThreadVars> tva(
       tm.GetNumThreads(),
-      CheckerThreadVars(*this, layer_number, max_num_branches,
-                        rough_total_num_states_processed));
+      /* master: */ CheckerThreadVars(*this, layer_number, max_num_branches,
+                                      rough_total_num_states_processed));
 
   /* Get increment and ensure it is at least 1 to avoid division by zero */
   increment = GetIncrement(layer_number);
@@ -70,8 +70,10 @@ bool mini_max::integrity::Checker::StartTestThreads(
   }
   /* process each state in the current layer */
   return_value = tm.ExecuteParallelLoop(
-      thread_prc, tva.GetPointerToArray(), tva.GetSizeOfArray(),
-      TM_SCHEDULE_STATIC, 0, num_knots_in_layer - 1, increment);
+      thread_prc, /* p_parameter: */ tva.GetPointerToArray(),
+      tva.GetSizeOfArray(),
+      /* schedule_type: */ TM_SCHEDULE_STATIC, /* initial_value: */ 0,
+      /* final_value: */ num_knots_in_layer - 1, increment);
   switch (return_value) {
     case TM_RETURN_VALUE_OK:
     case TM_RETURN_VALUE_EXECUTION_CANCELLED:
@@ -158,7 +160,7 @@ DWORD mini_max::integrity::Checker::TestLayerThreadProc(void* p_parameter,
 
   /* output */
   tl_vars.states_processed.StateProcessed(
-      log, db.GetNumberOfKnots(layer_number), L"Tested ");
+      log, db.GetNumberOfKnots(layer_number), /* text: */ L"Tested ");
 
   /* situation already existend in database ? */
   db.ReadKnotValueFromDatabase(layer_number, state_number,
@@ -167,7 +169,8 @@ DWORD mini_max::integrity::Checker::TestLayerThreadProc(void* p_parameter,
                              num_plies_till_cur_state);
 
   /* prepare the situation */
-  if (!game.SetSituation(thread_no, layer_number, state_number)) {
+  if (!game.SetSituation(thread_no, /* layer_num: */ layer_number,
+                         state_number)) {
     /* when situation cannot be constructed then state must be marked as invalid
      */
     /* in database */
@@ -185,8 +188,8 @@ DWORD mini_max::integrity::Checker::TestLayerThreadProc(void* p_parameter,
   /* debug information */
   if (c.verbosity > 5) {
     log.Log(Logger::LogLevel::trace,
-            L"Test layer: " + std::to_wstring(layer_number) + L" state: " +
-                std::to_wstring(state_number));
+            /* message: */ L"Test layer: " + std::to_wstring(layer_number) +
+                L" state: " + std::to_wstring(state_number));
     game.PrintField(thread_no, short_value_in_database);
   }
 
@@ -222,7 +225,8 @@ DWORD mini_max::integrity::Checker::TestLayerThreadProc(void* p_parameter,
     /* check each possible move */
     for (i = 0; i < num_possibilities; i++) {
       /* move */
-      game.Move(thread_no, possibility_ids[i], player_has_changed, p_backup);
+      game.Move(thread_no, /* id_possibility: */ possibility_ids[i],
+                player_has_changed, p_backup);
       has_cur_player_changed[i] = player_has_changed;
 
       /* get database value */
@@ -256,9 +260,10 @@ DWORD mini_max::integrity::Checker::TestLayerThreadProc(void* p_parameter,
       /* debug information */
       if (c.verbosity > 5) {
         log.Log(Logger::LogLevel::trace,
-                L"Test layer: " + std::to_wstring(layer_number) + L" state: " +
-                    std::to_wstring(state_number));
-        game.PrintField(thread_no, sub_value_in_database[i], 4);
+                /* message: */ L"Test layer: " + std::to_wstring(layer_number) +
+                    L" state: " + std::to_wstring(state_number));
+        game.PrintField(thread_no, sub_value_in_database[i],
+                        /* indent_spaces: */ 4);
       }
 
       /* if layer or state number is invalid then value of testes state must be
@@ -275,7 +280,8 @@ DWORD mini_max::integrity::Checker::TestLayerThreadProc(void* p_parameter,
       }
 
       /* undo move */
-      game.Undo(thread_no, possibility_ids[i], player_has_changed, p_backup);
+      game.Undo(thread_no, /* id_possibility: */ possibility_ids[i],
+                player_has_changed, p_backup);
       has_cur_player_changed[i] = player_has_changed;
     }
 
@@ -506,10 +512,12 @@ bool mini_max::integrity::Checker::TestIfSymStatesHaveSameValue(
 
   /* simple checks */
   if (!db.IsOpen()) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: No database file open!");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: No database file open!");
   }
   if (!db.IsLayerCompleteAndInFile(layer_number)) {
-    return log.Log(Logger::LogLevel::error, L"ERROR: Layer not in file!");
+    return log.Log(Logger::LogLevel::error,
+                   /* message: */ L"ERROR: Layer not in file!");
   }
 
   /* do not read state by state from file, but load the full layer into memory
@@ -542,7 +550,7 @@ DWORD mini_max::integrity::Checker::TestSymStatesSameValueThreadProc(
 
   /* output */
   tl_vars.states_processed.StateProcessed(
-      log, db.GetNumberOfKnots(layer_number), L"Tested ");
+      log, db.GetNumberOfKnots(layer_number), /* text: */ L"Tested ");
 
   /* situation already existend in database ? */
   db.ReadKnotValueFromDatabase(layer_number, state_number,
@@ -551,7 +559,8 @@ DWORD mini_max::integrity::Checker::TestSymStatesSameValueThreadProc(
                              num_plies_till_cur_state);
 
   /* prepare the situation */
-  if (!game.SetSituation(thread_no, layer_number, state_number)) {
+  if (!game.SetSituation(thread_no, /* layer_num: */ layer_number,
+                         state_number)) {
     /* when situation cannot be constructed then state must be marked as invalid
      */
     /* in database */
@@ -581,19 +590,19 @@ DWORD mini_max::integrity::Checker::TestSymStatesSameValueThreadProc(
     if (short_value_of_sym_state != short_value_in_database ||
         num_plies_till_cur_state != num_plies_till_sym_state) {
       log.Log(Logger::LogLevel::error,
-              L"current tested state " + std::to_wstring(state_number) +
-                  L" has value " +
+              /* message: */ L"current tested state " +
+                  std::to_wstring(state_number) + L" has value " +
                   std::to_wstring((int)short_value_in_database));
-      game.SetSituation(thread_no, layer_number, state_number);
+      game.SetSituation(thread_no, /* layer_num: */ layer_number, state_number);
       game.PrintField(thread_no, short_value_in_database);
       log << "\n";
       log << "symmetric layer " << sym_state.layer_number << " and state "
           << sym_state.state_number << " has value "
           << (int)short_value_of_sym_state << "\n";
-      game.SetSituation(thread_no, sym_state.layer_number,
+      game.SetSituation(thread_no, /* layer_num: */ sym_state.layer_number,
                         sym_state.state_number);
       game.PrintField(thread_no, short_value_of_sym_state);
-      game.SetSituation(thread_no, layer_number, state_number);
+      game.SetSituation(thread_no, /* layer_num: */ layer_number, state_number);
       return TM_RETURN_VALUE_TERMINATE_ALL_THREADS;
     }
   }
@@ -634,7 +643,7 @@ DWORD mini_max::integrity::Checker::TestSetSituationThreadProc(
   Checker& c = tl_vars.r_checker;
   GameInterface& game = c.game;
   Logger& log = c.log;
-  StateAddressStruct cur_state = {(StateNumberVarType)index,
+  StateAddressStruct cur_state = {/* state_number: */ (StateNumberVarType)index,
                                   (unsigned char)tl_vars.layer_number};
 
   /* game.GetLayerAndStateNumber() */
@@ -649,7 +658,8 @@ DWORD mini_max::integrity::Checker::TestSetSituationThreadProc(
   TwoBit short_value;
 
   /* set state */
-  if (game.SetSituation(tl_vars.cur_thread_no, cur_state.layer_number,
+  if (game.SetSituation(tl_vars.cur_thread_no,
+                        /* layer_num: */ cur_state.layer_number,
                         cur_state.state_number)) {
     /* get symmetry operation number */
     game.GetLayerAndStateNumber(tl_vars.cur_thread_no, got_layer_number,
@@ -662,8 +672,8 @@ DWORD mini_max::integrity::Checker::TestSetSituationThreadProc(
     /* check if state is any duplicate */
     game.GetSymStateNumWithDuplicates(tl_vars.cur_thread_no, sym_states);
 
-    if (std::find(sym_states.begin(), sym_states.end(), got_state) ==
-        sym_states.end()) {
+    if (std::find(/* first: */ sym_states.begin(), /* last: */ sym_states.end(),
+                  got_state) == sym_states.end()) {
       log << "ERROR: SetSituation(" << cur_state.layer_number << ", "
           << cur_state.state_number << "), but GetLayerAndStateNumber("
           << got_state.layer_number << ", " << got_state.state_number
@@ -695,7 +705,8 @@ DWORD mini_max::integrity::Checker::TestSetSituationThreadProc(
 
   /* output */
   tl_vars.states_processed.StateProcessed(
-      log, c.db.GetNumberOfKnots(cur_state.layer_number), L"Tested ");
+      log, c.db.GetNumberOfKnots(cur_state.layer_number),
+      /* text: */ L"Tested ");
   return TM_RETURN_VALUE_OK;
 }
 
@@ -706,7 +717,7 @@ DWORD mini_max::integrity::Checker::TestMoveAndUndoThreadProc(void* p_parameter,
   Checker& c = tl_vars.r_checker;
   GameInterface& game = c.game;
   Logger& log = c.log;
-  StateAddressStruct cur_state = {(StateNumberVarType)index,
+  StateAddressStruct cur_state = {/* state_number: */ (StateNumberVarType)index,
                                   (unsigned char)tl_vars.layer_number};
 
   /* game.GetPossibilities() */
@@ -724,7 +735,8 @@ DWORD mini_max::integrity::Checker::TestMoveAndUndoThreadProc(void* p_parameter,
   StateAddressStruct sub_state;
 
   /* set state */
-  if (game.SetSituation(tl_vars.cur_thread_no, cur_state.layer_number,
+  if (game.SetSituation(tl_vars.cur_thread_no,
+                        /* layer_num: */ cur_state.layer_number,
                         cur_state.state_number)) {
     game.GetValueOfSituation(tl_vars.cur_thread_no, float_value,
                              short_knot_value);
@@ -733,7 +745,8 @@ DWORD mini_max::integrity::Checker::TestMoveAndUndoThreadProc(void* p_parameter,
   }
 
   if (c.verbosity >= 5) {
-    game.PrintField(tl_vars.cur_thread_no, 0, 0);
+    game.PrintField(tl_vars.cur_thread_no, /* value: */ 0,
+                    /* indent_spaces: */ 0);
   }
 
   /* is current state consistent? */
@@ -774,15 +787,18 @@ DWORD mini_max::integrity::Checker::TestMoveAndUndoThreadProc(void* p_parameter,
     /* check each possibility */
     for (cur_poss = 0; cur_poss < knot.num_possibilities; cur_poss++) {
       /* move */
-      game.Move(tl_vars.cur_thread_no, possibility_ids[cur_poss],
+      game.Move(tl_vars.cur_thread_no,
+                /* id_possibility: */ possibility_ids[cur_poss],
                 sub_knot.player_to_move_changed, p_backup);
 
       if (c.verbosity >= 5) {
-        game.PrintField(tl_vars.cur_thread_no, 0, 0);
+        game.PrintField(tl_vars.cur_thread_no, /* value: */ 0,
+                        /* indent_spaces: */ 0);
       }
 
       /* is this layer listed in GetSuccLayers() */
-      if (std::find(c.succ_layers.begin(), c.succ_layers.end(),
+      if (std::find(/* first: */ c.succ_layers.begin(),
+                    /* last: */ c.succ_layers.end(),
                     sub_state.layer_number) == c.succ_layers.end()) {
         /* BUG: Fix TicTacToe and Muehle */
         /* log << "ERROR: SetSituation(" << cur_state.layer_number << ", " << */
@@ -810,7 +826,8 @@ DWORD mini_max::integrity::Checker::TestMoveAndUndoThreadProc(void* p_parameter,
       }
 
       /* undo move */
-      game.Undo(tl_vars.cur_thread_no, possibility_ids[cur_poss],
+      game.Undo(tl_vars.cur_thread_no,
+                /* id_possibility: */ possibility_ids[cur_poss],
                 knot.player_to_move_changed, p_backup);
 
       /* did player_to_move_changed correctly? */
@@ -836,7 +853,8 @@ DWORD mini_max::integrity::Checker::TestMoveAndUndoThreadProc(void* p_parameter,
       }
 
       /* state reached by Move() must not be invalid */
-      if (!game.SetSituation(tl_vars.cur_thread_no, sub_state.layer_number,
+      if (!game.SetSituation(tl_vars.cur_thread_no,
+                             /* layer_num: */ sub_state.layer_number,
                              sub_state.state_number)) {
         log << "ERROR: Moved from layer " << cur_state.layer_number
             << " and state " << cur_state.state_number
@@ -846,14 +864,16 @@ DWORD mini_max::integrity::Checker::TestMoveAndUndoThreadProc(void* p_parameter,
       }
 
       /* set back to current state */
-      game.SetSituation(tl_vars.cur_thread_no, cur_state.layer_number,
+      game.SetSituation(tl_vars.cur_thread_no,
+                        /* layer_num: */ cur_state.layer_number,
                         cur_state.state_number);
     }
   }
 
   /* output */
   tl_vars.states_processed.StateProcessed(
-      log, c.db.GetNumberOfKnots(cur_state.layer_number), L"Tested ");
+      log, c.db.GetNumberOfKnots(cur_state.layer_number),
+      /* text: */ L"Tested ");
   return TM_RETURN_VALUE_OK;
 }
 
@@ -864,7 +884,7 @@ DWORD mini_max::integrity::Checker::TestGetPredecessorsThreadProc(
   Checker& c = tl_vars.r_checker;
   GameInterface& game = c.game;
   Logger& log = c.log;
-  StateAddressStruct cur_state = {(StateNumberVarType)index,
+  StateAddressStruct cur_state = {/* state_number: */ (StateNumberVarType)index,
                                   (unsigned char)tl_vars.layer_number};
 
   /* game.GetPossibilities() */
@@ -875,23 +895,27 @@ DWORD mini_max::integrity::Checker::TestGetPredecessorsThreadProc(
 
   /* game.GetPredecessors() */
   std::vector<retro_analysis::PredVars> pred_vars;
-  pred_vars.reserve(MAX_NUM_PREDECESSORS);
+  pred_vars.reserve(/* n: */ MAX_NUM_PREDECESSORS);
 
   /* print status */
   tl_vars.states_processed.StateProcessed(
-      log, c.db.GetNumberOfKnots(cur_state.layer_number), L"Tested ");
+      log, c.db.GetNumberOfKnots(cur_state.layer_number),
+      /* text: */ L"Tested ");
 
   /* set situation of a valid state */
-  if (!game.SetSituation(tl_vars.cur_thread_no, cur_state.layer_number,
+  if (!game.SetSituation(tl_vars.cur_thread_no,
+                         /* layer_num: */ cur_state.layer_number,
                          cur_state.state_number)) {
     return TM_RETURN_VALUE_OK;
   }
 
   if (c.verbosity >= 5) {
     log.Log(Logger::LogLevel::trace,
-            L"SetSituation(" + std::to_wstring(cur_state.layer_number) + L", " +
+            /* message: */ L"SetSituation(" +
+                std::to_wstring(cur_state.layer_number) + L", " +
                 std::to_wstring(cur_state.state_number) + L")");
-    game.PrintField(tl_vars.cur_thread_no, 0, 0);
+    game.PrintField(tl_vars.cur_thread_no, /* value: */ 0,
+                    /* indent_spaces: */ 0);
   }
 
   /* get all possible moves */
@@ -901,14 +925,16 @@ DWORD mini_max::integrity::Checker::TestGetPredecessorsThreadProc(
   /* go to each successor state */
   for (cur_poss = 0; cur_poss < knot.num_possibilities; cur_poss++) {
     /* move */
-    game.Move(tl_vars.cur_thread_no, possibility_ids[cur_poss],
+    game.Move(tl_vars.cur_thread_no,
+              /* id_possibility: */ possibility_ids[cur_poss],
               knot.player_to_move_changed, p_backup);
 
     if (c.verbosity >= 5) {
       log.Log(Logger::LogLevel::trace,
-              L"Move() according possibility_id=" +
+              /* message: */ L"Move() according possibility_id=" +
                   std::to_wstring(possibility_ids[cur_poss]));
-      game.PrintField(tl_vars.cur_thread_no, 0, 4);
+      game.PrintField(tl_vars.cur_thread_no, /* value: */ 0,
+                      /* indent_spaces: */ 4);
     }
 
     /* get predecessors */
@@ -952,12 +978,14 @@ DWORD mini_max::integrity::Checker::TestGetPredecessorsThreadProc(
     }
 
     /* undo move */
-    game.Undo(tl_vars.cur_thread_no, possibility_ids[cur_poss],
+    game.Undo(tl_vars.cur_thread_no,
+              /* id_possibility: */ possibility_ids[cur_poss],
               knot.player_to_move_changed, p_backup);
 
     if (c.verbosity >= 5) {
       log << "Undo()" << "\n";
-      game.PrintField(tl_vars.cur_thread_no, 0, 4);
+      game.PrintField(tl_vars.cur_thread_no, /* value: */ 0,
+                      /* indent_spaces: */ 4);
     }
   }
 
@@ -972,7 +1000,7 @@ DWORD mini_max::integrity::Checker::TestGetPossibilitiesThreadProc(
   Checker& c = tl_vars.r_checker;
   GameInterface& game = c.game;
   Logger& log = c.log;
-  StateAddressStruct cur_state = {(StateNumberVarType)index,
+  StateAddressStruct cur_state = {/* state_number: */ (StateNumberVarType)index,
                                   (unsigned char)tl_vars.layer_number};
 
   /* game.GetPossibilities() */
@@ -987,7 +1015,7 @@ DWORD mini_max::integrity::Checker::TestGetPossibilitiesThreadProc(
 
   /* game.GetPredecessors() */
   std::vector<retro_analysis::PredVars> pred_vars;
-  pred_vars.reserve(MAX_NUM_PREDECESSORS);
+  pred_vars.reserve(/* n: */ MAX_NUM_PREDECESSORS);
 
   /* game.GetLayerAndStateNumber() */
   StateAddressStruct got_state;
@@ -995,19 +1023,23 @@ DWORD mini_max::integrity::Checker::TestGetPossibilitiesThreadProc(
 
   /* print status */
   tl_vars.states_processed.StateProcessed(
-      log, c.db.GetNumberOfKnots(cur_state.layer_number), L"Tested ");
+      log, c.db.GetNumberOfKnots(cur_state.layer_number),
+      /* text: */ L"Tested ");
 
   /* set situation of a valid state */
-  if (!game.SetSituation(tl_vars.cur_thread_no, cur_state.layer_number,
+  if (!game.SetSituation(tl_vars.cur_thread_no,
+                         /* layer_num: */ cur_state.layer_number,
                          cur_state.state_number)) {
     return TM_RETURN_VALUE_OK;
   }
 
   if (c.verbosity >= 5) {
     log.Log(Logger::LogLevel::trace,
-            L"SetSituation(" + std::to_wstring(cur_state.layer_number) + L", " +
+            /* messages: */ L"SetSituation(" +
+                std::to_wstring(cur_state.layer_number) + L", " +
                 std::to_wstring(cur_state.state_number) + L")");
-    game.PrintField(tl_vars.cur_thread_no, 0, 0);
+    game.PrintField(tl_vars.cur_thread_no, /* value: */ 0,
+                    /* indent_spaces: */ 0);
   }
 
   /* get predecessors */
@@ -1031,11 +1063,13 @@ DWORD mini_max::integrity::Checker::TestGetPossibilitiesThreadProc(
     /* Apply the symmetry operation used to reach this predecessor state,
        ensuring the game situation matches the predecessor's representation. */
     game.ApplySymOp(tl_vars.cur_thread_no, pred_vars[j].pred_sym_operation,
-                    true, false);
+                    /* do_inverse_operation: */ true,
+                    /* player_to_move_changed: */ false);
 
     if (c.verbosity >= 5) {
-      log.Log(Logger::LogLevel::trace, L"predecessor state:");
-      game.PrintField(tl_vars.cur_thread_no, 0, 0);
+      log.Log(Logger::LogLevel::trace, /* message: */ L"predecessor state:");
+      game.PrintField(tl_vars.cur_thread_no, /* value: */ 0,
+                      /* indent_spaces: */ 0);
     }
 
     /* get all possible moves */
@@ -1054,7 +1088,8 @@ DWORD mini_max::integrity::Checker::TestGetPossibilitiesThreadProc(
     /* go to each successor state */
     for (cur_poss = 0; cur_poss < knot.num_possibilities; cur_poss++) {
       /* move */
-      game.Move(tl_vars.cur_thread_no, possibility_ids[cur_poss],
+      game.Move(tl_vars.cur_thread_no,
+                /* id_possibility: */ possibility_ids[cur_poss],
                 knot.player_to_move_changed, p_backup);
 
       /* get corresponding state number */
@@ -1069,7 +1104,8 @@ DWORD mini_max::integrity::Checker::TestGetPossibilitiesThreadProc(
       }
 
       /* undo move */
-      game.Undo(tl_vars.cur_thread_no, possibility_ids[cur_poss],
+      game.Undo(tl_vars.cur_thread_no,
+                /* id_possibility: */ possibility_ids[cur_poss],
                 knot.player_to_move_changed, p_backup);
     }
     if (cur_poss == knot.num_possibilities) {
@@ -1085,4 +1121,4 @@ DWORD mini_max::integrity::Checker::TestGetPossibilitiesThreadProc(
   return TM_RETURN_VALUE_OK;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

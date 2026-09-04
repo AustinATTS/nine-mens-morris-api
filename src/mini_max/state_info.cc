@@ -45,5 +45,5 @@ void mini_max::StateInfo::UpdateBestAmountOfPlies() {
   }
 }
 
-}  // namespace mini_max
-}  // namespace muehle
+} /* namespace mini_max */
+} /* namespace muehle */

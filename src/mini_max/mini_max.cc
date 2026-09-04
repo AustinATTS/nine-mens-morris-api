@@ -9,7 +9,8 @@ namespace muehle {
 /* MiniMax class constructor */
 mini_max::MiniMax::MiniMax(GameInterface* game,
                            unsigned int max_alpha_beta_search_depth)
-    : log{Logger::LogLevel::info, Logger::LogType::both, L"mini_max.log"},
+    : log{Logger::LogLevel::info, Logger::LogType::both,
+          /* filename: */ L"mini_max.log"},
       game{game},
       db{*game, log},
       checker{log, thread_manager, db, *game},
@@ -21,7 +22,7 @@ mini_max::MiniMax::MiniMax(GameInterface* game,
   ab_solver.SetSearchDepth(max_alpha_beta_search_depth);
 
   InitializeCriticalSection(&cs_os_print);
-  srand((unsigned int)time(NULL));
+  srand((unsigned int)time(/* timer: */ NULL));
 }
 
 /* MiniMax class destructor */
@@ -60,7 +61,8 @@ bool mini_max::MiniMax::OpenDatabase(std::wstring const& directory,
   }
 
   if (db.IsOpen()) {
-    return log.Log(Logger::LogLevel::trace, L"Database already open!");
+    return log.Log(Logger::LogLevel::trace,
+                   /* message: */ L"Database already open!");
   }
   return db.OpenDatabase(file_directory, use_comp_file_if_both_exist);
 }
@@ -71,9 +73,9 @@ bool mini_max::MiniMax::CalculateDatabase() {
   bool abort_calculation = false;
   last_calculated_layer.clear();
 
-  log.Log(Logger::LogLevel::info, L"*************************");
-  log.Log(Logger::LogLevel::info, L"*  Calculate  Database  *");
-  log.Log(Logger::LogLevel::info, L"*************************");
+  log.Log(Logger::LogLevel::info, /* message: */ L"*************************");
+  log.Log(Logger::LogLevel::info, /* message: */ L"*  Calculate  Database  *");
+  log.Log(Logger::LogLevel::info, /* message: */ L"*************************");
 
   /* Call preparation function of parent class */
   game->PrepareCalculation();
@@ -97,15 +99,18 @@ bool mini_max::MiniMax::CalculateDatabase() {
       layers_to_calculate.push_back(cur_calculated_layer);
 
       /* Remove duplicates */
-      sort(layers_to_calculate.begin(), layers_to_calculate.end());
+      sort(/* first: */ layers_to_calculate.begin(),
+           /* last: */ layers_to_calculate.end());
       layers_to_calculate.erase(
-          unique(layers_to_calculate.begin(), layers_to_calculate.end()),
-          layers_to_calculate.end());
+          /* last: */ unique(/* first: */ layers_to_calculate.begin(),
+                             /* last: */ layers_to_calculate.end()),
+          /* last: */ layers_to_calculate.end());
 
       /* Dont calc if neither the layer nor the partner layer has any knots */
       unsigned int total_number_of_knots = std::accumulate(
-          layers_to_calculate.begin(), layers_to_calculate.end(), 0,
-          [&](unsigned int sum, unsigned int cur_layer) {
+          /* first: */ layers_to_calculate.begin(),
+          /* last: */ layers_to_calculate.end(), /* init: */ 0,
+          /* binary_op: */ [&](unsigned int sum, unsigned int cur_layer) {
             return sum + db.GetNumberOfKnots(cur_layer);
           });
       if (total_number_of_knots == 0) {
@@ -141,39 +146,43 @@ bool mini_max::MiniMax::CalculateDatabase() {
     cur_action = Activity::none;
   } else {
     log.Log(Logger::LogLevel::info,
-            L"The database is already fully calculated.");
+            /* message: */ L"The database is already fully calculated.");
   }
 
   if (abort_calculation) {
     log.Log(Logger::LogLevel::error,
-            L"Layer calculation cancelled or failed!");
+            /* message: */ L"Layer calculation cancelled or failed!");
     return false;
   }
 
   /* Output */
-  log.Log(Logger::LogLevel::info, L"*************************");
-  log.Log(Logger::LogLevel::info, L"* Calculation  Finished *");
-  log.Log(Logger::LogLevel::info, L"*************************");
+  log.Log(Logger::LogLevel::info, /* message: */ L"*************************");
+  log.Log(Logger::LogLevel::info, /* message: */ L"* Calculation  Finished *");
+  log.Log(Logger::LogLevel::info, /* message: */ L"*************************");
   return true;
 }
 
 /* Calculates statistics for a completed database. */
 bool mini_max::MiniMax::CalculateStatistics() {
-  log.Log(Logger::LogLevel::info, L"*************************");
-  log.Log(Logger::LogLevel::info, L"* Calculate  Statistics *");
-  log.Log(Logger::LogLevel::info, L"*************************");
+  log.Log(Logger::LogLevel::info, /* message: */ L"*************************");
+  log.Log(Logger::LogLevel::info, /* message: */ L"* Calculate  Statistics *");
+  log.Log(Logger::LogLevel::info, /* message: */ L"*************************");
 
   /* Check if database is open and complete */
   if (db.IsOpen() && db.IsComplete()) {
     /* Calculate layer statistics */
     monitor.CalcLayerStatistics("statistics.csv");
 
-    log.Log(Logger::LogLevel::info, L"*************************");
-    log.Log(Logger::LogLevel::info, L"*  Statistics Finished  *");
-    log.Log(Logger::LogLevel::info, L"*************************");
+    log.Log(Logger::LogLevel::info,
+            /* message: */ L"*************************");
+    log.Log(Logger::LogLevel::info,
+            /* message: */ L"*  Statistics Finished  *");
+    log.Log(Logger::LogLevel::info,
+            /* message: */ L"*************************");
     return true;
   } else {
     log.Log(Logger::LogLevel::error,
+            /* message: */
             L"Database must be open and complete to calculate statistics.");
     return false;
   }
@@ -190,9 +199,13 @@ bool mini_max::MiniMax::IsCurrentStateInDatabase(unsigned int thread_no) {
   }
 }
 
-void mini_max::MiniMax::UnloadDatabase() { db.Unload(); }
+void mini_max::MiniMax::UnloadDatabase() {
+  db.Unload();
+}
 
-void mini_max::MiniMax::CloseDatabase() { db.CloseDatabase(); }
+void mini_max::MiniMax::CloseDatabase() {
+  db.CloseDatabase();
+}
 
 void mini_max::MiniMax::PauseDatabaseCalculation() {
   thread_manager.PauseExecution();
@@ -248,15 +261,16 @@ bool mini_max::MiniMax::CalcLayer(unsigned int layer_number) {
   /* Test layers */
   for (auto layer : layers_to_calculate) {
     if (!checker.TestLayer(layer)) {
-      return log.Log(Logger::LogLevel::error,
-                     L"ERROR: Layer calculation cancelled or failed!");
+      return log.Log(
+          Logger::LogLevel::error,
+          /* message: */ L"ERROR: Layer calculation cancelled or failed!");
     }
   }
 
   /* Update output information */
   EnterCriticalSection(&cs_os_print);
-  last_calculated_layer.assign(layers_to_calculate.begin(),
-                               layers_to_calculate.end());
+  last_calculated_layer.assign(/* first: */ layers_to_calculate.begin(),
+                               /* last: */ layers_to_calculate.end());
   LeaveCriticalSection(&cs_os_print);
 
   /* Everything was ok */
@@ -267,4 +281,4 @@ void mini_max::MiniMax::SetCurrentActivity(Activity new_action) {
   cur_action = new_action;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

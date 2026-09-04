@@ -1,40 +1,39 @@
 #include "muehle/mini_max/database/speedometer.h"
 
 #ifdef _WIN32
-#include <windows.h>  // QueryPerformanceCounter, QueryPerformanceFrequency
-#else
+/* QueryPerformanceCounter, QueryPerformanceFrequency */
+#include <windows.h>
+#else /* _WIN32 */
 #include "muehle/win_32_compat.h"
-#endif
+#endif /* _WIN32 */
 
 namespace muehle {
 
-// Desc: constructor
-//-----------------------------------------------------------------------------
-mini_max::database::Speedometer::Speedometer(std::wstring const& name,
-                                            long long print_every_nth_operations,
-                                            PrintFunctType print_function)
+/* constructor */
+mini_max::database::Speedometer::Speedometer(
+    std::wstring const& name, long long print_every_nth_operations,
+    PrintFunctType print_function)
     : name(name),
       print_every_nth_operations(print_every_nth_operations),
       num_operations(0),
       print_function(print_function) {
-  // for io operations per second measurement
+  /* for io operations per second measurement */
   QueryPerformanceFrequency(&frequency);
 }
 
-// Desc: destructor
-//-----------------------------------------------------------------------------
+/* destructor */
 mini_max::database::Speedometer::~Speedometer() {}
 
 void mini_max::database::Speedometer::MeasureIops() {
-  // thread safety
+  /* thread safety */
   std::lock_guard<std::mutex> lock(mutex);
 
-  // first call
+  /* first call */
   if (num_operations == 0) {
     QueryPerformanceCounter(&last_time);
   }
 
-  // count operation
+  /* count operation */
   num_operations++;
 
   if (num_operations >= print_every_nth_operations) {
@@ -48,4 +47,4 @@ void mini_max::database::Speedometer::MeasureIops() {
   }
 }
 
-}
+} /* namespace muehle */

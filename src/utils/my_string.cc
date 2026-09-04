@@ -6,10 +6,14 @@ namespace muehle {
 MyString::MyString() {}
 
 /* Constructor for ASCII strings */
-MyString::MyString(const char* c_str) { Assign(c_str); }
+MyString::MyString(const char* c_str) {
+  Assign(c_str);
+}
 
 /* Constructor for wide char strings */
-MyString::MyString(const WCHAR* c_str) { Assign(c_str); }
+MyString::MyString(const WCHAR* c_str) {
+  Assign(c_str);
+}
 
 /* Destructor */
 MyString::~MyString() {
@@ -28,10 +32,14 @@ MyString::~MyString() {
 }
 
 /* Returns the ascii string */
-const char* MyString::CStrA() { return str_a; }
+const char* MyString::CStrA() {
+  return str_a;
+}
 
 /* Returns the wide char string */
-const WCHAR* MyString::CStrW() { return str_w; }
+const WCHAR* MyString::CStrW() {
+  return str_w;
+}
 
 /* Set the string to a new ascii string */
 MyString& MyString::Assign(const char* c_str) {
@@ -53,7 +61,7 @@ MyString& MyString::Assign(const char* c_str) {
   length = new_length;
 
   strcpy(str_a, c_str);
-  mbstowcs(str_w, c_str, new_length + 1);
+  mbstowcs(str_w, c_str, /* n: */ new_length + 1);
 
   return *this;
 }
@@ -78,7 +86,7 @@ MyString& MyString::Assign(const WCHAR* c_str) {
   length = new_length;
 
   wcscpy(str_w, c_str);
-  wcstombs(str_a, c_str, new_length + 1);
+  wcstombs(str_a, c_str, /* n: */ new_length + 1);
 
   return *this;
 }
@@ -125,9 +133,10 @@ bool ReadAsciiData(HANDLE h_file, double* p_data, unsigned int num_values,
   do {
     /* Read from buffer if necessary */
     if (cur_buffer_pos >= buffer_size - max_value_length_in_bytes) {
-      memcpy(&buffer[0], &buffer[cur_buffer_pos], buffer_size - cur_buffer_pos);
-      ReadFile(h_file, &buffer[buffer_size - cur_buffer_pos], cur_buffer_pos,
-               &dw_bytes_read, nullptr);
+      memcpy(&buffer[0], &buffer[cur_buffer_pos],
+             /* n: */ buffer_size - cur_buffer_pos);
+      ReadFile(h_file, /* buf: */ &buffer[buffer_size - cur_buffer_pos],
+               cur_buffer_pos, &dw_bytes_read, nullptr);
       actual_buffer_size = buffer_size - cur_buffer_pos + dw_bytes_read;
       cur_buffer_pos = 0;
       cur_byte = &buffer[cur_buffer_pos];
@@ -304,7 +313,8 @@ bool ReadAsciiData(HANDLE h_file, double* p_data, unsigned int num_values,
           }
           if (exponent) {
             (*p_data) *=
-                std::pow(10, exp_is_negative ? -1 * exponential_value : 1);
+                std::pow(/* n: */ 10,
+                         /* n: */ exp_is_negative ? -1 * exponential_value : 1);
           }
 
           /* Init  */
@@ -344,7 +354,9 @@ bool ReadAsciiData(HANDLE h_file, double* p_data, unsigned int num_values,
     cur_byte++;
 
     /* buffer overrun? */
-    if (cur_buffer_pos >= actual_buffer_size) return false;
+    if (cur_buffer_pos >= actual_buffer_size) {
+      return false;
+    }
 
   } while (cur_read_value < num_values);
 
@@ -352,4 +364,4 @@ bool ReadAsciiData(HANDLE h_file, double* p_data, unsigned int num_values,
   return true;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

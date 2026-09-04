@@ -98,4 +98,4 @@ bool mini_max::retro_analysis::AddNumSuccedorsVars::Flush() {
   return true;
 }
 
-}  // namespace muehle
+}  /* namespace muehle */
