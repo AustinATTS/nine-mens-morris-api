@@ -6,7 +6,9 @@
 namespace muehle {
 
 /* Constructor */
-FieldStruct::FieldStruct() { Reset(); }
+FieldStruct::FieldStruct() {
+  Reset();
+}
 
 /* Copy Constructor */
 FieldStruct::FieldStruct(const FieldStruct& other)
@@ -50,30 +52,78 @@ const FieldStruct::Array2d<FieldStruct::FieldPos, FieldStruct::size, 4>
       auto i = size;
 
       /* Set connections */
-      SetConnection(connected_square, 0, 1, 9, i, i);
-      SetConnection(connected_square, 1, 2, 4, 0, i);
-      SetConnection(connected_square, 2, i, 14, 1, i);
-      SetConnection(connected_square, 3, 4, 10, i, i);
-      SetConnection(connected_square, 4, 5, 7, 3, 1);
-      SetConnection(connected_square, 5, i, 13, 4, i);
-      SetConnection(connected_square, 6, 7, 11, i, i);
-      SetConnection(connected_square, 7, 8, i, 6, 4);
-      SetConnection(connected_square, 8, i, 12, 7, i);
-      SetConnection(connected_square, 9, 10, 21, i, 0);
-      SetConnection(connected_square, 10, 11, 18, 9, 3);
-      SetConnection(connected_square, 11, i, 15, 10, 6);
-      SetConnection(connected_square, 12, 13, 17, i, 8);
-      SetConnection(connected_square, 13, 14, 20, 12, 5);
-      SetConnection(connected_square, 14, i, 23, 13, 2);
-      SetConnection(connected_square, 15, 16, i, i, 11);
-      SetConnection(connected_square, 16, 17, 19, 15, i);
-      SetConnection(connected_square, 17, i, i, 16, 12);
-      SetConnection(connected_square, 18, 19, i, i, 10);
-      SetConnection(connected_square, 19, 20, 22, 18, 16);
-      SetConnection(connected_square, 20, i, i, 19, 13);
-      SetConnection(connected_square, 21, 22, i, i, 9);
-      SetConnection(connected_square, 22, 23, i, 21, 19);
-      SetConnection(connected_square, 23, i, i, 22, 14);
+      SetConnection(connected_square, /* index: */ 0, /* first_direction: */ 1,
+                    /* second_direction: */ 9, /* third_direction: */ i,
+                    /* fourth_direction: */ i);
+      SetConnection(connected_square, /* index: */ 1, /* first_direction: */ 2,
+                    /* second_direction: */ 4, /* third_direction: */ 0,
+                    /* fourth_direction: */ i);
+      SetConnection(connected_square, /* index: */ 2, /* first_direction: */ i,
+                    /* second_direction: */ 14, /* third_direction: */ 1,
+                    /* fourth_direction: */ i);
+      SetConnection(connected_square, /* index: */ 3, /* first_direction: */ 4,
+                    /* second_direction: */ 10, /* third_direction: */ i,
+                    /* fourth_direction: */ i);
+      SetConnection(connected_square, /* index: */ 4, /* first_direction: */ 5,
+                    /* second_direction: */ 7, /* third_direction: */ 3,
+                    /* fourth_direction: */ 1);
+      SetConnection(connected_square, /* index: */ 5, /* first_direction: */ i,
+                    /* second_direction: */ 13, /* third_direction: */ 4,
+                    /* fourth_direction: */ i);
+      SetConnection(connected_square, /* index: */ 6, /* first_direction: */ 7,
+                    /* second_direction: */ 11, /* third_direction: */ i,
+                    /* fourth_direction: */ i);
+      SetConnection(connected_square, /* index: */ 7, /* first_direction: */ 8,
+                    /* second_direction: */ i, /* third_direction: */ 6,
+                    /* fourth_direction: */ 4);
+      SetConnection(connected_square, /* index: */ 8, /* first_direction: */ i,
+                    /* second_direction: */ 12, /* third_direction: */ 7,
+                    /* fourth_direction: */ i);
+      SetConnection(connected_square, /* index: */ 9, /* first_direction: */ 10,
+                    /* second_direction: */ 21, /* third_direction: */ i,
+                    /* fourth_direction: */ 0);
+      SetConnection(connected_square, /* index: */ 10,
+                    /* first_direction: */ 11, /* second_direction: */ 18,
+                    /* third_direction: */ 9, /* fourth_direction: */ 3);
+      SetConnection(connected_square, /* index: */ 11, /* first_direction: */ i,
+                    /* second_direction: */ 15, /* third_direction: */ 10,
+                    /* fourth_direction: */ 6);
+      SetConnection(connected_square, /* index: */ 12,
+                    /* first_direction: */ 13, /* second_direction: */ 17,
+                    /* third_direction: */ i, /* fourth_direction: */ 8);
+      SetConnection(connected_square, /* index: */ 13,
+                    /* first_direction: */ 14, /* second_direction: */ 20,
+                    /* third_direction: */ 12, /* fourth_direction: */ 5);
+      SetConnection(connected_square, /* index: */ 14, /* first_direction: */ i,
+                    /* second_direction: */ 23, /* third_direction: */ 13,
+                    /* fourth_direction: */ 2);
+      SetConnection(connected_square, /* index: */ 15,
+                    /* first_direction: */ 16, /* second_direction: */ i,
+                    /* third_direction: */ i, /* fourth_direction: */ 11);
+      SetConnection(connected_square, /* index: */ 16,
+                    /* first_direction: */ 17, /* second_direction: */ 19,
+                    /* third_direction: */ 15, /* fourth_direction: */ i);
+      SetConnection(connected_square, /* index: */ 17, /* first_direction: */ i,
+                    /* second_direction: */ i, /* third_direction: */ 16,
+                    /* fourth_direction: */ 12);
+      SetConnection(connected_square, /* index: */ 18,
+                    /* first_direction: */ 19, /* second_direction: */ i,
+                    /* third_direction: */ i, /* fourth_direction: */ 10);
+      SetConnection(connected_square, /* index: */ 19,
+                    /* first_direction: */ 20, /* second_direction: */ 22,
+                    /* third_direction: */ 18, /* fourth_direction: */ 16);
+      SetConnection(connected_square, /* index: */ 20, /* first_direction: */ i,
+                    /* second_direction: */ i, /* third_direction: */ 19,
+                    /* fourth_direction: */ 13);
+      SetConnection(connected_square, /* index: */ 21,
+                    /* first_direction: */ 22, /* second_direction: */ i,
+                    /* third_direction: */ i, /* fourth_direction: */ 9);
+      SetConnection(connected_square, /* index: */ 22,
+                    /* first_direction: */ 23, /* second_direction: */ i,
+                    /* third_direction: */ 21, /* fourth_direction: */ 19);
+      SetConnection(connected_square, /* index: */ 23, /* first_direction: */ i,
+                    /* second_direction: */ i, /* third_direction: */ 22,
+                    /* fourth_direction: */ 14);
 
       return connected_square;
     }();
@@ -84,32 +134,80 @@ const FieldStruct::Array3d<FieldStruct::FieldPos, FieldStruct::size, 2, 2>
       Array3d<FieldPos, size, 2, 2> neighbour;
 
       /* Neighbours */
-      SetNeighbour(neighbour, 0, 1, 2, 9, 21);
-      SetNeighbour(neighbour, 1, 0, 2, 4, 7);
-      SetNeighbour(neighbour, 2, 0, 1, 14, 23);
-      SetNeighbour(neighbour, 3, 4, 5, 10, 18);
-      SetNeighbour(neighbour, 4, 1, 7, 3, 5);
-      SetNeighbour(neighbour, 5, 3, 4, 13, 20);
-      SetNeighbour(neighbour, 6, 7, 8, 11, 15);
-      SetNeighbour(neighbour, 7, 1, 4, 6, 8);
-      SetNeighbour(neighbour, 8, 6, 7, 12, 17);
-      SetNeighbour(neighbour, 9, 10, 11, 0, 21);
-      SetNeighbour(neighbour, 10, 9, 11, 3, 18);
-      SetNeighbour(neighbour, 11, 9, 10, 6, 15);
-      SetNeighbour(neighbour, 12, 13, 14, 8, 17);
-      SetNeighbour(neighbour, 13, 12, 14, 5, 20);
-      SetNeighbour(neighbour, 14, 12, 13, 2, 23);
-      SetNeighbour(neighbour, 15, 6, 11, 16, 17);
-      SetNeighbour(neighbour, 16, 15, 17, 19, 22);
-      SetNeighbour(neighbour, 17, 15, 16, 8, 12);
-      SetNeighbour(neighbour, 18, 3, 10, 19, 20);
-      SetNeighbour(neighbour, 19, 18, 20, 16, 22);
-      SetNeighbour(neighbour, 20, 5, 13, 18, 19);
-      SetNeighbour(neighbour, 21, 0, 9, 22, 23);
-      SetNeighbour(neighbour, 22, 16, 19, 21, 23);
-      SetNeighbour(neighbour, 23, 2, 14, 21, 22);
+      SetNeighbour(neighbour, /* index: */ 0, /* first_neighbour0: */ 1,
+                   /* second_neighbour0: */ 2, /* first_neighbour1: */ 9,
+                   /* second_neighbour1: */ 21);
+      SetNeighbour(neighbour, /* index: */ 1, /* first_neighbour0: */ 0,
+                   /* second_neighbour0: */ 2, /* first_neighbour1: */ 4,
+                   /* second_neighbour1: */ 7);
+      SetNeighbour(neighbour, /* index: */ 2, /* first_neighbour0: */ 0,
+                   /* second_neighbour0: */ 1, /* first_neighbour1: */ 14,
+                   /* second_neighbour1: */ 23);
+      SetNeighbour(neighbour, /* index: */ 3, /* first_neighbour0: */ 4,
+                   /* second_neighbour0: */ 5, /* first_neighbour1: */ 10,
+                   /* second_neighbour1: */ 18);
+      SetNeighbour(neighbour, /* index: */ 4, /* first_neighbour0: */ 1,
+                   /* second_neighbour0: */ 7, /* first_neighbour1: */ 3,
+                   /* second_neighbour1: */ 5);
+      SetNeighbour(neighbour, /* index: */ 5, /* first_neighbour0: */ 3,
+                   /* second_neighbour0: */ 4, /* first_neighbour1: */ 13,
+                   /* second_neighbour1: */ 20);
+      SetNeighbour(neighbour, /* index: */ 6, /* first_neighbour0: */ 7,
+                   /* second_neighbour0: */ 8, /* first_neighbour1: */ 11,
+                   /* second_neighbour1: */ 15);
+      SetNeighbour(neighbour, /* index: */ 7, /* first_neighbour0: */ 1,
+                   /* second_neighbour0: */ 4, /* first_neighbour1: */ 6,
+                   /* second_neighbour1: */ 8);
+      SetNeighbour(neighbour, /* index: */ 8, /* first_neighbour0: */ 6,
+                   /* second_neighbour0: */ 7, /* first_neighbour1: */ 12,
+                   /* second_neighbour1: */ 17);
+      SetNeighbour(neighbour, /* index: */ 9, /* first_neighbour0: */ 10,
+                   /* second_neighbour0: */ 11, /* first_neighbour1: */ 0,
+                   /* second_neighbour1: */ 21);
+      SetNeighbour(neighbour, /* index: */ 10, /* first_neighbour0: */ 9,
+                   /* second_neighbour0: */ 11, /* first_neighbour1: */ 3,
+                   /* second_neighbour1: */ 18);
+      SetNeighbour(neighbour, /* index: */ 11, /* first_neighbour0: */ 9,
+                   /* second_neighbour0: */ 10, /* first_neighbour1: */ 6,
+                   /* second_neighbour1: */ 15);
+      SetNeighbour(neighbour, /* index: */ 12, /* first_neighbour0: */ 13,
+                   /* second_neighbour0: */ 14, /* first_neighbour1: */ 8,
+                   /* second_neighbour1: */ 17);
+      SetNeighbour(neighbour, /* index: */ 13, /* first_neighbour0: */ 12,
+                   /* second_neighbour0: */ 14, /* first_neighbour1: */ 5,
+                   /* second_neighbour1: */ 20);
+      SetNeighbour(neighbour, /* index: */ 14, /* first_neighbour0: */ 12,
+                   /* second_neighbour0: */ 13, /* first_neighbour1: */ 2,
+                   /* second_neighbour1: */ 23);
+      SetNeighbour(neighbour, /* index: */ 15, /* first_neighbour0: */ 6,
+                   /* second_neighbour0: */ 11, /* first_neighbour1: */ 16,
+                   /* second_neighbour1: */ 17);
+      SetNeighbour(neighbour, /* index: */ 16, /* first_neighbour0: */ 15,
+                   /* second_neighbour0: */ 17, /* first_neighbour1: */ 19,
+                   /* second_neighbour1: */ 22);
+      SetNeighbour(neighbour, /* index: */ 17, /* first_neighbour0: */ 15,
+                   /* second_neighbour0: */ 16, /* first_neighbour1: */ 8,
+                   /* second_neighbour1: */ 12);
+      SetNeighbour(neighbour, /* index: */ 18, /* first_neighbour0: */ 3,
+                   /* second_neighbour0: */ 10, /* first_neighbour1: */ 19,
+                   /* second_neighbour1: */ 20);
+      SetNeighbour(neighbour, /* index: */ 19, /* first_neighbour0: */ 18,
+                   /* second_neighbour0: */ 20, /* first_neighbour1: */ 16,
+                   /* second_neighbour1: */ 22);
+      SetNeighbour(neighbour, /* index: */ 20, /* first_neighbour0: */ 5,
+                   /* second_neighbour0: */ 13, /* first_neighbour1: */ 18,
+                   /* second_neighbour1: */ 19);
+      SetNeighbour(neighbour, /* index: */ 21, /* first_neighbour0: */ 0,
+                   /* second_neighbour0: */ 9, /* first_neighbour1: */ 22,
+                   /* second_neighbour1: */ 23);
+      SetNeighbour(neighbour, /* index: */ 22, /* first_neighbour0: */ 16,
+                   /* second_neighbour0: */ 19, /* first_neighbour1: */ 21,
+                   /* second_neighbour1: */ 23);
+      SetNeighbour(neighbour, /* index: */ 23, /* first_neighbour0: */ 2,
+                   /* second_neighbour0: */ 14, /* first_neighbour1: */ 21,
+                   /* second_neighbour1: */ 22);
 
       return neighbour;
     }();
 
-}  // namespace muehle
+} /* namespace muehle */

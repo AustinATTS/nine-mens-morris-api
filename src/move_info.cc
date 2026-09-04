@@ -48,4 +48,4 @@ const MoveInfo& MoveInfo::GetMoveInfo(PossibilityId id) {
   return move;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

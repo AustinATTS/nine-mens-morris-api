@@ -5,7 +5,6 @@
 #include "muehle/field_struct.h"
 
 namespace muehle {
-using namespace std;
 
 /* Returns the possible moves for the current player */
 void FieldStructForward::GetPossibilities(
@@ -29,7 +28,7 @@ void FieldStructForward::GetPossSettingPhase(
   /* Locals */
   FieldPos to;
   unsigned int number_of_mills_being_closed;
-  vector<FieldPos> removable_stones;
+  std::vector<FieldPos> removable_stones;
 
   /* get all removable stones */
   GetPossStoneRemove(removable_stones);
@@ -45,18 +44,23 @@ void FieldStructForward::GetPossSettingPhase(
     }
 
     /* Check if a mill is being closed */
-    number_of_mills_being_closed = WouldMillBeClosed(FieldStruct::size, to);
+    number_of_mills_being_closed =
+        WouldMillBeClosed(/* from: */ FieldStruct::size, to);
 
     /* If a mill is closed, generate moves with stone removal. Don't allow to
      * close two mills at once, don't allow to close a mill, although no stone
      * can be removed from the opponent */
     if (number_of_mills_being_closed == 1 && removable_stones.size()) {
       for (FieldPos remove_pos : removable_stones) {
-        possibility_ids.push_back(MoveInfo{size, to, remove_pos}.GetId());
+        possibility_ids.push_back(/* x: */ MoveInfo{
+            /* from: */ size, to, /* remove_stone: */ remove_pos}
+                                      .GetId());
       }
       /* No mill closed, generate move without stone removal */
     } else if (number_of_mills_being_closed == 0) {
-      possibility_ids.push_back(MoveInfo{size, to, size}.GetId());
+      possibility_ids.push_back(
+          /* x: */ MoveInfo{/* from: */ size, to, /* remove_stone: */ size}
+              .GetId());
     }
   }
 }
@@ -66,7 +70,7 @@ void FieldStructForward::GetPossNormalMove(
     std::vector<MoveInfo::PossibilityId>& possibility_ids) const {
   /* Locals */
   FieldPos from, to, dir, remove_pos;
-  vector<FieldPos> removable_stones;
+  std::vector<FieldPos> removable_stones;
 
   possibility_ids.clear();
 
@@ -86,11 +90,14 @@ void FieldStructForward::GetPossNormalMove(
           /* If a mill is closed, generate moves with stone removal */
           if (WouldMillBeClosed(from, to) && !removable_stones.empty()) {
             for (FieldPos remove_pos : removable_stones) {
-              possibility_ids.push_back(MoveInfo{from, to, remove_pos}.GetId());
+              possibility_ids.push_back(
+                  /* x: */ MoveInfo{from, to, /* remove_stone: */ remove_pos}
+                      .GetId());
             }
             /* No mill closed, generate move without stone removal */
           } else {
-            possibility_ids.push_back(MoveInfo{from, to, size}.GetId());
+            possibility_ids.push_back(
+                /* x: */ MoveInfo{from, to, /* remove_stone: */ size}.GetId());
           }
 
           /* Current person is allowed to jump */
@@ -106,11 +113,14 @@ void FieldStructForward::GetPossNormalMove(
           /* If a mill is closed, generate moves with stone removal */
           if (WouldMillBeClosed(from, to) && !removable_stones.empty()) {
             for (FieldPos remove_pos : removable_stones) {
-              possibility_ids.push_back(MoveInfo{from, to, remove_pos}.GetId());
+              possibility_ids.push_back(
+                  /* s: */ MoveInfo{from, to, /* remove_stone: */ remove_pos}
+                      .GetId());
             }
             /* No mill closed, generate move without stone removal */
           } else {
-            possibility_ids.push_back(MoveInfo{from, to, size}.GetId());
+            possibility_ids.push_back(
+                /* x: */ MoveInfo{from, to, /* remove_stone: */ size}.GetId());
           }
         }
       }
@@ -229,20 +239,28 @@ void FieldStructForward::UpdateWarning(FieldPos first_stone,
                                        FieldPos second_stone,
                                        PlayerId acting_player) {
   if (first_stone < size) {
-    UpdateStonePartOfMill(first_stone, neighbour[first_stone][0][0],
-                          neighbour[first_stone][0][1], acting_player);
+    UpdateStonePartOfMill(/* stone_one: */ first_stone,
+                          /* stone_two: */ neighbour[first_stone][0][0],
+                          /* stone_three: */ neighbour[first_stone][0][1],
+                          acting_player);
   }
   if (first_stone < size) {
-    UpdateStonePartOfMill(first_stone, neighbour[first_stone][1][0],
-                          neighbour[first_stone][1][1], acting_player);
+    UpdateStonePartOfMill(/* stone_one: */ first_stone,
+                          /* stone_two: */ neighbour[first_stone][1][0],
+                          /* stone_three: */ neighbour[first_stone][1][1],
+                          acting_player);
   }
   if (second_stone < size) {
-    UpdateStonePartOfMill(second_stone, neighbour[second_stone][0][0],
-                          neighbour[second_stone][0][1], acting_player);
+    UpdateStonePartOfMill(/* stone_one: */ second_stone,
+                          /* stone_two: */ neighbour[second_stone][0][0],
+                          /* stone_three: */ neighbour[second_stone][0][1],
+                          acting_player);
   }
   if (second_stone < size) {
-    UpdateStonePartOfMill(second_stone, neighbour[second_stone][1][0],
-                          neighbour[second_stone][1][1], acting_player);
+    UpdateStonePartOfMill(/* stone_one: */ second_stone,
+                          /* stone_two: */ neighbour[second_stone][1][0],
+                          /* stone_three: */ neighbour[second_stone][1][1],
+                          acting_player);
   }
 }
 
@@ -347,7 +365,8 @@ bool FieldStructForward::SetStone(const MoveInfo& move, BackupStruct& backup) {
   }
 
   /* Update warnings */
-  UpdateWarning(move.to, size, cur_player.id);
+  UpdateWarning(/* first_stone: */ move.to, /* second_stone: */ size,
+                cur_player.id);
 
   /* Handle stone removal if mill was closed */
   if (move.remove_stone < size) {
@@ -380,7 +399,9 @@ bool FieldStructForward::NormalMove(const MoveInfo& move,
 
   /* Check if removal of stone is correct */
   if (move.remove_stone < size) {
-    if (!CanStoneBeRemoved(move.remove_stone)) return false;
+    if (!CanStoneBeRemoved(move.remove_stone)) {
+      return false;
+    }
   }
 
   /* Set stone into field */
@@ -388,11 +409,15 @@ bool FieldStructForward::NormalMove(const MoveInfo& move,
   field[move.to] = cur_player.id;
 
   /* Update possible moves */
-  UpdatePossibleMoves(move.from, cur_player, true, move.to);
-  UpdatePossibleMoves(move.to, cur_player, false, move.from);
+  UpdatePossibleMoves(/* stone: */ move.from, cur_player,
+                      /* stone_removed: */ true, /* ignore_stone: */ move.to);
+  UpdatePossibleMoves(/* stone: */ move.to, cur_player,
+                      /* stone_removed: */ false,
+                      /* ignore_stone: */ move.from);
 
   /* Update warnings */
-  UpdateWarning(move.from, move.to, cur_player.id);
+  UpdateWarning(/* first_stone: */ move.from, /* second_stone: */ move.to,
+                cur_player.id);
   CalcNumberOfMills();
 
   /* Handle stone removal if a mill was closed */
@@ -422,11 +447,13 @@ bool FieldStructForward::RemoveStone(const MoveInfo& move,
     cur_player.num_possible_moves++;
     opp_player.num_possible_moves++;
   } else {
-    UpdatePossibleMoves(move.remove_stone, opp_player, true, size);
+    UpdatePossibleMoves(/* stone: */ move.remove_stone, opp_player,
+                        /* stone_removed: */ true, /* ignore_stone: */ size);
   }
 
   /* Update warnings */
-  UpdateWarning(move.remove_stone, size, opp_player.id);
+  UpdateWarning(/* first_stone: */ move.remove_stone, /* second_stone: */ size,
+                opp_player.id);
 
   /* End of game? */
   if ((opp_player.num_stones < 3) && (!setting_phase)) {
@@ -484,7 +511,7 @@ bool FieldStructForward::Move(const MoveInfo& move, BackupStruct& old_state) {
   }
 
   /* Set next player */
-  std::swap(cur_player, opp_player);
+  std::swap(/* a: */ cur_player, /* b: */ opp_player);
 
   /* Update has_only_mills */
   CalcHasOnlyMills();
@@ -503,4 +530,4 @@ bool FieldStructForward::Undo(const BackupStruct& old_state) {
   return true;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

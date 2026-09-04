@@ -1,11 +1,13 @@
 #include "muehle/muehle.h"
 
-#include <c++/13/ctime>
+#include <ctime>
 
 namespace muehle {
 
 /* Muehle class constructor */
-Muehle::Muehle() { srand((unsigned)time(nullptr)); }
+Muehle::Muehle() {
+  srand((unsigned)time(/* timer: */ nullptr));
+}
 
 /* Muehle class destructor */
 Muehle::~Muehle() {}
@@ -31,7 +33,8 @@ void Muehle::BeginNewGame(MuehleAI* first_player_ai, MuehleAI* second_player_ai,
   if (reset_field) {
     field.Reset(beginning_player);
   }
-  field.SetSituation(field.GetField(), setting_phase, 0);
+  field.SetSituation(field.GetField(), setting_phase,
+                     /* total_num_stones_missing: */ 0);
   if (field.GetCurPlayer().id != beginning_player) {
     field.Invert();
   }
@@ -58,7 +61,8 @@ bool Muehle::PutStone(FieldPos pos, PlayerId player) {
   /* Set stone */
   FieldStruct::FieldArray the_field = field.GetField();
   the_field[pos] = player;
-  field.SetSituation(the_field, field.InSettingPhase(), 0);
+  field.SetSituation(the_field, field.InSettingPhase(),
+                     /* total_num_stones_missing */ 0);
 
   /* Return success */
   return true;
@@ -153,8 +157,9 @@ PlayerId Muehle::GetWinner() const {
 /* Returns the number of turns to remis */
 unsigned int Muehle::GetNumTurnsToRemis() const {
   /* Only consider moves up to the current index */
-  std::vector<LogItem> log_subset(move_log.begin(),
-                                  move_log.begin() + move_log_current_index);
+  std::vector<LogItem> log_subset(
+      /* first: */ move_log.begin(),
+      /* last: */ move_log.begin() + move_log_current_index);
   unsigned int num_normal_moves_done =
       LogItem::GetNumNormalMovesWithoutRemoval(log_subset);
   return num_moves_to_remis - num_normal_moves_done;
@@ -168,8 +173,9 @@ float Muehle::GetNumRepeatedMoves() const {
   }
 
   /* Only consider moves up to the current index */
-  std::vector<LogItem> log_subset(move_log.begin(),
-                                  move_log.begin() + move_log_current_index);
+  std::vector<LogItem> log_subset(
+      /* first: */ move_log.begin(),
+      /* last: */ move_log.begin() + move_log_current_index);
   return LogItem::GetNumRepeatedMoves(log_subset);
 }
 
@@ -247,7 +253,7 @@ bool Muehle::MoveStone(const MoveInfo& move) {
   FieldStruct::BackupStruct old_state;
   PlayerId moving_player = field.GetCurPlayer().id;
   bool is_move_completed = false;
-  
+
   /* If a is a mill closed and no information on which stone to remove is given,
   then the move is not completed yet. */
   if (move.remove_stone == FieldStruct::size) {
@@ -271,7 +277,7 @@ bool Muehle::MoveStone(const MoveInfo& move) {
   /* Store history */
   if (move_log_current_index < move_log.size()) {
     move_log[move_log_current_index] = LogItem{move, moving_player};
-    move_log.resize(move_log_current_index + 1);
+    move_log.resize(/* new_size: */ move_log_current_index + 1);
   } else {
     move_log.push_back(LogItem{move, moving_player});
   }
@@ -296,12 +302,15 @@ bool Muehle::SetCurrentGameState(FieldStruct& cur_state) {
 
 /* Calls the PrintField() function of the current field. Prints the current game
  * state on the screen. */
-void Muehle::PrintField() const { field.Print(); }
+void Muehle::PrintField() const {
+  field.Print();
+}
 
 /* Redo the last move */
 bool Muehle::RedoLastMove(void) {
   if (move_log_current_index >= move_log.size()) {
-    return false; /* No more moves to redo */
+    /* No more moves to redo */
+    return false;
   }
   std::vector<LogItem> move_log_bak = move_log;
 
@@ -372,10 +381,12 @@ Muehle::LogItem::LogItem(const MoveInfo& move, PlayerId player)
 unsigned int Muehle::LogItem::GetNumNormalMovesWithoutRemoval(
     const std::vector<LogItem>& log) {
   if (log.empty()) {
-    return 0; /* Leave if there are no moves */
+    /* Leave if there are no moves */
+    return 0;
   }
   if (log.size() < 2) {
-    return 0; /* Leave if there cant be normal moves */
+    /* Leave if there cant be normal moves */
+    return 0;
   }
 
   /* Locals */
@@ -404,10 +415,12 @@ unsigned int Muehle::LogItem::GetNumNormalMovesWithoutRemoval(
 float Muehle::LogItem::GetNumRepeatedMoves(const std::vector<LogItem>& log) {
   /* Check if the log is valid for counting repeated moves */
   if (log.empty()) {
-    return 0.0f; /* Leave if there are no moves */
+    /* Leave if there are no moves */
+    return 0.0f;
   }
   if (log.size() < 3) {
-    return 0.0f; /* Leave if there cant be repeated moves */
+    /* Leave if there cant be repeated moves */
+    return 0.0f;
   }
 
   /* Consider the last move as backward_move_current_player */
@@ -416,10 +429,12 @@ float Muehle::LogItem::GetNumRepeatedMoves(const std::vector<LogItem>& log) {
 
   /* Consider the second last move as backward_move_opponent_player */
   if (backward_move_current_player.move.IsSettingPhase()) {
-    return 0.0f; /* Leave if the last move is not a normal move */
+    /* Leave if the last move is not a normal move */
+    return 0.0f;
   }
   if (backward_move_opponent_player.move.IsSettingPhase()) {
-    return 0.0f; /* Leave if the second last move is not a normal move */
+    /* Leave if the second last move is not a normal move */
+    return 0.0f;
   }
 
   /* Create forward moves for the current and opponent player */
@@ -449,9 +464,11 @@ float Muehle::LogItem::GetNumRepeatedMoves(const std::vector<LogItem>& log) {
     } else if (*it == backward_move_opponent_player) {
       continue;
     } else if (*it == forward_move_current_player) {
-      repeated_moves += 0.5f; /* Count as half repeated move */
+      /* Count as half repeated move */
+      repeated_moves += 0.5f;
     } else if (*it == forward_move_opponent_player) {
-      repeated_moves += 0.5f; /* count as half repeated move */
+      /* count as half repeated move */
+      repeated_moves += 0.5f;
       /* If the move is neither a forward or backward move of the current player
        * nor the opponent player, break the loop. */
     } else {
@@ -466,4 +483,4 @@ bool Muehle::LogItem::operator==(const LogItem& other) const {
   return (move == other.move && player == other.player);
 }
 
-}  // namespace muehle
+} /* namespace muehle */

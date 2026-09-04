@@ -18,6 +18,8 @@ PlayerId FieldStructTypes::Core::GetStone(FieldPos pos) const {
 }
 
 /* Returns true if the game is in the setting phase */
-bool FieldStructTypes::Core::InSettingPhase() const { return setting_phase; }
+bool FieldStructTypes::Core::InSettingPhase() const {
+  return setting_phase;
+}
 
-}  // namespace muehle
+} /* namespace muehle */

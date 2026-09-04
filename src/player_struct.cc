@@ -20,4 +20,4 @@ PlayerStruct::Core::Core(const PlayerStruct& player) {
   num_stones = player.num_stones;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

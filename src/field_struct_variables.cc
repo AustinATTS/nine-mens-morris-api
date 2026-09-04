@@ -3,7 +3,6 @@
 #include <iostream>
 
 namespace muehle {
-using namespace std;
 
 /* Prints the field to the console */
 void FieldStructVariables::Print() const {
@@ -15,47 +14,50 @@ void FieldStructVariables::Print() const {
     c[index] = GetCharFromStone(field[index]);
   }
 
-  cout << "current player          : " << GetCharFromStone(cur_player.id)
-       << " has " << cur_player.num_stones << " stones (set "
-       << cur_player.num_stones_set << ")\n";
-  cout << "opponent player         : " << GetCharFromStone(opp_player.id)
-       << " has " << opp_player.num_stones << " stones (set "
-       << opp_player.num_stones_set << ")\n";
-  cout << "setting phase           : " << (setting_phase ? "true" : "false");
+  std::cout << "current player          : " << GetCharFromStone(cur_player.id)
+            << " has " << cur_player.num_stones << " stones (set "
+            << cur_player.num_stones_set << ")\n";
+  std::cout << "opponent player         : " << GetCharFromStone(opp_player.id)
+            << " has " << opp_player.num_stones << " stones (set "
+            << opp_player.num_stones_set << ")\n";
+  std::cout << "setting phase           : "
+            << (setting_phase ? "true" : "false");
   if (long_version) {
-    cout << "\n";
-    cout << "\n   a-----b-----c   " << c[0] << "-----" << c[1] << "-----"
-         << c[2];
-    cout << "\n   |     |     |   " << "|     |     |";
-    cout << "\n   | d---e---f |   " << "| " << c[3] << "---" << c[4] << "---"
-         << c[5] << " |";
-    cout << "\n   | |   |   | |   " << "| |   |   | |";
-    cout << "\n   | | g-h-i | |   " << "| | " << c[6] << "-" << c[7] << "-"
-         << c[8] << " | |";
-    cout << "\n   | | | | | | |   " << "| | |   | | |";
-    cout << "\n   j-k-l   m-n-o   " << c[9] << "-" << c[10] << "-" << c[11]
-         << "   " << c[12] << "-" << c[13] << "-" << c[14];
-    cout << "\n   | | | | | | |   " << "| | |   | | |";
-    cout << "\n   | | p-q-r | |   " << "| | " << c[15] << "-" << c[16] << "-"
-         << c[17] << " | |";
-    cout << "\n   | |   |   | |   " << "| |   |   | |";
-    cout << "\n   | s---t---u |   " << "| " << c[18] << "---" << c[19] << "---"
-         << c[20] << " |";
-    cout << "\n   |     |     |   " << "|     |     |";
-    cout << "\n   v-----w-----x   " << c[21] << "-----" << c[22] << "-----"
-         << c[23];
-    cout << "\n" << endl;
+    std::cout << "\n";
+    std::cout << "\n   a-----b-----c   " << c[0] << "-----" << c[1] << "-----"
+              << c[2];
+    std::cout << "\n   |     |     |   " << "|     |     |";
+    std::cout << "\n   | d---e---f |   " << "| " << c[3] << "---" << c[4]
+              << "---" << c[5] << " |";
+    std::cout << "\n   | |   |   | |   " << "| |   |   | |";
+    std::cout << "\n   | | g-h-i | |   " << "| | " << c[6] << "-" << c[7] << "-"
+              << c[8] << " | |";
+    std::cout << "\n   | | | | | | |   " << "| | |   | | |";
+    std::cout << "\n   j-k-l   m-n-o   " << c[9] << "-" << c[10] << "-" << c[11]
+              << "   " << c[12] << "-" << c[13] << "-" << c[14];
+    std::cout << "\n   | | | | | | |   " << "| | |   | | |";
+    std::cout << "\n   | | p-q-r | |   " << "| | " << c[15] << "-" << c[16]
+              << "-" << c[17] << " | |";
+    std::cout << "\n   | |   |   | |   " << "| |   |   | |";
+    std::cout << "\n   | s---t---u |   " << "| " << c[18] << "---" << c[19]
+              << "---" << c[20] << " |";
+    std::cout << "\n   |     |     |   " << "|     |     |";
+    std::cout << "\n   v-----w-----x   " << c[21] << "-----" << c[22] << "-----"
+              << c[23];
+    std::cout << "\n" << std::endl;
   } else {
-    cout << "\n" << c[0] << "-----" << c[1] << "-----" << c[2];
-    cout << "\n" << "| " << c[3] << "---" << c[4] << "---" << c[5] << " |";
-    cout << "\n" << "| | " << c[6] << "-" << c[7] << "-" << c[8] << " | |";
-    cout << "\n"
-         << c[9] << "-" << c[10] << "-" << c[11] << "   " << c[12] << "-"
-         << c[13] << "-" << c[14];
-    cout << "\n" << "| | " << c[15] << "-" << c[16] << "-" << c[17] << " | |";
-    cout << "\n" << "| " << c[18] << "---" << c[19] << "---" << c[20] << " |";
-    cout << "\n" << c[21] << "-----" << c[22] << "-----" << c[23];
-    cout << "\n" << endl;
+    std::cout << "\n" << c[0] << "-----" << c[1] << "-----" << c[2];
+    std::cout << "\n" << "| " << c[3] << "---" << c[4] << "---" << c[5] << " |";
+    std::cout << "\n" << "| | " << c[6] << "-" << c[7] << "-" << c[8] << " | |";
+    std::cout << "\n"
+              << c[9] << "-" << c[10] << "-" << c[11] << "   " << c[12] << "-"
+              << c[13] << "-" << c[14];
+    std::cout << "\n"
+              << "| | " << c[15] << "-" << c[16] << "-" << c[17] << " | |";
+    std::cout << "\n"
+              << "| " << c[18] << "---" << c[19] << "---" << c[20] << " |";
+    std::cout << "\n" << c[21] << "-----" << c[22] << "-----" << c[23];
+    std::cout << "\n" << std::endl;
   }
 }
 
@@ -88,13 +90,13 @@ void FieldStructVariables::Reset(PlayerId first_player) {
   cur_player.has_only_mills = false;
   opp_player.has_only_mills = false;
 
-  field.fill(PlayerId::square_is_free);
-  stone_part_of_mill.fill(0);
+  field.fill(/* u: */ PlayerId::square_is_free);
+  stone_part_of_mill.fill(/* u: */ 0);
 }
 
 /* Switches the players and inverts the field */
 void FieldStructVariables::Invert() {
-  std::swap(cur_player, opp_player);
+  std::swap(/* a: */ cur_player, /* b: */ opp_player);
 
   for (FieldPos k = 0; k < size; k++) {
     switch (field[k]) {
@@ -200,7 +202,9 @@ const FieldStructVariables::FieldArray& FieldStructVariables::GetField() const {
 }
 
 /* Returns true if the game has finished */
-bool FieldStructVariables::HasGameFinished() const { return game_has_finished; }
+bool FieldStructVariables::HasGameFinished() const {
+  return game_has_finished;
+}
 
 /* Returns the number of stones set in the setting phase */
 unsigned int FieldStructVariables::GetNumStonesSet() const {
@@ -208,7 +212,9 @@ unsigned int FieldStructVariables::GetNumStonesSet() const {
 }
 
 /* Returns true if the game is in setting phase */
-bool FieldStructVariables::InSettingPhase() const { return setting_phase; }
+bool FieldStructVariables::InSettingPhase() const {
+  return setting_phase;
+}
 
 /* Updates 'has_only_mills'. stone_part_of_mill and field must be in sync */
 void FieldStructVariables::CalcHasOnlyMills() {
@@ -331,8 +337,10 @@ void FieldStructVariables::CalcStonePartOfMill() {
     stone_part_of_mill[i] = 0;
   }
   for (FieldPos i = 0; i < size; i++) {
-    SetStonePartOfMill(i, neighbour[i][0][0], neighbour[i][0][1]);
-    SetStonePartOfMill(i, neighbour[i][1][0], neighbour[i][1][1]);
+    SetStonePartOfMill(i, /* first_enighbour: */ neighbour[i][0][0],
+                       /* second_enighbour: */ neighbour[i][0][1]);
+    SetStonePartOfMill(i, /* first_enighbour: */ neighbour[i][1][0],
+                       /* second_enighbour: */ neighbour[i][1][1]);
   }
   /* Since every mill would be detected 3 times */
   for (FieldPos i = 0; i < size; i++) {
@@ -563,4 +571,4 @@ bool FieldStructVariables::IsIntegrityOk() const {
   return true;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

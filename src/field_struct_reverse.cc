@@ -3,7 +3,6 @@
 #include "muehle/field_struct.h"
 
 namespace muehle {
-using namespace std;
 
 /* Returns the predecessors fields of the current fie */
 void FieldStructReverse::GetPredecessors(
@@ -111,7 +110,7 @@ void FieldStructReverse::GetPredecessors_settingPhase(
         } else {
           field.opp_player.num_stones--;
           field.opp_player.num_stones_set--;
-          std::swap(field.cur_player, field.opp_player);
+          std::swap(/* a: */ field.cur_player, /* b: */ field.opp_player);
         }
       }
 
@@ -125,7 +124,7 @@ void FieldStructReverse::GetPredecessors_settingPhase(
           field.cur_player.num_stones_set++;
           field.cur_player.num_stones++;
         } else {
-          std::swap(field.cur_player, field.opp_player);
+          std::swap(/* a: */ field.cur_player, /* b: */ field.opp_player);
           field.opp_player.num_stones_set++;
           field.opp_player.num_stones++;
           field.field[to] = field.opp_player.id;
@@ -193,7 +192,7 @@ void FieldStructReverse::GetPredecessors_normalMove(
         if (mill_was_closed) {
           field.cur_player.number_of_mills--;
         } else {
-          std::swap(field.cur_player, field.opp_player);
+          std::swap(/* a: */ field.cur_player, /* b: */ field.opp_player);
         }
 
         field.field[from] = field.field[to];
@@ -213,7 +212,7 @@ void FieldStructReverse::GetPredecessors_normalMove(
         if (mill_was_closed) {
           field.cur_player.number_of_mills++;
         } else {
-          std::swap(field.cur_player, field.opp_player);
+          std::swap(/* a: */ field.cur_player, /* b: */ field.opp_player);
         }
       }
     }
@@ -289,7 +288,7 @@ void FieldStructReverse::GetPredecessors_jumpingPhase(
         if (mill_was_closed) {
           field.cur_player.number_of_mills--;
         } else {
-          std::swap(field.cur_player, field.opp_player);
+          std::swap(/* a: */ field.cur_player, /* b: */ field.opp_player);
         }
 
         field.field[from] = field.field[to];
@@ -306,7 +305,7 @@ void FieldStructReverse::GetPredecessors_jumpingPhase(
         if (mill_was_closed) {
           field.cur_player.number_of_mills++;
         } else {
-          std::swap(field.cur_player, field.opp_player);
+          std::swap(/* a: */ field.cur_player, /* b: */ field.opp_player);
         }
       }
     }
@@ -353,7 +352,7 @@ void FieldStructReverse::GetPredecessors_stoneRemove(
     /* Stone mustnt be part of a mill, except if player has only mills */
     stone_from_mill_was_removed = 0;
     {
-      vector<FieldPos> mill_stones = {
+      std::vector<FieldPos> mill_stones = {
           from, field.neighbour[from][0][0], field.neighbour[from][0][1],
           field.neighbour[from][1][0], field.neighbour[from][1][1]};
       if (field.field[mill_stones[1]] == field.cur_player.id &&
@@ -394,17 +393,19 @@ void FieldStructReverse::GetPredecessors_stoneRemove(
         field.cur_player.has_only_mills = true;
         field.CalcStonePartOfMill();
       }
-      std::swap(field.cur_player, field.opp_player);
+      std::swap(/* a: */ field.cur_player, /* b: */ field.opp_player);
     }
 
     /* Get predecessor from closing the mill */
-    GetPredecessors_normalMove(pred_fields, field, true);
-    GetPredecessors_jumpingPhase(pred_fields, field, true);
-    GetPredecessors_settingPhase(pred_fields, field, true);
+    GetPredecessors_normalMove(pred_fields, field, /* mill_was_closed: */ true);
+    GetPredecessors_jumpingPhase(pred_fields, field,
+                                 /* mill_was_closed: */ true);
+    GetPredecessors_settingPhase(pred_fields, field,
+                                 /* mill_was_closed: */ true);
 
     /* Remove stone again */
     {
-      std::swap(field.cur_player, field.opp_player);
+      std::swap(/* a: */ field.cur_player, /* b: */ field.opp_player);
       field.field[from] = PlayerId::square_is_free;
       field.game_has_finished = game_has_finished_backup;
       field.cur_player.num_stones--;
@@ -474,4 +475,4 @@ bool FieldStructReverse::AnyLonelyStone(const FieldStructReverse& field,
   return false;
 }
 
-}  // namespace muehle
+} /* namespace muehle */
