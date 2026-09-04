@@ -292,6 +292,63 @@ void mini_max::database::Database::ShowLayerStats(unsigned int layer_number) {
   log << " invalid states: " << GetNumInvalidStates(layer_number) << "\n";
 }
 
+/* Returns true if all layers of the database are completely calculated. */
+bool mini_max::database::Database::IsComplete() { return db_stats.completed; }
+
+/* Returns true if the layer is completely calculated and saved in the file. */
+bool mini_max::database::Database::IsLayerCompleteAndInFile(
+    unsigned int layer_number) {
+  if (layer_number >= layer_stats.size()) {
+    return log.Log(
+        Logger::LogLevel::error,
+        L"ERROR: Layer " + std::to_wstring(layer_number) + L" does not exist!");
+  }
+  return layer_stats[layer_number].completed_and_in_file;
+}
+
+/* Returns the number of knots in the layer. */
+unsigned int mini_max::database::Database::GetNumberOfKnots(
+    unsigned int layer_number) {
+  if (layer_number >= layer_stats.size()) return 0;
+  return layer_stats[layer_number].knots_in_layer;
+}
+
+/* Returns the size of the layer in bytes, which might differ from the number of knots. */
+long long mini_max::database::Database::GetLayerSizeInBytes(
+    unsigned int layer_num) {
+  if (layer_num >= layer_stats.size()) return 0;
+  return layer_stats[layer_num].GetLayerSizeInBytesForSkv() +
+         layer_stats[layer_num].GetLayerSizeInBytesForPlyInfo();
+}
+
+/* Returns the number of won states in the layer. */
+mini_max::StateNumberVarType mini_max::database::Database::GetNumWonStates(
+    unsigned int layer_num) {
+  if (layer_num >= layer_stats.size()) return 0;
+  return layer_stats[layer_num].num_won_states;
+}
+
+/* Returns the number of lost states in the layer. */
+mini_max::StateNumberVarType mini_max::database::Database::GetNumLostStates(
+    unsigned int layer_num) {
+  if (layer_num >= layer_stats.size()) return 0;
+  return layer_stats[layer_num].num_lost_states;
+}
+
+/* Returns the number of drawn states in the layer. */
+mini_max::StateNumberVarType mini_max::database::Database::GetNumDrawnStates(
+    unsigned int layer_num) {
+  if (layer_num >= layer_stats.size()) return 0;
+  return layer_stats[layer_num].num_drawn_states;
+}
+
+/* Returns the number of invalid states in the layer. */
+mini_max::StateNumberVarType mini_max::database::Database::GetNumInvalidStates(
+    unsigned int layer_num) {
+  if (layer_num >= layer_stats.size()) return 0;
+  return layer_stats[layer_num].num_invalid_states;
+}
+
 /* Save the layer to the file, which is already in memory. */
 /* The layer is marked as completed and saved in the file. */
 /* The layer is not saved if it is empty. */
