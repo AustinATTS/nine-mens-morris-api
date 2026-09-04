@@ -8,12 +8,14 @@ MinMaxAi::FieldClass::FieldClass() : FieldStruct() {
 
 MinMaxAi::FieldClass::FieldClass(const FieldStruct& the_field)
     : FieldStruct(the_field) {
-  warnings.fill(WarningId::no_warning);
+  warnings.fill(/* u: */ WarningId::no_warning);
 
   /* Go in every direction */
   for (unsigned int i = 0; i < size; i++) {
-    SetWarningAndMill(i, neighbour[i][0][0], neighbour[i][0][1]);
-    SetWarningAndMill(i, neighbour[i][1][0], neighbour[i][1][1]);
+    SetWarningAndMill(/* stone: */ i, /* first_neighbour: */ neighbour[i][0][0],
+                      /* second_neighbour: */ neighbour[i][0][1]);
+    SetWarningAndMill(/* stone: */ i, /* first_neighbour: */ neighbour[i][1][0],
+                      /* second_neighbour: */ neighbour[i][1][1]);
   }
 }
 
@@ -29,12 +31,14 @@ void MinMaxAi::FieldClass::SetWarningAndMill(unsigned int stone,
       field[first_neighbour] == PlayerId::square_is_free &&
       field[second_neighbour] == row_owner) {
     warnings[first_neighbour] =
-        AddWarning(warnings[first_neighbour], row_owner_warning);
+        AddWarning(/* existing_warning: */ warnings[first_neighbour],
+                   /* new_warning: */ row_owner_warning);
   }
   if (row_owner != PlayerId::square_is_free &&
       field[first_neighbour] == row_owner) {
     warnings[second_neighbour] =
-        AddWarning(warnings[second_neighbour], row_owner_warning);
+        AddWarning(/* existing_warning: */ warnings[second_neighbour],
+                   /* new_warning: */ row_owner_warning);
   }
 }
 
@@ -165,8 +169,9 @@ void MinMaxAi::PrintMoveInformation(unsigned int thread_no,
 }
 
 /* MinMaxAi Class Constructor */
-MinMaxAi::MinMaxAi() : state_addressing(L".") {
-  thread_vars.resize(mm.GetNumThreads(), ThreadVarsStruct());
+MinMaxAi::MinMaxAi() : state_addressing(/* directory: */ L".") {
+  thread_vars.resize(/* new_size: */ mm.GetNumThreads(),
+                     /* x: */ ThreadVarsStruct());
 }
 
 /* MinMaxAI class destructor */
@@ -201,7 +206,7 @@ void MinMaxAi::Play(const FieldStruct& the_field, MoveInfo& move) {
 
   /* Reserve memory */
   for (auto& vars : thread_vars) {
-    vars.old_states.resize(search_depth + 3);
+    vars.old_states.resize(/* new_size: */ search_depth + 3);
   }
 
   /* Start the MiniMax algorithm */
@@ -229,9 +234,13 @@ unsigned int MinMaxAi::GetLayerNumber(unsigned int thread_no) {
   return state_addressing.GetLayerNumber(thread_vars[thread_no].field);
 }
 
-void MinMaxAi::GetLayerAndStateNumber (unsigned int thread_no, unsigned int& layer_num, unsigned int& state_num, unsigned int& sym_op) {
+void MinMaxAi::GetLayerAndStateNumber(unsigned int thread_no,
+                                      unsigned int& layer_num,
+                                      unsigned int& state_num,
+                                      unsigned int& sym_op) {
   layer_num = state_addressing.GetLayerNumber(thread_vars[thread_no].field);
-  state_addressing.GetStateNumber(layer_num, state_num, sym_op, thread_vars[thread_no].field);
+  state_addressing.GetStateNumber(layer_num, /* state_number: */ state_num,
+                                  sym_op, thread_vars[thread_no].field);
 }
 
-}  // namespace muehle
+} /* namespace muehle */

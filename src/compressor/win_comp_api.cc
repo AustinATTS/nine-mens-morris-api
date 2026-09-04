@@ -83,5 +83,5 @@ long long muehle::compressor::WinCompApi::EstimateMaxSizeOfCompressedData(
   return compressed_buffer_size;
 }
 
-}  // namespace muehle
-#endif  // _WIN32
+}  /* namespace muehle */
+#endif  /* _WIN32 */

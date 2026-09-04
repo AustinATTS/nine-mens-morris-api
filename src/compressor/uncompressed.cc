@@ -28,4 +28,4 @@ long long compressor::Uncompressed::EstimateMaxSizeOfCompressedData(
     long long amount_uncompressed_data) {
   return amount_uncompressed_data;
 }
-}  // namespace muehle
+} /* namespace muehle */

@@ -12,44 +12,44 @@
 namespace muehle {
 
 std::string Trim(const std::string& text) {
-  const auto first = text.find_first_not_of(" \t\r\n");
+  const auto first = text.find_first_not_of(/* s: */ " \t\r\n");
   if (first == std::string::npos) {
     return {};
   }
-  const auto last = text.find_last_not_of(" \t\r\n");
-  return text.substr(first, last - first + 1);
+  const auto last = text.find_last_not_of(/* s: */ " \t\r\n");
+  return text.substr(/* pos: */ first, /* n: */ last - first + 1);
 }
 
 std::string UnescapeJsonString(std::string value) {
   std::string result;
-  result.reserve(value.size());
+  result.reserve(/* res: */ value.size());
   for (std::size_t index = 0; index < value.size(); ++index) {
     if (value[index] == '\\' && index + 1 < value.size()) {
       const char next = value[++index];
       switch (next) {
         case '\\':
-          result.push_back('\\');
+          result.push_back(/* c: */ '\\');
           break;
         case '"':
-          result.push_back('"');
+          result.push_back(/* c: */ '"');
           break;
         case '/':
-          result.push_back('/');
+          result.push_back(/* c: */ '/');
           break;
         case 'b':
-          result.push_back('\b');
+          result.push_back(/* c: */ '\b');
           break;
         case 'f':
-          result.push_back('\f');
+          result.push_back(/* c: */ '\f');
           break;
         case 'n':
-          result.push_back('\n');
+          result.push_back(/* c: */ '\n');
           break;
         case 'r':
-          result.push_back('\r');
+          result.push_back(/* c: */ '\r');
           break;
         case 't':
-          result.push_back('\t');
+          result.push_back(/* c: */ '\t');
           break;
         default:
           result.push_back(next);
@@ -64,12 +64,16 @@ std::string UnescapeJsonString(std::string value) {
 
 bool ExtractUnsigned(const std::string& input, const std::string& key,
                      unsigned int& value) {
-  const std::regex pattern("\"" + key + "\"\\s*:\\s*(\\d+)");
+  const std::regex pattern(/* s: */ "\"" + key + "\"\\s*:\\s*(\\d+)");
   std::smatch match;
-  if (!std::regex_search(input, match, pattern)) return false;
+  if (!std::regex_search(input, match, pattern)) {
+    return false;
+  }
   try {
     const auto parsed = std::stoull(match[1].str());
-    if (parsed > std::numeric_limits<unsigned int>::max()) return false;
+    if (parsed > std::numeric_limits<unsigned int>::max()) {
+      return false;
+    }
     value = static_cast<unsigned int>(parsed);
   } catch (const std::exception&) {
     return false;
@@ -79,26 +83,31 @@ bool ExtractUnsigned(const std::string& input, const std::string& key,
 
 bool ExtractBool(const std::string& input, const std::string& key,
                  bool& value) {
-  const std::regex pattern("\"" + key + "\"\\s*:\\s*(true|false)");
+  const std::regex pattern(/* s: */ "\"" + key + "\"\\s*:\\s*(true|false)");
   std::smatch match;
-  if (!std::regex_search(input, match, pattern)) return false;
+  if (!std::regex_search(input, match, pattern)) {
+    return false;
+  }
   value = (match[1].str() == "true");
   return true;
 }
 
 bool ExtractString(const std::string& input, const std::string& key,
                    std::string& value) {
-  const std::regex pattern("\"" + key + "\"\\s*:\\s*\"((?:\\\\.|[^\"])*)\"");
+  const std::regex pattern(/* s: */ "\"" + key +
+                           "\"\\s*:\\s*\"((?:\\\\.|[^\"])*)\"");
   std::smatch match;
-  if (!std::regex_search(input, match, pattern)) return false;
-  value = UnescapeJsonString(match[1].str());
+  if (!std::regex_search(input, match, pattern)) {
+    return false;
+  }
+  value = UnescapeJsonString(/* value: */ match[1].str());
   return true;
 }
 
 bool ExtractBoard(const std::string& input,
                   std::array<PlayerId, FieldStruct::size>& board,
                   std::string& error) {
-  const std::regex pattern("\"(board|field)\"\\s*:\\s*\\[(.*?)\\]");
+  const std::regex pattern(/* p: */ "\"(board|field)\"\\s*:\\s*\\[(.*?)\\]");
   std::smatch match;
   if (!std::regex_search(input, match, pattern)) {
     error = "Missing board array. Expected 24 integers in 'board' or 'field'.";
@@ -108,9 +117,11 @@ bool ExtractBoard(const std::string& input,
   std::stringstream stream(match[2].str());
   std::string token;
   std::size_t index = 0;
-  while (std::getline(stream, token, ',')) {
+  while (std::getline(stream, token, /* delim: */ ',')) {
     token = Trim(token);
-    if (token.empty()) continue;
+    if (token.empty()) {
+      continue;
+    }
     if (index >= FieldStruct::size) {
       error = "Board array must contain exactly 24 entries.";
       return false;
@@ -119,8 +130,9 @@ bool ExtractBoard(const std::string& input,
     try {
       std::size_t parsed_characters = 0;
       const auto parsed = std::stoul(token, &parsed_characters);
-      if (parsed_characters != token.size())
+      if (parsed_characters != token.size()) {
         throw std::invalid_argument("trailing characters");
+      }
       stone_value = static_cast<unsigned int>(parsed);
     } catch (const std::exception&) {
       error = "Board array values must be integers: 0, 1, or 2.";
@@ -153,15 +165,16 @@ bool ExtractBoard(const std::string& input,
 
 bool ParseCurrentPlayer(const std::string& input, PlayerId& player) {
   unsigned int player_value = 0;
-  if (ExtractUnsigned(input, "current_player", player_value) ||
-      ExtractUnsigned(input, "player", player_value)) {
+  if (ExtractUnsigned(input, /* key: */ "current_player", player_value) ||
+      ExtractUnsigned(input, /* key: */ "player", player_value)) {
     player = (player_value == 2) ? PlayerId::player_two : PlayerId::player_one;
     return true;
   }
 
   std::string player_text;
-  if (ExtractString(input, "current_player", player_text) ||
-      ExtractString(input, "player", player_text)) {
+  if (ExtractString(input, /* key: */ "current_player",
+                    /* value: */ player_text) ||
+      ExtractString(input, /* key: */ "player", /* value: */ player_text)) {
     for (auto& character : player_text) {
       character = static_cast<char>(
           std::tolower(static_cast<unsigned char>(character)));
@@ -213,7 +226,7 @@ std::string ShortValueToString(unsigned int short_value) {
 
 std::string EscapeJson(const std::string& value) {
   std::string result;
-  result.reserve(value.size() + 8);
+  result.reserve(/* res: */ value.size() + 8);
   for (char character : value) {
     switch (character) {
       case '\\':
@@ -291,7 +304,9 @@ std::string SerializeResponse(const MuehleBridge::Response& response) {
   for (std::size_t choice_index = 0; choice_index < response.choices.size();
        ++choice_index) {
     const auto& choice = response.choices[choice_index];
-    if (choice_index > 0) stream << ",";
+    if (choice_index > 0) {
+      stream << ",";
+    }
     stream << "{";
     stream << "\"possibility_id\":" << choice.possibility_id << ",";
     stream << "\"move\":{"
@@ -306,7 +321,9 @@ std::string SerializeResponse(const MuehleBridge::Response& response) {
     stream << "\"freq_values_sub_moves\":[";
     for (std::size_t value_index = 0;
          value_index < choice.freq_values_sub_moves.size(); ++value_index) {
-      if (value_index > 0) stream << ",";
+      if (value_index > 0) {
+        stream << ",";
+      }
       stream << choice.freq_values_sub_moves[value_index];
     }
     stream << "]}";
@@ -327,15 +344,15 @@ MuehleBridge::Request ParseRequest(const std::string& input,
   if (!ExtractBoard(input, request.board, error)) {
     return request;
   }
-  ExtractBool(input, "setting_phase", request.setting_phase);
-  ExtractUnsigned(input, "total_num_stones_missing",
+  ExtractBool(input, /* key: */ "setting_phase", request.setting_phase);
+  ExtractUnsigned(input, /* key: */ "total_num_stones_missing",
                   request.total_num_stones_missing);
-  ExtractUnsigned(input, "search_depth", request.search_depth);
+  ExtractUnsigned(input, /* key: */ "search_depth", request.search_depth);
   ParseCurrentPlayer(input, request.current_player);
   return request;
 }
 
-}  // namespace muehle
+} /* namespace muehle */
 
 int main(int argc, char** argv) {
   const std::string input = [&]() {
@@ -355,7 +372,8 @@ int main(int argc, char** argv) {
   }();
 
   std::string parse_error;
-  const muehle::MuehleBridge::Request request = muehle::ParseRequest(input, parse_error);
+  const muehle::MuehleBridge::Request request =
+      muehle::ParseRequest(input, parse_error);
 
   if (!parse_error.empty()) {
     muehle::MuehleBridge::Response error_response;
@@ -366,8 +384,8 @@ int main(int argc, char** argv) {
 
   std::ostringstream coutSink;
   std::wostringstream wcoutSink;
-  auto* const old_cout_buffer = std::cout.rdbuf(coutSink.rdbuf());
-  auto* const old_wcout_buffer = std::wcout.rdbuf(wcoutSink.rdbuf());
+  auto* const old_cout_buffer = std::cout.rdbuf(/* sb: */ coutSink.rdbuf());
+  auto* const old_wcout_buffer = std::wcout.rdbuf(/* sb: */ wcoutSink.rdbuf());
 
   muehle::MuehleBridge::Response response;
   {

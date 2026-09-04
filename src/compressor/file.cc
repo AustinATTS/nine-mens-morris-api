@@ -44,9 +44,10 @@ bool compressor::File::Open(std::wstring const& file_path, bool only_read) {
 
     /* create directory if it does not exist */
     if (file_path_str.has_parent_path() &&
-        !std::filesystem::exists(file_path_str.parent_path())) {
+        !std::filesystem::exists(/* p: */ file_path_str.parent_path())) {
       try {
-        if (!std::filesystem::create_directories(file_path_str.parent_path())) {
+        if (!std::filesystem::create_directories(
+                /* p: */ file_path_str.parent_path())) {
           return false;
         }
       } catch (const std::exception&) {
@@ -56,7 +57,8 @@ bool compressor::File::Open(std::wstring const& file_path, bool only_read) {
 
     /* open file */
     fs.open(file_path_str,
-            std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+            /* mode: */ std::ios::in | std::ios::out | std::ios::binary |
+                std::ios::trunc);
 
     if (!fs.good() || !fs.is_open()) {
       return false;
@@ -93,7 +95,9 @@ bool compressor::File::Close() {
 }
 
 /* Returns true if the file is open. */
-bool compressor::File::IsOpen() { return fs.is_open(); }
+bool compressor::File::IsOpen() {
+  return fs.is_open();
+}
 
 /* Returns a list of all keys in the file. */
 std::vector<std::wstring> compressor::File::GetKeys() {
@@ -111,11 +115,12 @@ std::vector<std::wstring> compressor::File::GetKeys() {
   }
   for (auto& cur_tmp_file :
        tmp_files) { /* get all keys from the temporary files */
-    keys.push_back(cur_tmp_file->GetKeyName());
+    keys.push_back(/* x: */ cur_tmp_file->GetKeyName());
   }
-  sort(keys.begin(), keys.end()); /* sort keys */
-  keys.erase(unique(keys.begin(), keys.end()),
-             keys.end()); /* remove duplicates */
+  sort(/* fire: */ keys.begin(), /* last: */ keys.end()); /* sort keys */
+  keys.erase(
+      /* first: */ unique(/* first: */ keys.begin(), /* last: */ keys.end()),
+      /* last: */ keys.end()); /* remove duplicates */
   return keys;
 }
 
@@ -202,7 +207,7 @@ bool compressor::File::ReadFromCompressed(std::wstring const& key,
     return false;
   }
   return footer.GetSection(key).ReadData(fs, footer, *comp, p_bytes, num_bytes,
-                                         position);
+                                         position); /* bool */
 }
 
 /* Write data to the compressed file, which is compressed and stored in blocks.
@@ -249,12 +254,13 @@ bool compressor::File::Write(std::wstring const& key, long long position,
     std::vector<char> tmp_data(footer.block_size_in_bytes);
     while (num_bytes_resting) {
       long long num_bytes_to_read =
-          std::min((long long)footer.block_size_in_bytes, num_bytes_resting);
-      if (!ReadFromCompressed(key, offset_within_section, num_bytes_to_read,
-                              &tmp_data[0])) {
+          std::min(/* a: */ (long long)footer.block_size_in_bytes,
+                   /* b: */ num_bytes_resting);
+      if (!ReadFromCompressed(key, /* position: */ offset_within_section,
+                              num_bytes_to_read, &tmp_data[0])) {
         return false;
       }
-      cur_tmp_file.Write(0, num_bytes_to_read, &tmp_data[0]);
+      cur_tmp_file.Write(/* position: */ 0, num_bytes_to_read, &tmp_data[0]);
       num_bytes_resting -= num_bytes_to_read;
     }
   }
@@ -287,7 +293,7 @@ bool compressor::File::Flush() {
 
   /* get all temporary file paths */
   for (auto& cur_tmp_file : tmp_files) {
-    tmp_file_paths.push_back(cur_tmp_file->GetFilePath());
+    tmp_file_paths.push_back(/* x: */ cur_tmp_file->GetFilePath());
   }
 
   /* loop over all files in the temporary directory */
@@ -301,7 +307,7 @@ bool compressor::File::Flush() {
     std::wstringstream ss;
     ss << L"Flushing section \"" << key << L"\" with " << num_bytes
        << L" bytes." << std::endl;
-    comp->Print(ss, 2);
+    comp->Print(ss, /* level: */ 2);
 
     /* does the section already exist? */
     if (footer.DoesKeyExist(key)) {
@@ -398,7 +404,7 @@ compressor::File::SectionInfo& compressor::File::FooterStruct::GetSection(
     std::wstring const& key) {
   auto section_id_it = dictionary.find(key);
   if (section_id_it == dictionary.end()) {
-    sections.push_back(SectionInfo());
+    sections.push_back(/* x: */ SectionInfo());
     sections.back().key_name = key;
     sections.back().section_id = sections.size();
     dictionary[key] = sections.size();
@@ -443,7 +449,7 @@ bool compressor::File::FooterStruct::Write(std::fstream& fs) {
   footer_offset_in_file = fs.tellg();
 
   /* write footer */
-  fs.write((char*)this, sizeof(type_id) + sizeof(version_id) +
+  fs.write((char*)this, /* n: */ sizeof(type_id) + sizeof(version_id) +
                             sizeof(num_sections) + sizeof(block_size_in_bytes) +
                             sizeof(file_info_offset_in_file) +
                             sizeof(footer_offset_in_file) +
@@ -528,21 +534,24 @@ bool compressor::File::SectionInfo::Write(std::fstream& fs,
    * per-character wchar_t -> char16_t narrowing below is always safe (no
    * surrogate pairs are ever needed).
    */
-  std::u16string key_name_u16(key_name.begin(), key_name.end());
-  key_length_in_bytes = static_cast<unsigned int>(key_name_u16.size() * sizeof(char16_t));
+  std::u16string key_name_u16(/* beg: */ key_name.begin(), key_name.end());
+  key_length_in_bytes =
+      static_cast<unsigned int>(key_name_u16.size() * sizeof(char16_t));
 
   /* write section info */
   unsigned int dummy_unit32 = 0;
-  fs.write((char*)&offset_in_file, sizeof(offset_in_file));
-  fs.write((char*)&uncompressed_size, sizeof(uncompressed_size));
-  fs.write((char*)&compressed_size, sizeof(compressed_size));
-  fs.write((char*)&num_blocks, sizeof(num_blocks));
+  fs.write((char*)&offset_in_file, /* n: */ sizeof(offset_in_file));
+  fs.write((char*)&uncompressed_size, /* n: */ sizeof(uncompressed_size));
+  fs.write((char*)&compressed_size, /* n: */ sizeof(compressed_size));
+  fs.write((char*)&num_blocks, /* n: */ sizeof(num_blocks));
   fs.write((char*)&dummy_unit32,
-           sizeof(dummy_unit32)); /* 4 bytes were formerly used for padding */
-  fs.write((char*)&section_id, sizeof(section_id));
+           /* n: */ sizeof(
+               dummy_unit32)); /* 4 bytes were formerly used for padding */
+  fs.write((char*)&section_id, /* n: */ sizeof(section_id));
   fs.write((char*)&dummy_unit32,
-           sizeof(dummy_unit32)); /* 4 bytes were formerly used for padding */
-  fs.write((char*)&key_length_in_bytes, sizeof(key_length_in_bytes));
+           /* n: */ sizeof(
+               dummy_unit32)); /* 4 bytes were formerly used for padding */
+  fs.write((char*)&key_length_in_bytes, /* n: */ sizeof(key_length_in_bytes));
   fs.write((char*)key_name_u16.data(), key_length_in_bytes);
 
   /* blocks are already stored in each section */
@@ -567,20 +576,23 @@ bool compressor::File::SectionInfo::Read(std::fstream& fs,
    * native wchar_t, which is what makes this able to read database files
    * generated by the original Windows/MSVC build. See the comment in
    * SectionInfo::Write for the full explanation. */
-  std::vector<char16_t> key_name_tmp(max_key_length, u'\0');
+  std::vector<char16_t> key_name_tmp(/* n: */ max_key_length,
+                                     /* value: */ u'\0');
   unsigned int dummy_unit32;
 
   /* read section info */
-  fs.read((char*)&offset_in_file, sizeof(offset_in_file));
-  fs.read((char*)&uncompressed_size, sizeof(uncompressed_size));
-  fs.read((char*)&compressed_size, sizeof(compressed_size));
-  fs.read((char*)&num_blocks, sizeof(num_blocks));
+  fs.read((char*)&offset_in_file, /* n: */ sizeof(offset_in_file));
+  fs.read((char*)&uncompressed_size, /* n: */ sizeof(uncompressed_size));
+  fs.read((char*)&compressed_size, /* n: */ sizeof(compressed_size));
+  fs.read((char*)&num_blocks, /* n: */ sizeof(num_blocks));
   fs.read((char*)&dummy_unit32,
-          sizeof(dummy_unit32)); /* 4 bytes were formerly used for padding */
-  fs.read((char*)&section_id, sizeof(section_id));
+          /* n: */ sizeof(
+              dummy_unit32)); /* 4 bytes were formerly used for padding */
+  fs.read((char*)&section_id, /* n: */ sizeof(section_id));
   fs.read((char*)&dummy_unit32,
-          sizeof(dummy_unit32)); /* 4 bytes were formerly used for padding */
-  fs.read((char*)&key_length_in_bytes, sizeof(key_length_in_bytes));
+          /* n: */ sizeof(
+              dummy_unit32)); /* 4 bytes were formerly used for padding */
+  fs.read((char*)&key_length_in_bytes, /* n: */ sizeof(key_length_in_bytes));
 
   /* keys */
   if (key_length_in_bytes > max_key_length) {
@@ -590,7 +602,8 @@ bool compressor::File::SectionInfo::Read(std::fstream& fs,
   fs.read((char*)&key_name_tmp[0], key_length_in_bytes);
   size_t num_chars = key_length_in_bytes / sizeof(char16_t);
   key_name_tmp[num_chars] = u'\0';
-  key_name.assign(key_name_tmp.begin(), key_name_tmp.begin() + num_chars);
+  key_name.assign(/* first: */ key_name_tmp.begin(),
+                  /* last: */ key_name_tmp.begin() + num_chars);
   return true;
 }
 
@@ -624,12 +637,14 @@ bool compressor::File::SectionInfo::WriteData(std::fstream& fs,
     while (num_bytes_resting) {
       /* locals */
       unsigned int num_bytes_to_compress = (unsigned int)std::min(
-          (long long)footer.block_size_in_bytes, num_bytes_resting);
-      cur_tmp_file.Read(cur_offset_in_tmp_file, num_bytes_to_compress,
-                        &uncompressed_data[0]);
+          /* a: */ (long long)footer.block_size_in_bytes,
+          /* b: */ num_bytes_resting);
+      cur_tmp_file.Read(/* position: */ cur_offset_in_tmp_file,
+                        num_bytes_to_compress, &uncompressed_data[0]);
 
       /* compress data */
-      if (!comp.Compress(&compressed_data[0], &uncompressed_data[0],
+      if (!comp.Compress(/* compressed_data: */ &compressed_data[0],
+                         /* source_data: */ &uncompressed_data[0],
                          num_bytes_to_compress, n_bytes_compressed)) {
         return false;
       }
@@ -664,27 +679,31 @@ bool compressor::File::SectionInfo::WriteData(std::fstream& fs,
     std::vector<std::future<std::pair<std::vector<char>, unsigned int>>>
         futures;
     std::vector<std::vector<char>> compressed_blocks(total_blocks);
-    std::vector<unsigned int> compressed_sizes(total_blocks, 0);
+    std::vector<unsigned int> compressed_sizes(total_blocks, /* value: */ 0);
 
     for (size_t block_id = 0; block_id < total_blocks; ++block_id) {
-      futures.push_back(std::async(std::launch::async, [&, block_id]() {
-        std::vector<char> block_uncompressed(footer.block_size_in_bytes);
-        std::vector<char> block_compressed(
-            comp.EstimateMaxSizeOfCompressedData(footer.block_size_in_bytes));
-        unsigned int n_bytes_compressed = 0;
-        long long offset = block_id * footer.block_size_in_bytes;
-        unsigned int num_bytes_to_compress =
-            (unsigned int)std::min((long long)footer.block_size_in_bytes,
-                                   cur_tmp_file.GetSize() - offset);
-        cur_tmp_file.Read(offset, num_bytes_to_compress,
-                          &block_uncompressed[0]);
-        if (!comp.Compress(&block_compressed[0], &block_uncompressed[0],
-                           num_bytes_to_compress, n_bytes_compressed)) {
-          throw std::runtime_error("Compression failed in thread");
-        }
-        block_compressed.resize(n_bytes_compressed);
-        return std::make_pair(std::move(block_compressed), n_bytes_compressed);
-      }));
+      futures.push_back(/* x: */ std::async(
+          /* policy: */ std::launch::async, /* fn: */ [&, block_id]() {
+            std::vector<char> block_uncompressed(footer.block_size_in_bytes);
+            std::vector<char> block_compressed(
+                /* n: */ comp.EstimateMaxSizeOfCompressedData(
+                    footer.block_size_in_bytes));
+            unsigned int n_bytes_compressed = 0;
+            long long offset = block_id * footer.block_size_in_bytes;
+            unsigned int num_bytes_to_compress = (unsigned int)std::min(
+                /* a: */ (long long)footer.block_size_in_bytes,
+                /* b: */ cur_tmp_file.GetSize() - offset);
+            cur_tmp_file.Read(/* position: */ offset, num_bytes_to_compress,
+                              &block_uncompressed[0]);
+            if (!comp.Compress(/* compressed_data: */ &block_compressed[0],
+                               /* source_data: */ &block_uncompressed[0],
+                               num_bytes_to_compress, n_bytes_compressed)) {
+              throw std::runtime_error("Compression failed in thread");
+            }
+            block_compressed.resize(n_bytes_compressed);
+            return std::make_pair(std::move(block_compressed),
+                                  n_bytes_compressed);
+          }));
       /* Limit number of concurrent threads */
       if (futures.size() >= num_threads) {
         for (auto& fut : futures) {
@@ -709,7 +728,8 @@ bool compressor::File::SectionInfo::WriteData(std::fstream& fs,
     unsigned int cur_offset_in_section = 0;
     compressed_size = 0;
     for (size_t block_id = 0; block_id < total_blocks; ++block_id) {
-      fs.write(compressed_blocks[block_id].data(), compressed_sizes[block_id]);
+      fs.write(/* s: */ compressed_blocks[block_id].data(),
+               compressed_sizes[block_id]);
       blocks[block_id].compressed_size = compressed_sizes[block_id];
       blocks[block_id].offset_in_section = cur_offset_in_section;
       cur_offset_in_section += compressed_sizes[block_id];
@@ -719,11 +739,12 @@ bool compressor::File::SectionInfo::WriteData(std::fstream& fs,
 
   /* write all block infos to file */
   for (auto& cur_block : blocks) {
-    fs.read((char*)&cur_block, sizeof(cur_block));
+    fs.read((char*)&cur_block, /* n: */ sizeof(cur_block));
 
     if (!fs) {
       std::cerr << "FAILED reading block metadata for key="
-                << std::string(key_name.begin(), key_name.end()) << "\n";
+                << std::string(/* beg: */ key_name.begin(), key_name.end())
+                << "\n";
       return false;
     }
   }
@@ -791,7 +812,7 @@ bool compressor::File::SectionInfo::ReadData(std::fstream& fs,
     fs.seekg(offset_in_file + compressed_size, std::ios_base::beg);
     blocks.resize(num_blocks);
     for (auto& cur_block : blocks) {
-      fs.read((char*)&cur_block, sizeof(cur_block));
+      fs.read((char*)&cur_block, /* n: */ sizeof(cur_block));
     }
   }
 
@@ -813,38 +834,40 @@ bool compressor::File::SectionInfo::ReadData(std::fstream& fs,
     /* read current block from compresed file */
     fs.read(&compressed_data[0], blocks[block_id].compressed_size);
 
-    std::cerr << "ReadData key=" << std::string(key_name.begin(), key_name.end())
-          << " block=" << block_id
-          << " offset_in_file=" << offset_in_file
-          << " compressed_size=" << compressed_size
-          << " block_offset=" << blocks[block_id].offset_in_section
-          << " block_compressed_size=" << blocks[block_id].compressed_size
-          << " num_blocks=" << num_blocks
-          << " uncompressed_size=" << uncompressed_size
-          << "\n";
+    std::cerr << "ReadData key="
+              << std::string(/* beg: */ key_name.begin(), key_name.end())
+              << " block=" << block_id << " offset_in_file=" << offset_in_file
+              << " compressed_size=" << compressed_size
+              << " block_offset=" << blocks[block_id].offset_in_section
+              << " block_compressed_size=" << blocks[block_id].compressed_size
+              << " num_blocks=" << num_blocks
+              << " uncompressed_size=" << uncompressed_size << "\n";
 
     /* decompress data */
-    if (!comp.Decompress(&uncompressed_data[0], &compressed_data[0],
-                     blocks[block_id].compressed_size,
-                     n_bytes_decompressed)) {
+    if (!comp.Decompress(
+            /* dest_data: */ &uncompressed_data[0],
+            /* compressed_data: */ &compressed_data[0],
+            /* n_bytes_compressed: */ blocks[block_id].compressed_size,
+            n_bytes_decompressed)) {
       std::cerr << "Decompress FAILED for key="
-                << std::string(key_name.begin(), key_name.end())
+                << std::string(/* beg: */ key_name.begin(), key_name.end())
                 << " block=" << block_id
                 << " compressed_size=" << blocks[block_id].compressed_size
                 << "\n";
       return false;
-                     }
+    }
 
     /* copy data to passed pointer from caller */
-    long long num_bytes_to_copy =
-        std::min({(long long)n_bytes_decompressed, num_bytes_resting,
+    long long num_bytes_to_copy = std::min(
+        /* i: */ {(long long)n_bytes_decompressed, num_bytes_resting,
                   (long long)footer.block_size_in_bytes - offset_inside_block});
     memcpy(p_block, &uncompressed_data[offset_inside_block], num_bytes_to_copy);
 
     /* goto next block */
     num_bytes_resting -= num_bytes_to_copy;
     num_resting_comp_bytes -= std::min(
-        (long long)blocks[block_id].compressed_size, num_resting_comp_bytes);
+        /* a: */ (long long)blocks[block_id].compressed_size,
+        /* b: */ num_resting_comp_bytes);
     p_block += num_bytes_to_copy;
     offset_inside_block = 0;
     block_id++;
@@ -860,9 +883,9 @@ compressor::File::TmpFile::TmpFile(std::wstring const& key_name)
                (key_name + L".dat"))
                   .wstring();
   std::filesystem::path file_path_str = file_path;
-  std::filesystem::create_directories(file_path_str.parent_path());
-  fs_tmp.open(file_path_str, std::ios::in | std::ios::out | std::ios::binary |
-                                 std::ios::trunc);
+  std::filesystem::create_directories(/* p: */ file_path_str.parent_path());
+  fs_tmp.open(file_path_str, /* mode: */ std::ios::in | std::ios::out |
+                                 std::ios::binary | std::ios::trunc);
   if (!fs_tmp.good() || !fs_tmp.is_open()) {
     throw std::runtime_error("Could not create temporary file for section.");
   }
@@ -890,8 +913,8 @@ bool compressor::File::TmpFile::DoesExist(std::wstring const& key_name) {
 bool compressor::File::TmpFile::OpenIfNotOpen() {
   if (!fs_tmp.good() || !fs_tmp.is_open()) {
     std::filesystem::path file_path_str = file_path;
-    fs_tmp.open(file_path_str.string(),
-                std::ios::in | std::ios::out | std::ios::binary);
+    fs_tmp.open(/* s: */ file_path_str.string(),
+                /* mode: */ std::ios::in | std::ios::out | std::ios::binary);
     if (!fs_tmp.good() || !fs_tmp.is_open()) {
       return false;
     }
@@ -955,4 +978,4 @@ long long compressor::File::TmpFile::GetSize() {
   return size;
 }
 
-}  // namespace muehle
+} /* namespace muehle */

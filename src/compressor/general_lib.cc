@@ -25,4 +25,4 @@ bool compressor::GeneralLib::Print(std::wstringstream& ss, int level) {
   }
 }
 
-}  // namespace muehle
+} /* namespace muehle */

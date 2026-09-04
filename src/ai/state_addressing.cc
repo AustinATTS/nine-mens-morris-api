@@ -16,29 +16,39 @@ namespace muehle {
 StateAddressing::StateAddressing(std::wstring const& directory) {
   /* allocate memory */
   ResizeVector2D(amount_situations_c_d, GroupIndex{0},
-                 NUM_STONES_PER_PLAYER + 1, NUM_STONES_PER_PLAYER + 1);
+                 /* x: */ NUM_STONES_PER_PLAYER + 1,
+                 /* y: */ NUM_STONES_PER_PLAYER + 1);
   ResizeVector2D(amount_situations_a_b, GroupIndex{0},
-                 NUM_STONES_PER_PLAYER + 1, NUM_STONES_PER_PLAYER + 1);
+                 /* x: */ NUM_STONES_PER_PLAYER + 1,
+                 /* y: */ NUM_STONES_PER_PLAYER + 1);
   ResizeVector1D(group_index_a_b, GroupIndex{0},
-                 MAX_NUM_SITUATIONS_A * MAX_NUM_SITUATIONS_B);
+                 /* size: */ MAX_NUM_SITUATIONS_A * MAX_NUM_SITUATIONS_B);
   ResizeVector1D(group_index_c_d, GroupIndex{0},
-                 MAX_NUM_SITUATIONS_C * MAX_NUM_SITUATIONS_D);
+                 /* size: */ MAX_NUM_SITUATIONS_C * MAX_NUM_SITUATIONS_D);
   ResizeVector1D(symmetry_operation_c_d, SymOperationId{0},
-                 MAX_NUM_SITUATIONS_C * MAX_NUM_SITUATIONS_D);
-  ResizeVector2D(symmetry_transformation_table, 0u, NUM_SYM_OPERATIONS,
-                 FieldStruct::size);
+                 /* size: */ MAX_NUM_SITUATIONS_C * MAX_NUM_SITUATIONS_D);
+  ResizeVector2D(symmetry_transformation_table, /* value: */ 0u,
+                 /* x: */ NUM_SYM_OPERATIONS,
+                 /* y: */ FieldStruct::size);
   ResizeVector3D(group_state_c_d, GroupStateNumber{0},
-                 NUM_STONES_PER_PLAYER + 1, NUM_STONES_PER_PLAYER + 1, 1);
+                 /* x: */ NUM_STONES_PER_PLAYER + 1,
+                 /* y: */ NUM_STONES_PER_PLAYER + 1, /* z: */ 1);
   ResizeVector3D(group_state_a_b, GroupStateNumber{0},
-                 NUM_STONES_PER_PLAYER + 1, NUM_STONES_PER_PLAYER + 1, 1);
-  ResizeVector1D(power_of_three, 0u, num_squares_group_c + num_squares_group_d);
-  ResizeVector2D(m_over_n, 0u, FieldStruct::size + 1, FieldStruct::size + 1);
-  ResizeVector1D(reverse_sym_operation, SymOperationId{0}, NUM_SYM_OPERATIONS);
-  ResizeVector2D(conc_sym_operation, SymOperationId{0}, NUM_SYM_OPERATIONS,
-                 NUM_SYM_OPERATIONS);
-  ResizeVector3D(layer_index, LayerId{0}, 2, NUM_STONES_PER_PLAYER + 1,
-                 NUM_STONES_PER_PLAYER + 1);
-  ResizeVector1D(layer, LayerStruct{}, NUM_LAYERS);
+                 /* x: */ NUM_STONES_PER_PLAYER + 1,
+                 /* y: */ NUM_STONES_PER_PLAYER + 1, /* z: */ 1);
+  ResizeVector1D(power_of_three, /* value: */ 0u,
+                 /* size: */ num_squares_group_c + num_squares_group_d);
+  ResizeVector2D(m_over_n, /* value: */ 0u, FieldStruct::size + 1,
+                 /* y: */ FieldStruct::size + 1);
+  ResizeVector1D(reverse_sym_operation, SymOperationId{0},
+                 /* size: */ NUM_SYM_OPERATIONS);
+  ResizeVector2D(conc_sym_operation, SymOperationId{0},
+                 /* x: */ NUM_SYM_OPERATIONS,
+                 /* y: */ NUM_SYM_OPERATIONS);
+  ResizeVector3D(layer_index, LayerId{0}, /* x: */ 2,
+                 /* y: */ NUM_STONES_PER_PLAYER + 1,
+                 /* z: */ NUM_STONES_PER_PLAYER + 1);
+  ResizeVector1D(layer, LayerStruct{}, /* size: */ NUM_LAYERS);
 
   /* locals */
   CacheFile cf(directory, *this);
@@ -206,12 +216,13 @@ void StateAddressing::InitGroupAB() {
   FieldStruct::FieldArray my_field;
 
   /* reserve memory*/
-  ResizeGroupStateMappingArray(group_state_a_b, nullptr,
+  ResizeGroupStateMappingArray(group_state_a_b,
+                               /* p_amount_situations: */ nullptr,
                                num_squares_group_a + num_squares_group_b);
 
   /* mark all group_index_c_d as not indexed*/
-  group_index_a_b.assign(MAX_NUM_SITUATIONS_A * MAX_NUM_SITUATIONS_B,
-                         NOT_INDEXED);
+  group_index_a_b.assign(/* n: */ MAX_NUM_SITUATIONS_A * MAX_NUM_SITUATIONS_B,
+                         /* val: */ NOT_INDEXED);
 
   /* iterate through each state within group A&B*/
   for (state_a_b = 0; state_a_b < MAX_NUM_SITUATIONS_A * MAX_NUM_SITUATIONS_B;
@@ -222,7 +233,7 @@ void StateAddressing::InitGroupAB() {
     }
 
     /* zero field*/
-    my_field.fill(PlayerId::square_is_free);
+    my_field.fill(/* u: */ PlayerId::square_is_free);
 
     /* make field*/
     CalcFieldBasedOnGroupAB(my_field, state_a_b);
@@ -266,13 +277,15 @@ void StateAddressing::InitGroupCD() {
 
   /* reserve memory*/
   ResizeVector3D(original_state_c_d_tmp, GroupStateNumber{0},
-                 NUM_STONES_PER_PLAYER + 1, NUM_STONES_PER_PLAYER + 1, 1);
-  ResizeGroupStateMappingArray(original_state_c_d_tmp, nullptr,
+                 /* x: */ NUM_STONES_PER_PLAYER + 1,
+                 /* y: */ NUM_STONES_PER_PLAYER + 1, /* z: */ 1);
+  ResizeGroupStateMappingArray(original_state_c_d_tmp,
+                               /* p_amount_situations: */ nullptr,
                                num_squares_group_c + num_squares_group_d);
 
   /* mark all group_index_c_d as not indexed*/
-  group_index_c_d.assign(MAX_NUM_SITUATIONS_C * MAX_NUM_SITUATIONS_D,
-                         NOT_INDEXED);
+  group_index_c_d.assign(/* n: */ MAX_NUM_SITUATIONS_C * MAX_NUM_SITUATIONS_D,
+                         /* val: */ NOT_INDEXED);
 
   /* iterate through each state within group C&D*/
   for (state_c_d = 0; state_c_d < MAX_NUM_SITUATIONS_C * MAX_NUM_SITUATIONS_D;
@@ -318,7 +331,9 @@ void StateAddressing::InitGroupCD() {
 
     /* mark all symmetric states */
     for (SymOperationId sym_op = 0; sym_op < NUM_SYM_OPERATIONS; sym_op++) {
-      ApplySymmetryTransfToField(sym_op, false, my_field, sym_field);
+      ApplySymmetryTransfToField(sym_op, /* do_inverse_operation: */ false,
+                                 /* source_field: */ my_field,
+                                 /* dest_field: */ sym_field);
 
       CalcGroupStateNumberCD(sym_field, sym_state_c_d);
 
@@ -353,8 +368,8 @@ void StateAddressing::InitLayerRegardingMovingPhase() {
   NumBlackStones nbs;
   unsigned int total_num_stones;
   LayerId layer_num;
-  NumWhiteStones w_c_d,
-      w_a_b; /* number of white and black stones for group C&D and A&B */
+  /* number of white and black stones for group C&D and A&B */
+  NumWhiteStones w_c_d, w_a_b;
   NumBlackStones b_c_d, b_a_b;
 
   /* iterate through each layer */
@@ -444,14 +459,18 @@ void StateAddressing::InitLayerRegardingMovingPhase() {
 
 void StateAddressing::InitLayerRegardingSettingPhase() {
   /* locals */
-  NumWhiteStones nws;            /* number of white stones */
-  NumBlackStones nbs;            /* number of black stones */
-  unsigned int total_num_stones; /* nws + nbs */
-  LayerId layer_num;             /* layer number */
-  NumWhiteStones w_c_d,
-      w_a_b; /* number of white stones for group C&D and A&B */
-  NumBlackStones b_c_d,
-      b_a_b; /* number of black stones for group C&D and A&B */
+  /* number of white stones */
+  NumWhiteStones nws;
+  /* number of black stones */
+  NumBlackStones nbs;
+  /* nws + nbs */
+  unsigned int total_num_stones;
+  /* layer number */
+  LayerId layer_num;
+  /* number of white stones for group C&D and A&B */
+  NumWhiteStones w_c_d, w_a_b;
+  /* number of black stones for group C&D and A&B */
+  NumBlackStones b_c_d, b_a_b;
 
   /* iterate through each layer */
   for (total_num_stones = 0, layer_num = NUM_LAYERS - 1;
@@ -585,18 +604,22 @@ inline void StateAddressing::CalcFieldBasedOnGroup(
 
 void StateAddressing::CalcFieldBasedOnGroupAB(
     FieldStruct::FieldArray& field, GroupStateNumber state_a_b) const {
-  CalcFieldBasedOnGroup(field, num_squares_group_a, state_a_b,
-                        square_index_group_a, group_order_a, power_of_three);
-  CalcFieldBasedOnGroup(field, num_squares_group_b, state_a_b,
-                        square_index_group_b, group_order_b, power_of_three);
+  CalcFieldBasedOnGroup(field, num_squares_group_a,
+                        /* state_number: */ state_a_b, square_index_group_a,
+                        group_order_a, power_of_three);
+  CalcFieldBasedOnGroup(field, num_squares_group_b,
+                        /* state_number: */ state_a_b, square_index_group_b,
+                        group_order_b, power_of_three);
 }
 
 void StateAddressing::CalcFieldBasedOnGroupCD(
     FieldStruct::FieldArray& field, GroupStateNumber state_c_d) const {
-  CalcFieldBasedOnGroup(field, num_squares_group_c, state_c_d,
-                        square_index_group_c, group_order_c, power_of_three);
-  CalcFieldBasedOnGroup(field, num_squares_group_d, state_c_d,
-                        square_index_group_d, group_order_d, power_of_three);
+  CalcFieldBasedOnGroup(field, num_squares_group_c,
+                        /* state_number: */ state_c_d, square_index_group_c,
+                        group_order_c, power_of_three);
+  CalcFieldBasedOnGroup(field, num_squares_group_d,
+                        /* state_number: */ state_c_d, square_index_group_d,
+                        group_order_d, power_of_three);
 }
 
 /* Calculates the state number based on the field array within a group */
@@ -674,12 +697,14 @@ bool StateAddressing::ApplySymmetryTransfToField(
   /* apply symmetrie operation on field */
   FieldStruct::FieldArray tmp_field = field.field;
   ApplySymmetryTransfToField(symmetry_operation_number, do_inverse_operation,
-                             tmp_field, field.field);
+                             /* source_field: */ tmp_field,
+                             /* dest_field: */ field.field);
 
   /* ... and mill counter if necessary */
   FieldStruct::MillArray tmp_stone_part_of_mill = field.stone_part_of_mill;
   ApplySymmetryTransfToField(symmetry_operation_number, do_inverse_operation,
-                             tmp_stone_part_of_mill, field.stone_part_of_mill);
+                             /* source_field: */ tmp_stone_part_of_mill,
+                             /* dest_field: */ field.stone_part_of_mill);
 
   return true;
 }
@@ -696,7 +721,8 @@ bool StateAddressing::ApplySymmetryTransfToField(
   /* apply symmetrie operation on field */
   FieldStruct::FieldArray tmp_field = field.field;
   ApplySymmetryTransfToField(symmetry_operation_number, do_inverse_operation,
-                             tmp_field, field.field);
+                             /* source_field: */ tmp_field,
+                             /* dest_field: */ field.field);
 
   return true;
 }
@@ -704,8 +730,10 @@ bool StateAddressing::ApplySymmetryTransfToField(
 /* Returns the layer number for a given number of white and black stones */
 StateAddressing::LayerId StateAddressing::GetLayerNumber(
     const FieldStruct::Core& field) const {
-  return GetLayerNumber(field.cur_player.num_stones,
-                        field.opp_player.num_stones, field.setting_phase);
+  return GetLayerNumber(
+      /* num_stones_of_cur_player: */ field.cur_player.num_stones,
+      /* num_stones_of_opp_player: */ field.opp_player.num_stones,
+      field.setting_phase);
 }
 
 /* Returns the layer number for a given number of white and black stones
@@ -795,7 +823,9 @@ bool StateAddressing::GetStateNumber(LayerId layer_num, StateId& state_number,
 
   /* the state numbers assumes that the current player is always player white */
   /* (2) thus we have to convert the field to this assumption */
-  AdaptFieldArrayToCurPlayer(field.field, my_field, field.GetCurPlayer().id);
+  AdaptFieldArrayToCurPlayer(/* src_field: */ field.field,
+                             /* dst_field: */ my_field,
+                             field.GetCurPlayer().id);
 
   /* count stones in each group */
   CountStonesInGroupCD(field, w_c_d, b_c_d);
@@ -804,8 +834,10 @@ bool StateAddressing::GetStateNumber(LayerId layer_num, StateId& state_number,
   CalcGroupStateNumberCD(my_field, state_c_d);
 
   /* apply symmetry operation on group A&B */
-  ApplySymmetryTransfToField(symmetry_operation_c_d[state_c_d], false, my_field,
-                             sym_field);
+  ApplySymmetryTransfToField(symmetry_operation_c_d[state_c_d],
+                             /* do_inverse_operation: */ false,
+                             /* source_field: */ my_field,
+                             /* dest_field: */ sym_field);
 
   /* calc state_a_b
    * Optimized: unroll loop and use pointer arithmetic for better cache locality
@@ -887,10 +919,12 @@ bool StateAddressing::AddTotalNumMissingStonesOffset(
   }
 
   /* add offset */
-  state_number = state_number * GetMaxTotalNumMissingStones(
-                                    field.GetCurPlayer().num_stones,
-                                    field.GetOppPlayer().num_stones) +
-                 total_num_missing_stones;
+  state_number =
+      state_number *
+          GetMaxTotalNumMissingStones(
+              /* amount_white_stones: */ field.GetCurPlayer().num_stones,
+              /* amount_black_stones: */ field.GetOppPlayer().num_stones) +
+      total_num_missing_stones;
 
   return true;
 }
@@ -937,8 +971,11 @@ bool StateAddressing::GetFieldByStateNumber(LayerId layer_num,
   FieldStruct::FieldArray sym_field;
 
   /* get w_c_d, b_c_d, w_a_b, b_a_b */
-  cur_layer.GetNumGroupStonesByStateNumber(state_number, setting_phase, w_a_b,
-                                           b_a_b, w_c_d, b_c_d);
+  cur_layer.GetNumGroupStonesByStateNumber(
+      state_number, setting_phase, /* num_white_stones_group_a_b: */ w_a_b,
+      /* num_black_stones_group_a_b: */ b_a_b,
+      /* num_white_stones_group_c_d: */ w_c_d,
+      /* num_black_stones_group_c_d: */ b_c_d);
 
   /* get index within groups */
   sub_layer_index_c_d = cur_layer.sub_layer_index_c_d[w_c_d][b_c_d];
@@ -958,15 +995,18 @@ bool StateAddressing::GetFieldByStateNumber(LayerId layer_num,
   CalcFieldBasedOnGroupAB(my_field, state_a_b);
 
   /* apply symmetry operation on group A&B */
-  ApplySymmetryTransfToField(symmetry_operation_c_d[state_c_d], true, my_field,
-                             sym_field);
+  ApplySymmetryTransfToField(symmetry_operation_c_d[state_c_d],
+                             /* do_inverse_operation: */ true,
+                             /* source_field: */ my_field,
+                             /* dest_field: */ sym_field);
 
   /* set my_field from state_c_d */
   CalcFieldBasedOnGroupCD(sym_field, state_c_d);
 
   /* the state numbers assumes that the current player is always player white
    * thus we have to convert this assumption to the requested player */
-  AdaptFieldArrayToCurPlayer(sym_field, my_field, cur_player);
+  AdaptFieldArrayToCurPlayer(/* src_field: */ sym_field,
+                             /* dst_field: */ my_field, cur_player);
 
   /* set field */
   field.Reset(cur_player);
@@ -1117,7 +1157,8 @@ bool StateAddressing::GetStateNumbersOfSymmetricStates(
   StateId state_number;
 
   /* get state number of current field */
-  if (!GetStateNumber(layer_number, state_number, symmetry_operation, field)) {
+  if (!GetStateNumber(/* layer_num: */ layer_number, state_number,
+                      /* sym_op: */ symmetry_operation, field)) {
     return false;
   }
   sym_field = field;
@@ -1138,11 +1179,14 @@ bool StateAddressing::GetStateNumbersOfSymmetricStates(
     }
 
     /* appy symmetry operation */
-    ApplySymmetryTransfToField(symmetry_operation, false, field.field,
-                               sym_field.field);
+    ApplySymmetryTransfToField(symmetry_operation,
+                               /* do_inverse_operation: */ false,
+                               /* source_field: */ field.field,
+                               /* dest_field: */ sym_field.field);
 
     /* store state number */
-    if (!GetStateNumber(layer_number, state_numbers[symmetry_operation],
+    if (!GetStateNumber(/* layer_num: */ layer_number,
+                        /* state_number: */ state_numbers[symmetry_operation],
                         sym_op_applied, sym_field)) {
       return false;
     }
@@ -1160,15 +1204,15 @@ StateAddressing::CacheFile::CacheFile(std::wstring const& directory,
     std::filesystem::create_directories(base);
   }
   file_path = (base / L"pre_calculated_vars.dat").wstring();
-  file.open(std::filesystem::path(file_path),
-            std::ios::in | std::ios::out | std::ios::binary);
+  file.open(/* s: */ std::filesystem::path(file_path),
+            /* mode: */ std::ios::in | std::ios::out | std::ios::binary);
   if (!file.is_open()) {
     file.clear();
-    file.open(std::filesystem::path(file_path),
-              std::ios::out | std::ios::binary);
+    file.open(/* s: */ std::filesystem::path(file_path),
+              /* mode: */ std::ios::out | std::ios::binary);
     file.close();
-    file.open(std::filesystem::path(file_path),
-              std::ios::in | std::ios::out | std::ios::binary);
+    file.open(/* s: */ std::filesystem::path(file_path),
+              /* mode: */ std::ios::in | std::ios::out | std::ios::binary);
   }
 }
 
@@ -1186,7 +1230,7 @@ bool StateAddressing::CacheFile::ReadFromFile() {
   }
   file.clear();
   file.seekg(0);
-  file.read(reinterpret_cast<char*>(&header), sizeof(header));
+  file.read(reinterpret_cast<char*>(&header), /* n: */ sizeof(header));
 
   /* check if file is valid */
   if (header.size_in_bytes != sizeof(header)) {
@@ -1206,7 +1250,8 @@ bool StateAddressing::CacheFile::ReadFromFile() {
       !ReadVector(file, sa.m_over_n)) {
     return false;
   }
-  sa.ResizeGroupStateMappingArray(sa.group_state_a_b, nullptr,
+  sa.ResizeGroupStateMappingArray(sa.group_state_a_b,
+                                  /* p_amount_situations: */ nullptr,
                                   num_squares_group_a + num_squares_group_b);
   sa.ResizeGroupStateMappingArray(sa.group_state_c_d, &sa.amount_situations_c_d,
                                   num_squares_group_c + num_squares_group_d);

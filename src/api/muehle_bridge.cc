@@ -20,7 +20,7 @@ MuehleBridge::Response MuehleBridge::Evaluate(const Request& req) {
   result.total_num_stones_missing = req.total_num_stones_missing;
 
   /* Attempt to open database */
-  const bool db_loaded = ai.OpenDatabase(L"./database/");
+  const bool db_loaded = ai.OpenDatabase(/* directory: */ L"./database/");
 
   if (db_loaded) {
     result.engine = "perfect-database";
@@ -78,4 +78,4 @@ MuehleBridge::Response MuehleBridge::Evaluate(const Request& req) {
   return result;
 }
 
-}  // namespace muehle
+} /* namespace muehle */
