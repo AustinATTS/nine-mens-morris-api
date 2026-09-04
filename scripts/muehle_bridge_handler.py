@@ -18,7 +18,7 @@ DB_PATH = (BASE_DIR / ".." / "database" / "database.dat").resolve()
 
 class MuehleBridgeHandler(BaseHTTPRequestHandler):
     bridge_command: list[str] = []
-    timeout_seconds: int = 10
+    timeout_seconds: int = 100
 
     def _send_json(self, status: int, payload: dict[str, Any]) -> None:
         body = json.dumps(payload).encode("utf-8")

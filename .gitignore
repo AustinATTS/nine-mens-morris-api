@@ -3,3 +3,7 @@ cmake-build-debug/
 .clang-format
 tool/*
 tools/*
+mini_max.log
+database/*.dat
+pre_calculated_vars.dat
+build/
